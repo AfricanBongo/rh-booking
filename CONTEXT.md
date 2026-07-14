@@ -8,7 +8,7 @@ A church conference room booking platform for RoyalHouse Church.
 |------|---------------|
 | `CONTEXT.md` | This file. Project state, architecture, decisions. |
 | `docs/design.md` | Design system. Colors, typography, spacing, components, interactions, page templates. |
-| `docs/plans/2026-07-13-3-day-mvp.md` | Implementation plan. Milestones, acceptance criteria, session prompts. |
+| `docs/plans/2026-07-15-3-day-mvp-v2.md` | Implementation plan. Milestones, acceptance criteria, session prompts. |
 | `AGENTS.md` | Coding conventions, patterns, testing, git workflow, what not to do. |
 
 ## Project Overview
@@ -39,17 +39,21 @@ Next.js 16 (Cloudflare Pages)  -->  Strapi (Coolify) : read-only content
 
 ## Key Decisions
 
+- Auth is MAGIC LINK (passwordless). No passwords. User enters email, receives link, clicks to log in.
+- Church branches stored in Supabase `church_branches` table (seeded, not hardcoded). ComboBox fetches from DB.
+- Conference registration is SEPARATE from room booking. User can register without booking a room.
 - Strapi = CMS for read-only content (conferences, rooms, merch, pickup locations). Admin panel IS the admin UI.
 - Supabase = auth + transactional data (bookings, invitations, payments, profiles, children, merch orders)
 - Stripe Checkout (hosted page) - no custom payment forms, no Stripe Products needed
 - stripe-sync-engine mirrors payment data into Supabase for querying
-- HeroUI component library (built for Next.js + Tailwind)
+- HeroUI v3 component library (built for Next.js + Tailwind)
 - Admin uses Strapi panel + Stripe dashboard (no custom admin UI in MVP)
-- Room prices stored in cents. Split evenly among roommates.
+- Room prices stored in cents. Per-person price = room total / max_occupants.
 - Minimum payment: $25. Deadline set per conference in Strapi.
-- Church branch list is hardcoded (22 branches). Admin edit is future enhancement.
-- Children 12+ are charged extra but do NOT consume a room occupancy slot.
+- Children 12+ charged 1x per-person rate extra. Do NOT consume a room slot.
 - Room switching blocked only when the individual user has paid in full.
+- 24-hour urgency: if check-in < 24h away, payment required on booking confirmation.
+- Single item merch purchase (no cart for MVP).
 
 ## Business Rules
 
@@ -93,7 +97,7 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 
 ## What's Next
 
-Session 1: Infrastructure + Auth + Marketing (use Sonnet)
+Session 1: Infrastructure + Auth + Marketing (Sonnet + Opus for auth)
 
 ## Environment
 
