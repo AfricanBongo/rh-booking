@@ -89,7 +89,7 @@ Keep it digestible. 3-5 sentences max. Not an essay.
 
 ### 4. Tests Must Stay Green
 
-Any change to platform logic that would break an existing test MUST include a test update in the same commit. Never commit with failing tests. CI runs on every push.
+Any change to platform logic that would break an existing test MUST be flagged. Do NOT automatically rewrite failing tests - flag the failure and let the developer decide how to handle it. CI runs on every push.
 
 ---
 
@@ -351,7 +351,7 @@ jobs:
 
 ### Test Maintenance Rule
 
-Any code change that would break an existing test MUST update that test in the same commit. Never leave broken tests behind.
+Any code change that would break an existing test MUST be flagged. Do NOT automatically rewrite failing tests - flag the failure and let the developer decide how to handle it.
 
 ---
 
@@ -407,27 +407,7 @@ One logical change per commit. Every commit must pass build + tests.
 
 ### Cloudflare Pages via GitHub Actions
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm ci
-      - run: npm run build
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: pages deploy .next --project-name=rh-booking
-```
+Deployment is handled manually by the developer. Do NOT create or modify deployment workflows.
 
 ### Environment Variables
 
