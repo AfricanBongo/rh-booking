@@ -2,6 +2,7 @@ import { strapiGet } from "@/lib/strapi";
 
 export interface MerchItem {
   id: string;
+  slug: string;
   name: string;
   description: string;
   price: number;
@@ -20,6 +21,7 @@ export interface PickupLocation {
 interface StrapiMerchItem {
   id: number;
   documentId: string;
+  slug: string;
   name: string;
   description: string;
   price: number;
@@ -45,6 +47,7 @@ function resolveImageUrl(url: string | undefined | null): string | null {
 function mapMerchItem(item: StrapiMerchItem, conferenceId: string): MerchItem {
   return {
     id: item.documentId,
+    slug: item.slug,
     name: item.name,
     description: item.description,
     price: item.price,
@@ -80,6 +83,17 @@ export async function getMerchItem(id: string): Promise<MerchItem> {
     populate: "images",
   });
   return mapMerchItem(result.data, result.data.conferences?.[0]?.documentId ?? "");
+}
+
+export async function getMerchItemBySlug(slug: string): Promise<MerchItem> {
+  const result = await strapiGet<StrapiMerchItem[]>("/api/merch-items", {
+    "filters[slug][$eq]": slug,
+    "populate": "images,conferences",
+  });
+  if (!result.data[0]) {
+    throw { status: 404, name: "NotFound", message: "Merch item not found" };
+  }
+  return mapMerchItem(result.data[0], result.data[0].conferences?.[0]?.documentId ?? "");
 }
 
 export async function getPickupLocations(conferenceId: string): Promise<PickupLocation[]> {

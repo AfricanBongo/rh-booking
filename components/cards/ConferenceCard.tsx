@@ -38,7 +38,7 @@ export function ConferenceCard({ conference }: ConferenceCardProps): React.React
         </p>
         <p className="text-sm text-muted mb-4">{conference.location}</p>
         <Link
-          href={`/conferences/${conference.id}`}
+          href={`/conferences/${conference.slug}`}
           className="border border-border text-foreground rounded-lg px-6 py-3 font-medium hover:bg-surface-secondary transition-colors inline-block text-sm"
         >
           Learn More

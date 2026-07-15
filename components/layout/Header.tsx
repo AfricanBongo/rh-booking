@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 
 export async function Header(): Promise<React.ReactElement> {
   const supabase = await createClient();
@@ -50,20 +51,7 @@ export async function Header(): Promise<React.ReactElement> {
           )}
         </nav>
 
-        <div className="flex md:hidden items-center gap-3">
-          {user ? (
-            <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-medium">
-              {initials}
-            </div>
-          ) : (
-            <Link
-              href="/auth/register"
-              className="bg-accent text-accent-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              Register
-            </Link>
-          )}
-        </div>
+        <MobileMenu isLoggedIn={!!user} />
       </div>
     </header>
   );

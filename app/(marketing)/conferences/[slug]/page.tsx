@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getConference } from "@/lib/data/conferences";
+import { getConferenceBySlug } from "@/lib/data/conferences";
 import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/RegistrationForm";
 
@@ -21,19 +21,19 @@ function formatDateRange(startDate: string, endDate: string): string {
 }
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function ConferenceDetailPage({ params }: PageProps): Promise<React.ReactElement> {
-  const { id } = await params;
+  const { slug } = await params;
 
   let conference;
   try {
-    conference = await getConference(id);
+    conference = await getConferenceBySlug(slug);
   } catch {
     return (
       <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-        <Link href="/" className="text-sm text-muted hover:text-foreground flex items-center gap-1 mb-6">
+        <Link href="/conferences" className="text-sm text-muted hover:text-foreground flex items-center gap-1 mb-6">
           <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" />
           </svg>
@@ -42,8 +42,8 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
         <div className="bg-surface rounded-xl p-8 text-center">
           <p className="text-lg font-medium text-foreground mb-2">Conference not found</p>
           <p className="text-muted mb-6">This conference may have been removed or the link is incorrect.</p>
-          <Link href="/" className="bg-accent text-accent-foreground rounded-lg px-6 py-3 font-medium hover:opacity-90 transition-opacity inline-block">
-            Back to Home
+          <Link href="/conferences" className="bg-accent text-accent-foreground rounded-lg px-6 py-3 font-medium hover:opacity-90 transition-opacity inline-block">
+            Browse Conferences
           </Link>
         </div>
       </main>
@@ -59,14 +59,14 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
       .from("conference_registrations")
       .select("id")
       .eq("user_id", user.id)
-      .eq("conference_id", id)
+      .eq("conference_id", conference.id)
       .maybeSingle();
     isRegistered = !!data;
   }
 
   return (
     <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-      <Link href="/" className="text-sm text-muted hover:text-foreground flex items-center gap-1 mb-6">
+      <Link href="/conferences" className="text-sm text-muted hover:text-foreground flex items-center gap-1 mb-6">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" />
         </svg>
@@ -155,7 +155,7 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             <h2 className="font-heading text-xl font-semibold mb-2">Register for This Conference</h2>
             <p className="text-muted mb-4">Sign in to register for this conference and book your room.</p>
             <Link
-              href={`/auth/login?returnUrl=/conferences/${id}`}
+              href={`/auth/login?returnUrl=/conferences/${slug}`}
               className="bg-accent text-accent-foreground rounded-lg px-6 py-3 font-medium hover:opacity-90 transition-opacity inline-block"
             >
               Sign in to Register
@@ -175,7 +175,7 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             </div>
             <p className="text-muted mb-4">You&apos;re all set for {conference.name}. Ready to book your room?</p>
             <Link
-              href={`/book/${id}`}
+              href={`/book/${conference.id}`}
               className="bg-accent text-accent-foreground rounded-lg px-6 py-3 font-medium hover:opacity-90 transition-opacity inline-block"
             >
               Book a Room
@@ -200,7 +200,7 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             <h2 className="font-heading text-xl font-semibold mb-1">Register for This Conference</h2>
             <p className="text-muted text-sm mb-6">Select your check-in and check-out dates within the conference window.</p>
             <RegistrationForm
-              conferenceId={id}
+              conferenceId={conference.id}
               conferenceStartDate={conference.startDate}
               conferenceEndDate={conference.endDate}
             />

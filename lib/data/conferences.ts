@@ -2,6 +2,7 @@ import { strapiGet } from "@/lib/strapi";
 
 export interface Conference {
   id: string;
+  slug: string;
   name: string;
   description: string;
   startDate: string;
@@ -15,6 +16,7 @@ export interface Conference {
 interface StrapiConferenceItem {
   id: number;
   documentId: string;
+  slug: string;
   name: string;
   description: string;
   start_date: string;
@@ -34,6 +36,7 @@ function resolveImageUrl(url: string | undefined | null): string | null {
 function mapConference(item: StrapiConferenceItem): Conference {
   return {
     id: item.documentId,
+    slug: item.slug,
     name: item.name,
     description: item.description,
     startDate: item.start_date,
@@ -64,4 +67,15 @@ export async function getConference(id: string): Promise<Conference> {
     { populate: "*" }
   );
   return mapConference(result.data);
+}
+
+export async function getConferenceBySlug(slug: string): Promise<Conference> {
+  const result = await strapiGet<StrapiConferenceItem[]>("/api/conferences", {
+    "filters[slug][$eq]": slug,
+    "populate": "*",
+  });
+  if (!result.data[0]) {
+    throw { status: 404, name: "NotFound", message: "Conference not found" };
+  }
+  return mapConference(result.data[0]);
 }

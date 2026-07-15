@@ -87,7 +87,7 @@ export default async function Home(): Promise<React.ReactElement> {
               </div>
               <div>
                 <Link
-                  href={`/conferences/${hero.id}`}
+                  href={`/conferences/${hero.slug}`}
                   className="bg-accent text-accent-foreground rounded-lg px-8 py-4 font-medium text-lg hover:opacity-90 transition-opacity inline-block"
                 >
                   Register Now
@@ -136,12 +136,12 @@ export default async function Home(): Promise<React.ReactElement> {
         </section>
       )}
 
-      <section className="py-12 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <section className="py-12 md:py-20 justify-items-center">
+        <div className="max-w-7xl w-full mx-auto px-4 md:px-6 lg:px-8">
           <h2 className="font-heading text-2xl md:text-4xl font-semibold mb-8">
             Frequently Asked Questions
           </h2>
-          <div className="max-w-3xl">
+          <div className="">
             {FAQS.map(({ question, answer }) => (
               <details key={question} className="border-b border-border py-4">
                 <summary className="cursor-pointer font-medium list-none flex items-center justify-between">
@@ -154,35 +154,6 @@ export default async function Home(): Promise<React.ReactElement> {
           </div>
         </div>
       </section>
-
-      <footer className="bg-surface border-t border-border py-8">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <p className="font-heading font-bold text-lg">
-              RoyalHouse <span className="text-accent">Booking</span>
-            </p>
-            <p className="text-sm text-muted mt-1">
-              &copy; 2026 RoyalHouse Chapel International
-            </p>
-          </div>
-          <div className="flex flex-col md:flex-row gap-3 text-sm">
-            <a
-              href="https://royalhousechapel.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted hover:text-foreground transition-colors"
-            >
-              royalhousechapel.org
-            </a>
-            <a
-              href="mailto:support@royalhouse.org"
-              className="text-muted hover:text-foreground transition-colors"
-            >
-              support@royalhouse.org
-            </a>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
