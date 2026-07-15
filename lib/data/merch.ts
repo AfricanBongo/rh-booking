@@ -1,10 +1,12 @@
+import { strapiGet } from "@/lib/strapi";
+
 export interface MerchItem {
   id: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
-  sizes: string[];
+  imageUrl: string | null;
+  merch_status: "open" | "closed";
   conferenceId: string;
 }
 
@@ -15,19 +17,78 @@ export interface PickupLocation {
   conferenceId: string;
 }
 
+interface StrapiMerchItem {
+  id: number;
+  documentId: string;
+  name: string;
+  description: string;
+  price: number;
+  images: { url: string }[] | null;
+  merch_status: "open" | "closed";
+  conferences: { documentId: string }[] | null;
+}
+
+interface StrapiPickupLocation {
+  id: number;
+  documentId: string;
+  name: string;
+  address: string;
+  conferences: { documentId: string }[] | null;
+}
+
+function resolveImageUrl(url: string | undefined | null): string | null {
+  if (!url) return null;
+  if (url.startsWith("http")) return url;
+  return `${process.env.NEXT_PUBLIC_STRAPI_URL ?? ""}${url}`;
+}
+
+function mapMerchItem(item: StrapiMerchItem, conferenceId: string): MerchItem {
+  return {
+    id: item.documentId,
+    name: item.name,
+    description: item.description,
+    price: item.price,
+    imageUrl: resolveImageUrl(item.images?.[0]?.url),
+    merch_status: item.merch_status,
+    conferenceId,
+  };
+}
+
+function mapPickupLocation(item: StrapiPickupLocation, conferenceId: string): PickupLocation {
+  return {
+    id: item.documentId,
+    name: item.name,
+    address: item.address,
+    conferenceId,
+  };
+}
+
 export async function getMerchItems(conferenceId: string): Promise<MerchItem[]> {
-  void conferenceId;
-  throw new Error("not implemented");
+  try {
+    const result = await strapiGet<StrapiMerchItem[]>("/api/merch-items", {
+      "filters[conferences][documentId][$eq]": conferenceId,
+      "populate": "images",
+    });
+    return result.data.map((item) => mapMerchItem(item, conferenceId));
+  } catch {
+    return [];
+  }
 }
 
 export async function getMerchItem(id: string): Promise<MerchItem> {
-  void id;
-  throw new Error("not implemented");
+  const result = await strapiGet<StrapiMerchItem>(`/api/merch-items/${id}`, {
+    populate: "images",
+  });
+  return mapMerchItem(result.data, result.data.conferences?.[0]?.documentId ?? "");
 }
 
-export async function getPickupLocations(
-  conferenceId: string
-): Promise<PickupLocation[]> {
-  void conferenceId;
-  throw new Error("not implemented");
+export async function getPickupLocations(conferenceId: string): Promise<PickupLocation[]> {
+  try {
+    const result = await strapiGet<StrapiPickupLocation[]>("/api/pickup-locations", {
+      "filters[conferences][documentId][$eq]": conferenceId,
+    });
+    return result.data.map((item) => mapPickupLocation(item, conferenceId));
+  } catch {
+    return [];
+  }
 }

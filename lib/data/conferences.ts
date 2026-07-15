@@ -61,7 +61,7 @@ export async function getConferences(): Promise<Conference[]> {
 export async function getConference(id: string): Promise<Conference> {
   const result = await strapiGet<StrapiConferenceItem>(
     `/api/conferences/${id}`,
-    { populate: "image" }
+    { populate: "*" }
   );
   return mapConference(result.data);
 }
