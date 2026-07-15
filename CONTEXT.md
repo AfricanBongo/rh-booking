@@ -81,6 +81,7 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - [x] Infrastructure setup
 - [x] Auth working (magic link, 2-step registration, profile edit)
 - [x] Marketing site + Conference pages
+- [x] Strapi content seeded (conference, rooms, merch, pickup locations)
 - [ ] Room booking
 - [ ] Children registration
 - [ ] Roommate flow
@@ -96,7 +97,7 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 ### Session 1 (2026-07-15)
 - **1.1** Project infrastructure: Next.js 16, Tailwind 4, Vitest, Supabase clients, Strapi client, data layer stubs, CI
 - **1.2** Supabase schema + RLS policies + church branches seed data (22 branches)
-- **1.3** [MANUAL — pending] Strapi content types + seed data
+- **1.3** Strapi content seeded: 1 conference (Kingdom Impact 2026, Aug 14-17, Atlanta GA), 3 room types (private $300, shared-2 $300, shared-4 $300), 3 merch items (t-shirt open, hoodie open, mug closed), 2 pickup locations. Conference documentId: `txnlz5bx02lkfx4h8psgkcct`.
 - **1.4** Auth: magic link login, 2-step registration (name/email/phone + gender/age/branch), auth callback, profile edit page. `proxy.ts` (Next.js 16 renamed middleware). Trigger fix: `handle_new_user` uses `SET search_path = public` + guards on `full_name` presence.
 - **1.5** Marketing landing page: navbar (server component, auth-aware), hero (empty state when no Strapi), How It Works, FAQ, footer. `ConferenceCard` component extracted.
 - **1.6** Conference detail page: hero image + gradient, info cards, about section, registration section (auth-gated). `RegistrationForm` client component with date validation. `/api/register-conference` POST route. Booking schema with TDD tests.
