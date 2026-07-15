@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+
 export interface Booking {
   id: string;
   userId: string;
@@ -10,7 +12,8 @@ export interface Booking {
 export interface RegistrationData {
   userId: string;
   conferenceId: string;
-  roomTypeId: string;
+  checkIn: string;
+  checkOut: string;
 }
 
 export async function getBooking(id: string): Promise<Booking> {
@@ -27,9 +30,19 @@ export async function getUserBooking(
   throw new Error("not implemented");
 }
 
-export async function registerForConference(
-  data: RegistrationData
-): Promise<Booking> {
-  void data;
-  throw new Error("not implemented");
+export async function registerForConference(data: RegistrationData): Promise<{ id: string }> {
+  const supabase = await createClient();
+  const { data: row, error } = await supabase
+    .from("conference_registrations")
+    .insert({
+      user_id: data.userId,
+      conference_id: data.conferenceId,
+      check_in: data.checkIn,
+      check_out: data.checkOut,
+    })
+    .select("id")
+    .single();
+
+  if (error) throw error;
+  return { id: row.id as string };
 }
