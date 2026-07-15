@@ -30,13 +30,13 @@ function MerchCard({ item }: { item: MerchItem }): React.ReactElement {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted mb-3">${item.price.toFixed(2)}</p>
+        <p className="text-sm text-muted mb-3">${(item.price / 100).toFixed(2)}</p>
         {!isClosed && (
           <Link
             href={`/merch/${item.slug}`}
-            className="border border-border text-foreground rounded-lg px-4 py-2 font-medium hover:bg-surface-secondary transition-colors inline-block text-sm"
+            className="bg-accent text-accent-foreground rounded-lg px-4 py-2 font-medium hover:opacity-90 transition-opacity inline-block text-sm"
           >
-            View Details
+            Buy Now
           </Link>
         )}
       </div>
