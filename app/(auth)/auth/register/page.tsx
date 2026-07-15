@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { registrationSchema, type RegistrationData } from "@/lib/validations/auth";
 import { createClient } from "@/lib/supabase/client";
 import { type ChurchBranch } from "@/lib/data/profiles";
@@ -12,6 +11,8 @@ import {
   RESEND_COOLDOWN_SECONDS,
 } from "@/lib/constants";
 import Link from "next/link";
+import { Button, Spinner } from "@heroui/react";
+import { EnvelopeSimpleIcon } from "@phosphor-icons/react";
 
 const step1Schema = registrationSchema.pick({
   full_name: true,
@@ -24,25 +25,6 @@ const step2Schema = registrationSchema.pick({
   age: true,
   church_branch_id: true,
 });
-
-function LeftPanel(): React.ReactElement {
-  return (
-    <div className="hidden md:flex md:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-accent to-[oklch(0.45_0.195_253.83)] text-white">
-      <div>
-        <span className="font-heading font-bold text-2xl">RoyalHouse Booking</span>
-      </div>
-      <div>
-        <blockquote className="font-heading text-3xl font-semibold leading-snug mb-4">
-          &ldquo;Come together in faith,<br />grow together in community.&rdquo;
-        </blockquote>
-        <p className="text-white/70 text-sm">RoyalHouse Chapel International</p>
-      </div>
-      <div className="text-white/50 text-xs">
-        Conference Room Booking Platform
-      </div>
-    </div>
-  );
-}
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
@@ -76,14 +58,14 @@ export default function RegisterPage() {
       .from("church_branches")
       .select("id, name")
       .order("name")
-      .then(({ data }) => {
+      .then(({ data }: { data: ChurchBranch[] | null }) => {
         if (data) setBranches(data);
       });
   }, []);
 
   useEffect(() => {
     if (!sent || countdown <= 0) return;
-    const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
+    const timer = setInterval(() => setCountdown((c: number) => c - 1), 1000);
     return () => clearInterval(timer);
   }, [sent, countdown]);
 
@@ -135,54 +117,52 @@ export default function RegisterPage() {
   const selectedBranchName =
     branches.find((b) => b.id === selectedBranchId)?.name ?? "";
 
+  // Shared left panel
+  const LeftPanel = (
+    <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-accent via-[oklch(0.50_0.18_270)] to-[oklch(0.35_0.15_285)]" />
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
+      <div className="relative z-10 flex flex-col justify-between p-10 text-white">
+        <Link href="/" className="font-heading font-bold text-xl">RoyalHouse</Link>
+        <div>
+          <p className="font-heading text-4xl font-semibold leading-tight mb-3">
+            Join the<br />gathering.
+          </p>
+          <p className="text-white/60 text-sm">22 branches. One family. One conference.</p>
+        </div>
+        <p className="text-white/40 text-xs">Conference Booking Platform</p>
+      </div>
+    </div>
+  );
+
   if (sent) {
     return (
-      <div className="flex-1 flex overflow-hidden" style={{ height: "calc(100dvh - 4rem)" }}>
-        <LeftPanel />
-        <div className="flex-1 flex items-center justify-center px-6 overflow-y-auto">
-          <div className="w-full max-w-md bg-surface rounded-xl shadow-sm p-6 text-center">
-            <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-accent"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+      <div className="min-h-screen flex">
+        {LeftPanel}
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-sm animate-scale-in text-center">
+            <div className="mx-auto mb-6 w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
+              <EnvelopeSimpleIcon size={28} weight="duotone" className="text-accent" />
             </div>
             <h1 className="font-heading text-2xl font-semibold text-foreground mb-2">
-              Check Your Email
+              Check your inbox
             </h1>
-            <p className="text-muted text-sm mb-1">
-              We sent a magic link to{" "}
-              <span className="font-medium text-foreground">{sentEmail}</span>
-            </p>
-            <p className="text-muted text-sm mb-6">
-              This link expires in {MAGIC_LINK_EXPIRY_MINUTES} minutes.
+            <p className="font-medium text-foreground text-sm mb-1">{sentEmail}</p>
+            <p className="text-xs text-muted mb-8">
+              Click the link to complete your registration. Expires in {MAGIC_LINK_EXPIRY_MINUTES} minutes.
             </p>
             {countdown > 0 ? (
-              <p className="text-sm text-muted">
-                Resend available in {countdown}s
-              </p>
+              <p className="text-sm text-muted">Resend in {countdown}s</p>
             ) : (
-              <button
-                onClick={handleResend}
-                className="text-sm font-medium text-accent hover:underline"
-              >
-                Resend magic link
+              <button onClick={handleResend} className="text-sm font-medium text-accent hover:underline">
+                Resend link
               </button>
             )}
             <button
               onClick={() => setSent(false)}
-              className="block mx-auto mt-4 text-sm text-muted hover:text-foreground"
+              className="block mx-auto mt-4 text-sm text-muted hover:text-foreground transition-colors"
             >
-              Wrong email? Try again
+              Use a different email
             </button>
           </div>
         </div>
@@ -192,89 +172,78 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex">
-      <LeftPanel />
-      <div className="flex-1 flex items-center justify-center px-6 overflow-y-auto">
-        <div className="w-full max-w-md bg-surface rounded-xl shadow-sm p-6">
-          <p className="text-sm text-muted mb-1">Step {step} of 2</p>
-          <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">
-            Create Account
+      {LeftPanel}
+
+      <div className="flex-1 flex items-center justify-center px-6 py-12 overflow-y-auto">
+        <div className="w-full max-w-sm animate-fade-up">
+          <div className="lg:hidden mb-8">
+            <Link href="/" className="font-heading font-bold text-xl text-foreground">RoyalHouse</Link>
+          </div>
+
+          {/* Step indicator */}
+          <div className="flex items-center gap-2 mb-6">
+            <div className={`h-1 flex-1 rounded-full transition-colors duration-300 ${step >= 1 ? "bg-accent" : "bg-border"}`} />
+            <div className={`h-1 flex-1 rounded-full transition-colors duration-300 ${step >= 2 ? "bg-accent" : "bg-border"}`} />
+          </div>
+
+          <h1 className="font-heading text-3xl font-semibold text-foreground mb-2">
+            {step === 1 ? "Create your account" : "Almost there"}
           </h1>
-          <p className="text-sm text-muted mb-6">
+          <p className="text-sm text-muted mb-8">
             {step === 1
-              ? "Enter your details to get started"
-              : "A few more details about you"}
+              ? "Takes under a minute. No password required."
+              : "Just a few more details so we can match you with your branch."}
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {step === 1 && (
               <>
                 <div>
-                  <label
-                    htmlFor="full_name"
-                    className="block text-sm font-medium text-foreground mb-1.5"
-                  >
-                    Full Name
+                  <label htmlFor="full_name" className="block text-sm font-medium text-foreground mb-2">
+                    Full name
                   </label>
                   <input
                     id="full_name"
                     type="text"
                     autoComplete="name"
                     {...register("full_name")}
-                    className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
                     placeholder="John Doe"
                   />
-                  {errors.full_name && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.full_name.message}
-                    </p>
-                  )}
+                  {errors.full_name && <p className="text-sm text-danger mt-1.5">{errors.full_name.message}</p>}
                 </div>
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-foreground mb-1.5"
-                  >
-                    Email
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                    Email address
                   </label>
                   <input
                     id="email"
                     type="email"
                     autoComplete="email"
                     {...register("email")}
-                    className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
                     placeholder="you@example.com"
                   />
-                  {errors.email && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
+                  {errors.email && <p className="text-sm text-danger mt-1.5">{errors.email.message}</p>}
                 </div>
                 <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-foreground mb-1.5"
-                  >
-                    Phone
+                  <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                    Phone number
                   </label>
                   <input
                     id="phone"
                     type="tel"
                     autoComplete="tel"
                     {...register("phone")}
-                    className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
                     placeholder="+1 555-123-4567"
                   />
-                  {errors.phone && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.phone.message}
-                    </p>
-                  )}
+                  {errors.phone && <p className="text-sm text-danger mt-1.5">{errors.phone.message}</p>}
                 </div>
                 <button
                   type="button"
                   onClick={handleStep1Next}
-                  className="bg-accent text-accent-foreground rounded-lg h-11 w-full font-medium hover:opacity-90 transition-opacity"
+                  className="bg-foreground text-background rounded-full h-12 w-full font-medium hover:opacity-90 transition-all duration-200 active:scale-[0.98]"
                 >
                   Continue
                 </button>
@@ -284,17 +253,15 @@ export default function RegisterPage() {
             {step === 2 && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">
-                    Gender
-                  </label>
-                  <div className="flex gap-3">
+                  <label className="block text-sm font-medium text-foreground mb-2">Gender</label>
+                  <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setValue("gender", "male", { shouldValidate: true })}
-                      className={`flex-1 rounded-lg h-11 font-medium transition-colors ${
+                      className={`rounded-xl h-12 font-medium transition-all duration-200 ${
                         selectedGender === "male"
-                          ? "bg-accent text-accent-foreground"
-                          : "border border-border text-foreground hover:bg-default"
+                          ? "bg-accent text-accent-foreground ring-2 ring-accent/20"
+                          : "border border-border text-foreground hover:border-accent/40"
                       }`}
                     >
                       Male
@@ -302,26 +269,19 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setValue("gender", "female", { shouldValidate: true })}
-                      className={`flex-1 rounded-lg h-11 font-medium transition-colors ${
+                      className={`rounded-xl h-12 font-medium transition-all duration-200 ${
                         selectedGender === "female"
-                          ? "bg-accent text-accent-foreground"
-                          : "border border-border text-foreground hover:bg-default"
+                          ? "bg-accent text-accent-foreground ring-2 ring-accent/20"
+                          : "border border-border text-foreground hover:border-accent/40"
                       }`}
                     >
                       Female
                     </button>
                   </div>
-                  {errors.gender && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.gender.message}
-                    </p>
-                  )}
+                  {errors.gender && <p className="text-sm text-danger mt-1.5">{errors.gender.message}</p>}
                 </div>
                 <div>
-                  <label
-                    htmlFor="age"
-                    className="block text-sm font-medium text-foreground mb-1.5"
-                  >
+                  <label htmlFor="age" className="block text-sm font-medium text-foreground mb-2">
                     Age
                   </label>
                   <input
@@ -329,18 +289,14 @@ export default function RegisterPage() {
                     type="number"
                     min="1"
                     {...register("age", { valueAsNumber: true })}
-                    className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
                     placeholder="25"
                   />
-                  {errors.age && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.age.message}
-                    </p>
-                  )}
+                  {errors.age && <p className="text-sm text-danger mt-1.5">{errors.age.message}</p>}
                 </div>
                 <div className="relative">
-                  <label className="block text-sm font-medium text-foreground mb-1.5">
-                    Church Branch
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Church branch
                   </label>
                   <input
                     type="text"
@@ -353,26 +309,22 @@ export default function RegisterPage() {
                       setBranchDropdownOpen(true);
                       setBranchSearch("");
                     }}
-                    onBlur={() =>
-                      setTimeout(() => setBranchDropdownOpen(false), 150)
-                    }
-                    className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
-                    placeholder="Search church branch..."
+                    onBlur={() => setTimeout(() => setBranchDropdownOpen(false), 150)}
+                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
+                    placeholder="Search your branch..."
                   />
                   {branchDropdownOpen && filteredBranches.length > 0 && (
-                    <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-auto bg-surface border border-border rounded-lg shadow-md">
+                    <ul className="absolute z-10 mt-2 w-full max-h-48 overflow-auto bg-surface border border-border rounded-xl shadow-lg py-1">
                       {filteredBranches.map((branch) => (
                         <li key={branch.id}>
                           <button
                             type="button"
                             onMouseDown={() => {
-                              setValue("church_branch_id", branch.id, {
-                                shouldValidate: true,
-                              });
+                              setValue("church_branch_id", branch.id, { shouldValidate: true });
                               setBranchSearch(branch.name);
                               setBranchDropdownOpen(false);
                             }}
-                            className="w-full text-left px-4 py-2 text-sm hover:bg-default text-foreground"
+                            className="w-full text-left px-4 py-2.5 text-sm hover:bg-surface-secondary text-foreground transition-colors"
                           >
                             {branch.name}
                           </button>
@@ -380,65 +332,38 @@ export default function RegisterPage() {
                       ))}
                     </ul>
                   )}
-                  {errors.church_branch_id && (
-                    <p className="text-sm text-danger mt-1">
-                      {errors.church_branch_id.message}
-                    </p>
-                  )}
+                  {errors.church_branch_id && <p className="text-sm text-danger mt-1.5">{errors.church_branch_id.message}</p>}
                 </div>
-                {error && (
-                  <p className="text-sm text-danger">{error}</p>
-                )}
-                <div className="flex gap-3">
+                {error && <p className="text-sm text-danger">{error}</p>}
+                <div className="flex gap-3 pt-1">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex-1 border border-border text-foreground rounded-lg h-11 font-medium hover:bg-default transition-colors"
+                    className="flex-1 border border-border text-foreground rounded-full h-12 font-medium hover:bg-surface-secondary transition-colors duration-200"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 bg-accent text-accent-foreground rounded-lg h-11 font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 bg-foreground text-background rounded-full h-12 font-medium hover:opacity-90 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]"
                   >
                     {submitting ? (
                       <>
-                        <svg
-                          className="animate-spin h-4 w-4"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                          />
-                        </svg>
-                        Registering...
+                        <Spinner size="sm" color="current" />
+                        Creating...
                       </>
                     ) : (
-                      "Register"
+                      "Create account"
                     )}
                   </button>
                 </div>
               </>
             )}
           </form>
-          <p className="text-sm text-muted text-center mt-6">
+          <p className="text-sm text-muted text-center mt-8">
             Already have an account?{" "}
-            <Link
-              href="/auth/login"
-              className="text-accent font-medium hover:underline"
-            >
+            <Link href="/auth/login" className="text-foreground font-medium hover:text-accent transition-colors">
               Sign in
             </Link>
           </p>

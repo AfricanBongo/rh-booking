@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { PillButton } from "@/components/ui";
 
 export async function Header(): Promise<React.ReactElement> {
   const supabase = await createClient();
@@ -11,47 +13,52 @@ export async function Header(): Promise<React.ReactElement> {
     : null;
 
   return (
-    <header className="sticky top-0 z-50 h-14 md:h-16 bg-surface/80 backdrop-blur-sm border-b border-border">
+    <header className="sticky top-0 z-50 h-16 md:h-18 bg-surface/90 backdrop-blur-md border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
-        <Link href="/" className="font-heading font-bold text-lg">
-          RoyalHouse <span className="text-accent">Booking</span>
+        <Link href="/" className="font-heading font-bold text-xl tracking-tight">
+          RoyalHouse
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href="/conferences" className="text-sm text-foreground hover:text-accent transition-colors">
+        <nav className="hidden md:flex items-center gap-8">
+          <Link href="/conferences" className="text-sm font-medium text-muted hover:text-foreground transition-colors duration-200">
             Conferences
           </Link>
-          <Link href="/merch" className="text-sm text-foreground hover:text-accent transition-colors">
+          <Link href="/merch" className="text-sm font-medium text-muted hover:text-foreground transition-colors duration-200">
             Merch
           </Link>
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm text-foreground hover:text-accent transition-colors">
+              <Link href="/dashboard" className="text-sm font-medium text-muted hover:text-foreground transition-colors duration-200">
                 Dashboard
               </Link>
-              <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-medium">
+              <ThemeToggle />
+              <Link
+                href="/dashboard/profile"
+                className="w-9 h-9 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-medium hover:opacity-90 transition-opacity"
+              >
                 {initials}
-              </div>
+              </Link>
             </>
           ) : (
-            <>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Link
                 href="/auth/login"
-                className="border border-border text-foreground rounded-lg px-4 py-2 text-sm font-medium hover:bg-surface-secondary transition-colors"
+                className="text-sm font-medium text-foreground hover:text-accent transition-colors duration-200"
               >
-                Login
+                Sign in
               </Link>
-              <Link
-                href="/auth/register"
-                className="bg-accent text-accent-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
-              >
-                Register
-              </Link>
-            </>
+              <PillButton href="/auth/register" variant="dark" size="sm">
+                Get started
+              </PillButton>
+            </div>
           )}
         </nav>
 
-        <MobileMenu isLoggedIn={!!user} />
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <MobileMenu isLoggedIn={!!user} />
+        </div>
       </div>
     </header>
   );
