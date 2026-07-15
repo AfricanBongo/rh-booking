@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { detectSearchType, applySearchPrivacy } from "@/lib/utils/search-privacy";
 
 export interface Profile {
   id: string;
@@ -22,6 +23,13 @@ export interface ProfileUpdateData {
 export interface ChurchBranch {
   id: string;
   name: string;
+}
+
+export interface SearchResult {
+  id: string;
+  fullName: string;
+  phone: string | null;
+  gender: "male" | "female";
 }
 
 export async function getProfile(userId: string): Promise<Profile | null> {
@@ -79,4 +87,60 @@ export async function fetchChurchBranches(): Promise<ChurchBranch[]> {
 
   if (error || !data) return [];
   return data;
+}
+
+export async function searchRoommates(
+  query: string,
+  conferenceId: string,
+  currentUserId: string
+): Promise<SearchResult[]> {
+  const supabase = await createClient();
+  const searchType = detectSearchType(query);
+
+  const registeredQuery = supabase
+    .from("conference_registrations")
+    .select("user_id")
+    .eq("conference_id", conferenceId);
+
+  const { data: registered } = await registeredQuery;
+  const registeredIds = (registered ?? []).map((r) => r.user_id as string);
+
+  if (registeredIds.length === 0) return [];
+
+  const { data: booked } = await supabase
+    .from("bookings")
+    .select("user_id")
+    .eq("conference_id", conferenceId)
+    .eq("status", "confirmed");
+
+  const bookedIds = new Set((booked ?? []).map((b) => b.user_id as string));
+
+  const eligibleIds = registeredIds.filter(
+    (id) => id !== currentUserId && !bookedIds.has(id)
+  );
+
+  if (eligibleIds.length === 0) return [];
+
+  let profileQuery = supabase
+    .from("profiles")
+    .select("id, full_name, phone, gender")
+    .in("id", eligibleIds);
+
+  if (searchType === "name") {
+    profileQuery = profileQuery.ilike("full_name", `%${query}%`);
+  } else {
+    const cleanPhone = query.replace(/[\s\-().+]/g, "");
+    profileQuery = profileQuery.ilike("phone", `%${cleanPhone}%`);
+  }
+
+  const { data: profiles } = await profileQuery.limit(10);
+
+  if (!profiles) return [];
+
+  return profiles.map((p) =>
+    applySearchPrivacy(
+      { id: p.id, fullName: p.full_name, phone: p.phone, gender: p.gender },
+      searchType
+    )
+  );
 }

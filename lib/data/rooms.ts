@@ -1,4 +1,6 @@
 import { strapiGet } from "@/lib/strapi";
+import { createClient } from "@/lib/supabase/server";
+import { calculateRoomAvailability } from "@/lib/utils/price";
 
 export interface RoomType {
   id: string;
@@ -8,7 +10,13 @@ export interface RoomType {
   totalAvailable: number;
   description: string;
   imageUrl: string | null;
+  imageUrls: string[];
   conferenceId: string;
+}
+
+export interface RoomTypeWithAvailability extends RoomType {
+  bookedCount: number;
+  remaining: number;
 }
 
 interface StrapiRoomTypeItem {
@@ -29,6 +37,10 @@ function resolveImageUrl(url: string | undefined | null): string | null {
 }
 
 function mapRoomType(item: StrapiRoomTypeItem, conferenceId: string): RoomType {
+  const allUrls = (item.images ?? [])
+    .map((img) => resolveImageUrl(img.url))
+    .filter((url): url is string => url !== null);
+
   return {
     id: item.documentId,
     documentId: item.documentId,
@@ -36,7 +48,8 @@ function mapRoomType(item: StrapiRoomTypeItem, conferenceId: string): RoomType {
     price: item.price,
     totalAvailable: item.total_available,
     description: item.description,
-    imageUrl: resolveImageUrl(item.images?.[0]?.url),
+    imageUrl: allUrls[0] ?? null,
+    imageUrls: allUrls,
     conferenceId,
   };
 }
@@ -51,4 +64,33 @@ export async function getRoomTypes(conferenceId: string): Promise<RoomType[]> {
   } catch {
     return [];
   }
+}
+
+export async function getRoomTypesWithAvailability(conferenceId: string): Promise<RoomTypeWithAvailability[]> {
+  const roomTypes = await getRoomTypes(conferenceId);
+  if (roomTypes.length === 0) return [];
+
+  const supabase = await createClient();
+  const { data: bookings } = await supabase
+    .from("room_groups")
+    .select("room_type_id, bookings(id)")
+    .eq("conference_id", conferenceId);
+
+  const bookedCounts: Record<string, number> = {};
+  if (bookings) {
+    for (const group of bookings) {
+      const typeId = group.room_type_id;
+      const count = Array.isArray(group.bookings) ? group.bookings.length : 0;
+      bookedCounts[typeId] = (bookedCounts[typeId] ?? 0) + count;
+    }
+  }
+
+  return roomTypes.map((rt) => {
+    const bookedCount = bookedCounts[rt.documentId] ?? 0;
+    return {
+      ...rt,
+      bookedCount,
+      remaining: calculateRoomAvailability(rt.totalAvailable, bookedCount),
+    };
+  });
 }
