@@ -78,19 +78,33 @@ CREATE TABLE merch_orders (
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, phone, gender, age, church_branch_id)
-  VALUES (
-    NEW.id,
-    NEW.raw_user_meta_data->>'full_name',
-    NEW.raw_user_meta_data->>'phone',
-    NEW.raw_user_meta_data->>'gender',
-    (NEW.raw_user_meta_data->>'age')::INTEGER,
-    (NEW.raw_user_meta_data->>'church_branch_id')::UUID
-  );
+  IF NEW.raw_user_meta_data->>'full_name' IS NOT NULL THEN
+    INSERT INTO public.profiles (id, full_name, phone, gender, age, church_branch_id)
+    VALUES (
+      NEW.id,
+      NEW.raw_user_meta_data->>'full_name',
+      NEW.raw_user_meta_data->>'phone',
+      NEW.raw_user_meta_data->>'gender',
+      (NEW.raw_user_meta_data->>'age')::INTEGER,
+      (NEW.raw_user_meta_data->>'church_branch_id')::UUID
+    );
+  END IF;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+
+GRANT SELECT ON church_branches TO anon, authenticated;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON profiles TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON conference_registrations TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON room_groups TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON bookings TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON invitations TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON children TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON merch_orders TO authenticated;
