@@ -78,9 +78,9 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 
 ## Current State
 
-- [ ] Infrastructure setup
-- [ ] Auth working
-- [ ] Marketing site + Conference pages
+- [x] Infrastructure setup
+- [x] Auth working (magic link, 2-step registration, profile edit)
+- [x] Marketing site + Conference pages
 - [ ] Room booking
 - [ ] Children registration
 - [ ] Roommate flow
@@ -93,11 +93,17 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 
 ## What's Done
 
-(Nothing yet - project kickoff)
+### Session 1 (2026-07-15)
+- **1.1** Project infrastructure: Next.js 16, Tailwind 4, Vitest, Supabase clients, Strapi client, data layer stubs, CI
+- **1.2** Supabase schema + RLS policies + church branches seed data (22 branches)
+- **1.3** [MANUAL — pending] Strapi content types + seed data
+- **1.4** Auth: magic link login, 2-step registration (name/email/phone + gender/age/branch), auth callback, profile edit page. `proxy.ts` (Next.js 16 renamed middleware). Trigger fix: `handle_new_user` uses `SET search_path = public` + guards on `full_name` presence.
+- **1.5** Marketing landing page: navbar (server component, auth-aware), hero (empty state when no Strapi), How It Works, FAQ, footer. `ConferenceCard` component extracted.
+- **1.6** Conference detail page: hero image + gradient, info cards, about section, registration section (auth-gated). `RegistrationForm` client component with date validation. `/api/register-conference` POST route. Booking schema with TDD tests.
 
 ## What's Next
 
-Session 1: Infrastructure + Auth + Marketing (Sonnet + Opus for auth)
+Session 2: Room Booking + Roommates + Children
 
 ## Environment
 
@@ -171,4 +177,8 @@ CONTEXT.md                          # This file
 
 ## Active Gotchas
 
-(None yet)
+- **`proxy.ts`** — Next.js 16 renamed `middleware.ts` → `proxy.ts`, exported function must be `proxy` not `middleware`
+- **Supabase trigger** — `handle_new_user()` must use `SET search_path = public` and guard on `full_name IS NOT NULL` (login OTP also fires the trigger on existing users)
+- **Strapi not yet configured** — `getConferences()` returns `[]` gracefully; conference detail shows "not found" until Strapi has data
+- **Local Supabase** — running on `http://127.0.0.1:54321`. Magic link `emailRedirectTo` uses `window.location.origin` so it follows the dev server host correctly
+- **19 tests passing** — `lib/validations/auth.test.ts` (13) + `lib/validations/booking.test.ts` (6)
