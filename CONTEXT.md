@@ -110,6 +110,9 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - **2.4** Invitations: accept/decline via PATCH. Accept triggers price recalculation for all room group members (room_price / new_occupant_count). `/app/invitations/page.tsx` with pending cards + action buttons.
 - **2.5** Booking confirmation: receipt-style breakdown (room share + children surcharge = total), 24-hour urgency detection (forces payment), `/api/bookings` POST creates room_group + booking + children atomically. Zustand store resets on confirm.
 
+### Session 2.6
+- **2.6** Local Stripe sync engine: `dev_setup.sh` script starts Supabase, Edge Functions, Stripe CLI listener, and `supabase/stripe-sync-engine` Docker container. Auto-captures webhook secret, triggers initial full sync. Logs streamed color-coded (cyan Supabase, magenta Stripe). Ctrl+C cleans up all processes.
+
 ## What's Next
 
 Session 3: Payments + Merch + Dashboard + Polish + Security Audit
