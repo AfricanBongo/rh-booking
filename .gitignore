@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ide
+.idea/
+
+# playwright
+.playwright-mcp/
+
+# dev_setup logs
+stripe_listen.log
+supabase_functions.log

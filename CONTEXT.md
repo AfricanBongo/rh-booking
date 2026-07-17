@@ -78,13 +78,15 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 
 ## Current State
 
-- [ ] Infrastructure setup
-- [ ] Auth working
-- [ ] Marketing site + Conference pages
-- [ ] Room booking
-- [ ] Children registration
-- [ ] Roommate flow
-- [ ] Invitations accept/decline
+- [x] Infrastructure setup
+- [x] Auth working (magic link, 2-step registration, profile edit)
+- [x] Marketing site + Conference pages
+- [x] Strapi content seeded (conference, rooms, merch, pickup locations)
+- [x] Room booking (selection + availability + price calc)
+- [x] Children registration (surcharge for 12+)
+- [x] Roommate flow (search + privacy rules + gender validation + invite)
+- [x] Invitations accept/decline (with price recalculation)
+- [x] Booking confirmation (receipt + urgency detection + finalization)
 - [ ] Payments (Stripe)
 - [ ] Merch store
 - [ ] Dashboard
@@ -93,11 +95,27 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 
 ## What's Done
 
-(Nothing yet - project kickoff)
+### Session 1 (2026-07-15)
+- **1.1** Project infrastructure: Next.js 16, Tailwind 4, Vitest, Supabase clients, Strapi client, data layer stubs, CI
+- **1.2** Supabase schema + RLS policies + church branches seed data (22 branches)
+- **1.3** Strapi content seeded: 1 conference (Kingdom Impact 2026, Aug 14-17, Atlanta GA), 3 room types (private $300, shared-2 $300, shared-4 $300), 3 merch items (t-shirt open, hoodie open, mug closed), 2 pickup locations. Conference documentId: `txnlz5bx02lkfx4h8psgkcct`.
+- **1.4** Auth: magic link login, 2-step registration (name/email/phone + gender/age/branch), auth callback, profile edit page. `proxy.ts` (Next.js 16 renamed middleware). Trigger fix: `handle_new_user` uses `SET search_path = public` + guards on `full_name` presence.
+- **1.5** Marketing landing page: navbar (server component, auth-aware), hero (empty state when no Strapi), How It Works, FAQ, footer. `ConferenceCard` component extracted.
+- **1.6** Conference detail page: hero image + gradient, info cards, about section, registration section (auth-gated). `RegistrationForm` client component with date validation. `/api/register-conference` POST route. Booking schema with TDD tests.
+
+### Session 2 (2026-07-16)
+- **2.1** Room selection: `getRoomTypesWithAvailability()` (Strapi rooms - Supabase bookings), `calculatePerPersonPrice()`, `calculateRoomAvailability()`, Zustand booking flow store, room type cards with per-person pricing, bed preference selection. Reusable `ImageSlider` + `ImageLightbox` components with View Transitions API (`experimental.viewTransition: true` in next.config). 
+- **2.2** Children registration: `calculateChildrenSurcharge()` (12+ = 1x per-person rate), Zod child schema, toggle + dynamic child rows, inline warnings for billable children, surcharge summary. Private rooms skip roommate step.
+- **2.3** Roommate search: `searchRoommates()` with privacy rules (name search shows phone, phone search hides phone), `validateGenderSharing()` with relationship modal (married/siblings/none), invitation creation via `/api/invitations` POST. Debounced search UI.
+- **2.4** Invitations: accept/decline via PATCH. Accept triggers price recalculation for all room group members (room_price / new_occupant_count). `/app/invitations/page.tsx` with pending cards + action buttons.
+- **2.5** Booking confirmation: receipt-style breakdown (room share + children surcharge = total), 24-hour urgency detection (forces payment), `/api/bookings` POST creates room_group + booking + children atomically. Zustand store resets on confirm.
+
+### Session 2.6
+- **2.6** Local Stripe sync engine: `dev_setup.sh` script starts Supabase, Edge Functions, Stripe CLI listener, and `supabase/stripe-sync-engine` Docker container. Auto-captures webhook secret, triggers initial full sync. Logs streamed color-coded (cyan Supabase, magenta Stripe). Ctrl+C cleans up all processes.
 
 ## What's Next
 
-Session 1: Infrastructure + Auth + Marketing (Sonnet + Opus for auth)
+Session 3: Payments + Merch + Dashboard + Polish + Security Audit
 
 ## Environment
 
@@ -123,38 +141,66 @@ app/
     profile/page.tsx
   book/
     [conferenceId]/
-      page.tsx                      # Room selection
-      children/page.tsx
-      roommate/page.tsx
-      confirm/page.tsx
+      page.tsx                      # Room selection (Step 1)
+      RoomSelectionClient.tsx
+      children/page.tsx             # Children registration (Step 2)
+      roommate/page.tsx             # Roommate search + invite (Step 3)
+      confirm/page.tsx              # Booking confirmation (Step 4)
   pay/page.tsx                      # Payment page
-  invitations/page.tsx
+  invitations/page.tsx              # Accept/decline invitations
   merch/
     page.tsx                        # Merch listing
     [id]/page.tsx                   # Merch detail
     orders/page.tsx
   api/
+    register-conference/route.ts
+    roommate-search/route.ts        # GET: search with privacy rules
+    invitations/route.ts            # POST: create, PATCH: accept/decline
+    bookings/route.ts               # POST: finalize booking
     checkout/route.ts               # Stripe Checkout session
 
 lib/
   data/
     conferences.ts                  # Reads from Strapi
-    rooms.ts                        # Reads from Strapi + Supabase
+    rooms.ts                        # Reads Strapi + Supabase (availability)
     merch.ts                        # Reads from Strapi
     bookings.ts                     # Reads/writes Supabase
     payments.ts                     # Reads from Supabase (synced Stripe data)
-    profiles.ts                     # Reads/writes Supabase
-    invitations.ts                  # Reads/writes Supabase
+    profiles.ts                     # Reads/writes Supabase + roommate search
+    invitations.ts                  # Reads/writes Supabase (create/accept/decline)
+  utils/
+    price.ts                        # Per-person price + availability calc
+    children.ts                     # Children surcharge calc
+    gender-validation.ts            # Gender sharing rules
+    search-privacy.ts               # Search type detection + privacy filter
   supabase/
     client.ts                       # Browser client
     server.ts                       # Server client
     middleware.ts                   # Auth middleware helper
   strapi.ts                         # Strapi REST client
   heroui-theme.ts                   # Custom theme
+  validations/
+    auth.ts                         # Registration + login schemas
+    booking.ts                      # Date validation
+    children.ts                     # Child entry schema
   constants/
-    church-branches.ts
+    index.ts                        # Payment urgency, min payment, etc.
+
+stores/
+  booking-flow.ts                   # Zustand: multi-step booking wizard state
 
 components/
+  ui/
+    PillButton.tsx
+    Badge.tsx
+    FormField.tsx
+    InfoCard.tsx
+    SectionHeader.tsx
+    ImageSlider.tsx                  # Reusable scroll-snap image slider
+    ImageLightbox.tsx                # Reusable modal gallery with animations
+  booking/
+    StepIndicator.tsx               # Step progress (1-4)
+    RoomTypeCard.tsx                 # Selectable room card
   header.tsx
   mobile-nav.tsx
 
@@ -171,4 +217,11 @@ CONTEXT.md                          # This file
 
 ## Active Gotchas
 
-(None yet)
+- **`proxy.ts`** — Next.js 16 renamed `middleware.ts` → `proxy.ts`, exported function must be `proxy` not `middleware`
+- **Supabase trigger** — `handle_new_user()` must use `SET search_path = public` and guard on `full_name IS NOT NULL` (login OTP also fires the trigger on existing users)
+- **Strapi not yet configured** — `getConferences()` returns `[]` gracefully; conference detail shows "not found" until Strapi has data
+- **Local Supabase** — running on `http://127.0.0.1:54321`. Magic link `emailRedirectTo` uses `window.location.origin` so it follows the dev server host correctly
+- **19 tests passing** — `lib/validations/auth.test.ts` (13) + `lib/validations/booking.test.ts` (6)
+- **52 tests passing** — added: `lib/utils/price.test.ts` (7), `lib/utils/children.test.ts` (5), `lib/utils/gender-validation.test.ts` (7), `lib/utils/search-privacy.test.ts` (6), `lib/validations/children.test.ts` (8)
+- **View Transitions** — `experimental.viewTransition: true` in `next.config.ts` for image thumbnail-to-lightbox morph
+- **Reusable UI components** — `ImageSlider` (scroll-snap + arrows) and `ImageLightbox` (animated translateX slides + view transitions) in `components/ui/`

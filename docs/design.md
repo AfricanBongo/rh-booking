@@ -1,69 +1,74 @@
 # RoyalHouse Booking — Design System
 
-> A conference room booking platform for RoyalHouse Church (US branches).
-> Visual DNA: Airbnb's premium warmth and generous whitespace meets Eventbrite's event-forward urgency and bold CTAs.
-> Built on HeroUI v3 Figma Kit with default tokens. Layout tokens from Tailwind CSS v4.
+> Conference room booking for RoyalHouse Church. 22 branches. One family.
+> Visual DNA: Airbnb's premium whitespace + Eventbrite's soft rounded cards + Luma's single-CTA clarity + Splash's full-bleed hero energy + Booking.com's trust patterns.
+> Built with custom components on Tailwind CSS v4 + HeroUI v3 (selective usage).
 
 ---
 
-## 1. Design Principles
+## 1. Design Philosophy
 
-| Principle | Meaning |
-|-----------|---------|
-| **Premium warmth** | Generous whitespace, large photography, rounded surfaces, trust-building layouts (Airbnb) |
-| **Event urgency** | Countdown timers, bold CTAs, clear action hierarchy, progress indicators (Eventbrite) |
-| **Mobile-first** | 390px is the primary canvas; desktop (1280px) is the responsive expansion |
-| **Component-driven** | Every UI element maps to a HeroUI v3 component; no custom primitives unless HeroUI lacks coverage |
-| **Church-appropriate** | Warm, inviting, energetic - not corporate SaaS. Confident but approachable. |
+### Core Principles
+
+| Principle | Meaning | Reference |
+|-----------|---------|-----------|
+| **Premium warmth** | Generous whitespace, large photography, rounded surfaces (16-20px radius), border-based elevation (no shadow at rest) | Airbnb |
+| **Event excitement** | Full-bleed hero imagery, bold display type, urgency signals (days away, spots remaining) | Splash, Eventbrite |
+| **Single CTA clarity** | One primary action per context. No competing buttons. | Luma |
+| **Trust through transparency** | Price breakdowns visible, payment flexibility prominent, real availability counts | Booking.com |
+| **Church-appropriate** | Warm, inviting, energetic. Not corporate SaaS, not overly playful. Confident but approachable. | Original |
+| **Mobile-first** | 390px is the primary canvas; desktop (1280px) is the responsive expansion | Original |
+
+### Dual-Mode UX Strategy
+
+The app operates in two modes that require different visual treatments:
+
+**Excitement Mode** (Conference discovery, landing page, merch):
+- Full-bleed imagery, large display type, social proof
+- Single prominent CTA per section
+- Event-forward language ("Secure Your Spot", not "Register")
+
+**Trust Mode** (Booking flow, payments, profile):
+- Step indicators, price breakdowns, progress bars
+- Transparent cost splitting
+- Reassuring language ("Pay at your pace", not "Payment required")
 
 ---
 
 ## 2. Color Tokens
 
-All colors use oklch color space. HeroUI v3 defaults - customizable via CSS variables.
+All colors use oklch color space. Defined as CSS custom properties, mapped to Tailwind via `@theme inline`.
 
 ### Light Mode
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--background` | `oklch(0.9702 0 0)` | Page background |
-| `--foreground` | `oklch(0.2103 0.0059 285.89)` (eclipse) | Primary text |
-| `--surface` | `oklch(100% 0 0)` (white) | Cards, panels, non-overlay containers |
+| `--foreground` | `oklch(0.2103 0.0059 285.89)` | Primary text |
+| `--surface` | `oklch(100% 0 0)` | Cards, panels |
 | `--surface-secondary` | `oklch(0.9524 0.0013 286.37)` | Subtle section backgrounds |
 | `--surface-tertiary` | `oklch(0.9373 0.0013 286.37)` | Deeper contrast sections |
-| `--accent` | `oklch(0.6204 0.195 253.83)` | Primary actions, links, focus rings (blue) |
-| `--accent-foreground` | `oklch(0.9911 0 0)` (snow) | Text on accent backgrounds |
-| `--success` | `oklch(0.7329 0.1935 150.81)` | Success states, "Paid in Full" badges |
-| `--warning` | `oklch(0.7819 0.1585 72.33)` | Urgency, countdown timers, low stock |
-| `--danger` | `oklch(0.6532 0.2328 25.74)` | Errors, destructive actions, "Closed" badges |
-| `--muted` | `oklch(0.5517 0.0138 285.94)` | Secondary text, placeholders, captions |
-| `--default` | `oklch(94% 0.001 286.375)` | Neutral backgrounds, disabled states |
+| `--accent` | `oklch(0.6204 0.195 253.83)` | Primary actions, links, focus rings |
+| `--accent-foreground` | `oklch(0.9911 0 0)` | Text on accent backgrounds |
+| `--success` | `oklch(0.7329 0.1935 150.81)` | Success states, "Paid in Full" |
+| `--warning` | `oklch(0.7819 0.1585 72.33)` | Urgency, countdowns |
+| `--danger` | `oklch(0.6532 0.2328 25.74)` | Errors, destructive actions |
+| `--muted` | `oklch(0.5517 0.0138 285.94)` | Secondary text, captions |
+| `--default` | `oklch(94% 0.001 286.375)` | Neutral backgrounds |
 | `--border` | `oklch(90% 0.004 286.32)` | Card borders, dividers |
-| `--separator` | `oklch(92% 0.004 286.32)` | Section dividers |
 
-### Dark Mode
+### Dark Mode (class: `.dark`)
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--background` | `oklch(12% 0.005 285.823)` | Page background |
-| `--foreground` | `oklch(0.9911 0 0)` (snow) | Primary text |
+| `--foreground` | `oklch(0.9911 0 0)` | Primary text |
 | `--surface` | `oklch(0.2103 0.0059 285.89)` | Cards, panels |
-| `--surface-secondary` | `oklch(0.257 0.0037 286.14)` | Subtle section backgrounds |
-| `--overlay` | `oklch(0.2103 0.0059 285.89)` | Modals, popovers |
-| `--default` | `oklch(27.4% 0.006 286.033)` | Neutral backgrounds |
+| `--surface-secondary` | `oklch(0.257 0.0037 286.14)` | Section backgrounds |
+| `--accent` | `oklch(0.68 0.18 253.83)` | Slightly brighter for dark bg |
 | `--border` | `oklch(28% 0.006 286.033)` | Card borders |
 
-### Semantic Color Usage
-
-| Context | Color Token |
-|---------|------------|
-| Primary CTA buttons | `--accent` |
-| Registration countdown | `--warning` |
-| "Registration Closed" badge | `--danger` |
-| "Paid in Full" / success | `--success` |
-| Disabled buttons/inputs | `--default` at `0.5` opacity |
-| Section alternate background | `--surface-secondary` |
-| Card background | `--surface` |
+Dark mode is class-based (`.dark` on `<html>`), managed by `next-themes`. Users can toggle between light, dark, and system via the header ThemeToggle.
 
 ---
 
@@ -74,395 +79,276 @@ All colors use oklch color space. HeroUI v3 defaults - customizable via CSS vari
 | Role | Font | Source |
 |------|------|--------|
 | Headings (Display, H1-H3) | **Outfit** | Google Fonts |
-| Body, Caption, Footnote | **Switzer** | Fontshare |
+| Body, Caption, UI | **Switzer** | Fontshare CDN |
 
 ### Type Scale
 
 | Level | Font | Size (mobile) | Size (desktop) | Weight | Usage |
 |-------|------|--------------|----------------|--------|-------|
-| Display | Outfit | 32px | 56px | Bold (700) | Hero headlines, page titles |
-| Heading 1 | Outfit | 24px | 36px | Semi Bold (600) | Section titles |
-| Heading 2 | Outfit | 20px | 28px | Semi Bold (600) | Card titles, subsections |
-| Heading 3 | Outfit | 18px | 22px | Semi Bold (600) | Step titles, labels |
-| Body | Switzer | 16px | 16px | Regular (400) | Paragraphs, descriptions |
-| Body Small | Switzer | 14px | 14px | Regular (400) | Secondary info, metadata |
-| Caption | Switzer | 12px | 12px | Medium (500) | Timestamps, badges, fine print |
-| Overline | Switzer | 12px | 12px | Medium (500) | Section labels, categories (uppercase) |
-
-### Type Rules
-
-- Body text: 1.5 line-height for readability
-- Headings: 1.2 line-height (tighter)
-- Max line width: ~65 characters for body text
-- Letter-spacing: -0.02em on Display, normal elsewhere
-- Outfit handles all heading hierarchy; Switzer handles everything else
+| Display | Outfit | 32px | 56px | Bold (700) | Hero headlines |
+| H1 | Outfit | 24px | 36px | Semi Bold (600) | Page/section titles |
+| H2 | Outfit | 20px | 28px | Semi Bold (600) | Card titles |
+| H3 | Outfit | 18px | 22px | Semi Bold (600) | Subsections |
+| Body | Switzer | 16px | 16px | Regular (400) | Paragraphs |
+| Body Small | Switzer | 14px | 14px | Regular (400) | Secondary info |
+| Caption | Switzer | 12px | 12px | Medium (500) | Badges, fine print |
 
 ---
 
-## 4. Spacing, Sizing, Shadows, Radius (Tailwind CSS v4)
+## 4. Iconography
 
-All layout tokens use Tailwind CSS v4's default scale. Reference Tailwind classes directly - no custom spacing tokens.
+**Library:** Phosphor Icons (`@phosphor-icons/react`)
 
-### Spacing Scale (used for padding, margin, gap)
+### Import Convention
 
-| Tailwind Class | Value | Common Usage |
-|----------------|-------|--------------|
-| `1` | 4px | Icon-to-text gaps |
-| `2` | 8px | Between related elements |
-| `3` | 12px | Small card padding, chip spacing |
-| `4` | 16px | Card padding, mobile grid gap |
-| `5` | 20px | Medium component spacing |
-| `6` | 24px | Desktop grid gap, element groups |
-| `8` | 32px | Section padding (mobile), footer |
-| `10` | 40px | Large section gaps |
-| `12` | 48px | Section vertical padding (mobile) |
-| `16` | 64px | Between-section spacing |
-| `20` | 80px | Section vertical padding (desktop), hero padding |
+```tsx
+// Server Components (RSC):
+import { UsersIcon, HouseIcon } from "@phosphor-icons/react/dist/ssr";
 
-### Airbnb-Inspired Spacing Rules
+// Client Components ('use client'):
+import { SunIcon, MoonIcon } from "@phosphor-icons/react";
+```
 
-- Generous whitespace between sections: `py-12` mobile, `py-20` desktop
-- Card interiors: minimum `p-4`
-- Content never touches edges: `px-4` mobile page margin
-- Visual grouping: related items `gap-2` to `gap-3`, unrelated groups `gap-6` to `gap-12`
+**IMPORTANT:** Always use the `Icon` suffix export (e.g. `UsersIcon`, not `Users`). The non-suffixed exports are deprecated.
+
+### Icon Weights
+
+| Context | Weight | Example |
+|---------|--------|---------|
+| Feature/decorative icons | `duotone` | How It Works step icons |
+| UI icons (nav, buttons) | `regular` (default) | CaretRight, ArrowLeft |
+| Placeholder/empty states | `thin` | ShoppingBag in empty merch |
+| Strong emphasis | `bold` | Check in success states |
+
+### Sizes
+
+| Context | Size | Example |
+|---------|------|---------|
+| Inline with text | 14-16px | MapPin next to location |
+| In buttons | 18-20px | Nav icons |
+| Feature cards | 24px | How It Works |
+| Empty states | 48px | Placeholder icons |
+
+---
+
+## 5. Custom Component Library
+
+We use HeroUI v3 selectively (Spinner, Disclosure for accessible accordion) but primarily rely on custom components that match our design language exactly. HeroUI's default BEM CSS does not load in our Tailwind 4 setup, so we built custom alternatives.
+
+### PillButton (`components/ui/PillButton.tsx`)
+
+Pill-shaped CTA button. The primary interactive element throughout the app.
+
+| Variant | Visual | Usage |
+|---------|--------|-------|
+| `primary` | Accent bg, white text | Main CTAs |
+| `dark` | Foreground bg, background text | Auth pages, header |
+| `outline` | Border, transparent bg | Secondary actions |
+| `ghost` | No border, hover bg | Tertiary actions |
+
+| Size | Dimensions |
+|------|-----------|
+| `sm` | h-9 px-4 text-sm |
+| `md` | h-11 px-6 text-sm |
+| `lg` | h-12 px-8 text-base |
+
+Props: `href` (renders as Link), `onClick`/`type` (renders as button), `fullWidth`, `disabled`.
+
+### Badge (`components/ui/Badge.tsx`)
+
+Small pill indicator for status, dates, or labels.
+
+| Variant | Visual | Usage |
+|---------|--------|-------|
+| `soft` | Accent/10 bg, accent text | Date badges on cards |
+| `outline` | Border only | Unavailable, neutral labels |
+| `solid` | Filled accent | Strong status |
+| `glass` | White/15 bg, backdrop-blur | On dark/image backgrounds (hero) |
+
+### FormField (`components/ui/FormField.tsx`)
+
+Wraps label + input + error. Used in all forms.
+
+### InfoCard (`components/ui/InfoCard.tsx`)
+
+Icon + label + value display card. Used on conference detail for key facts.
+
+### SectionHeader (`components/ui/SectionHeader.tsx`)
+
+Section title with optional overline, subtitle, and right-aligned link.
+
+---
+
+## 6. Motion & Animation
+
+### Philosophy
+
+Motion is subtle and purposeful. Never busy. It communicates:
+- **Entrance**: Content arriving on screen (fade-up, stagger)
+- **Feedback**: User action acknowledged (press scale, hover lift)
+- **Transition**: State changing (accordion open, page navigation)
+
+### Keyframe Animations
+
+| Name | Easing | Duration | Usage |
+|------|--------|----------|-------|
+| `fade-up` | `cubic-bezier(0.16, 1, 0.3, 1)` | 600ms | Section entrance |
+| `fade-in` | `ease` | 500ms | Simple reveals |
+| `scale-in` | `cubic-bezier(0.16, 1, 0.3, 1)` | 400ms | Modals, confirmations |
+| `slide-up` | `cubic-bezier(0.16, 1, 0.3, 1)` | 500ms | Accordion content, toasts |
+
+### Stagger Pattern
+
+The `.stagger` class applies sequential delays to children (80ms apart). Use on card grids:
+
+```html
+<div class="grid stagger">
+  <div class="animate-fade-up">Card 1</div> <!-- delay 0ms -->
+  <div class="animate-fade-up">Card 2</div> <!-- delay 80ms -->
+  <div class="animate-fade-up">Card 3</div> <!-- delay 160ms -->
+</div>
+```
+
+### Micro-Interactions
+
+| Element | Interaction | CSS |
+|---------|-------------|-----|
+| PillButton | Scale up on hover, scale down on press | `hover:scale-[1.02] active:scale-[0.98]` |
+| Cards | Lift on hover (translateY + shadow) | `.hover-lift` utility |
+| Images in cards | Zoom on hover | `group-hover:scale-105 transition-transform duration-500` |
+| Card borders | Accent tint on hover | `hover:border-accent/30` |
+| FAQ accordion | Content slides up on open | `details[open] > summary ~ * { animation: slide-up }` |
+| Icon containers | Color fill on hover | `group-hover:bg-accent group-hover:text-accent-foreground` |
+| Focus rings | Smooth outline appearance | `focus-visible: outline-accent, outline-offset-2` |
+| Page load | Sections fade up sequentially | `animate-fade-up` on sections |
+
+### Reduced Motion
+
+All animations respect `prefers-reduced-motion: reduce`. The easing function includes `motion-reduce:transition-none` fallback.
+
+---
+
+## 7. Page Specifications
+
+### Marketing Landing Page
+
+**Structure (top to bottom):**
+1. **Hero** (85vh): Full-bleed conference photo, gradient overlay, conference name in Display type, subtitle copy, PillButton CTA + Badge ("30 days away")
+2. **How It Works**: Centered heading + 4 icon cards (stagger entrance)
+3. **Upcoming Conferences**: Section header + card grid (3-col desktop)
+4. **Merch** ("Wear the moment"): Overline + heading + product cards from Strapi
+5. **FAQ** ("Common questions"): Native details/summary with slide animation
+6. **CTA Band** ("Ready to join?"): Centered heading + dual buttons
+
+**Copy tone:** Warm, clear, encouraging. Active voice. Short sentences.
+
+**Key copy:**
+- Hero subtitle: "Three days of worship, teaching, and community that will stay with you long after you leave."
+- How It Works heading: "From registration to room key"
+- Merch overline: "LIMITED COLLECTION"
+- Merch heading: "Wear the moment"
+- FAQ heading: "Common questions"
+- CTA: "Spots fill up fast. Register today and take your time with the rest."
+
+### Conference Detail Page
+
+**Structure:**
+1. **Hero image** (full-width, gradient overlay, back link, title + dates)
+2. **Info cards** (3-column: dates, location, payment deadline) - uses InfoCard component
+3. **About section** (prose)
+4. **Registration card** (state-dependent: not logged in / registered / active / closed)
+
+### Auth Pages (Login + Register)
+
+**Layout:** Split screen. Left 45% = gradient panel with brand tagline. Right = form.
+
+**Login copy:** "Welcome back" / "Enter your email and we'll send you a sign-in link. No password needed."
+**Register copy:** "Create your account" / "Takes under a minute. No password required."
+**Register step 2:** "Almost there" / "Just a few more details so we can match you with your branch."
+
+### Merch Store
+
+**Listing:** Grid of product cards (image-dominant, square aspect ratio). Unavailable items grayed with Badge overlay.
+**Detail:** Split layout - image left, details + purchase form right.
+
+---
+
+## 8. Spacing, Sizing, Radius
 
 ### Border Radius
 
-| Tailwind Class | Value | Usage |
-|----------------|-------|-------|
-| `rounded-lg` | 8px | Buttons, inputs, chips |
-| `rounded-xl` | 12px | Cards, form fields |
-| `rounded-2xl` | 16px | Hero images, modals |
-| `rounded-full` | 9999px | Avatars, circular badges |
+| Usage | Value | Tailwind |
+|-------|-------|----------|
+| Buttons | 9999px (pill) | `rounded-full` |
+| Cards, panels | 16px | `rounded-2xl` |
+| Input fields | 12px | `rounded-xl` |
+| Icon containers | 12px | `rounded-xl` |
+| Images (heroes) | 16px | `rounded-2xl` |
+| Badges | 9999px (pill) | `rounded-full` |
 
-### Shadows
+### Section Spacing
 
-| Tailwind Class | Usage |
-|----------------|-------|
-| `shadow-sm` | Cards at rest |
-| `shadow-md` | Cards on hover, elevated elements |
-| `shadow-lg` | Dropdowns, popovers |
-| `shadow-xl` | Modals |
-
-### Sizing
-
-| Context | Tailwind Approach |
-|---------|-------------------|
-| Container max-width | `max-w-7xl` (1280px) |
-| Form max-width | `max-w-md` (448px) or `max-w-lg` (512px) |
-| Card min-height | Content-driven (no fixed) |
-| Button height | Determined by HeroUI size prop (sm/md/lg) |
-| Navbar height | `h-14` (56px) mobile, `h-16` (64px) desktop |
-| Touch targets | Minimum `w-11 h-11` (44px) on mobile |
-| Image aspect ratio | `aspect-video` (16:9) for card thumbnails |
+| Context | Mobile | Desktop |
+|---------|--------|---------|
+| Between sections | `py-16` (64px) | `py-24` (96px) |
+| Section heading to content | `mb-10` (40px) | `mb-14` (56px) |
+| Card grid gap | `gap-6` (24px) | `gap-6` (24px) |
+| Page horizontal padding | `px-4` | `px-8` |
 
 ---
 
-## 5. Layout & Grid
+## 9. Responsive Behavior
 
-### Breakpoints
-
-| Name | Width | Tailwind Prefix |
-|------|-------|-----------------|
-| Mobile | 390px | Default (no prefix) |
+| Breakpoint | Width | Tailwind |
+|-----------|-------|----------|
+| Mobile | 390px | Default |
 | Tablet | 810px | `md:` |
 | Desktop | 1280px | `lg:` |
 
-### Container
-
-- Max width: `max-w-7xl` (1280px), centered with `mx-auto`
-- Horizontal padding: `px-4` (mobile), `px-6` (tablet), `px-8` (desktop)
-
-### Grid
-
-- Mobile: Single column (`grid-cols-1`)
-- Tablet: 2-column where applicable (`md:grid-cols-2`)
-- Desktop: 2-3 columns (`lg:grid-cols-2` or `lg:grid-cols-3`)
-
-### Page Templates
-
-| Template | Structure | Used For |
-|----------|-----------|----------|
-| **Marketing** | Navbar > Hero > Content sections > Footer | Landing page |
-| **Detail** | Navbar > Back link > Content > Action area > Footer | Conference detail, merch detail |
-| **Form** | Navbar > Centered card (`max-w-md`) > Footer | Auth, profile edit |
-| **Multi-step** | Navbar > Step indicator > Content > Navigation buttons | Booking flow |
-| **Dashboard** | Navbar > Welcome > Cards grid > Sections > Footer | User dashboard |
-| **List** | Navbar > Page title > Filter/sort > Grid/List > Pagination > Footer | Merch store, orders, invitations |
+- Container: `max-w-7xl mx-auto`
+- Cards: 1-col mobile → 2-col tablet → 3-col desktop
+- Hero: Full-bleed on all sizes, 75vh mobile, 85vh desktop
+- Auth: Stacked on mobile (gradient panel hidden), split on desktop
 
 ---
 
-## 6. Iconography
+## 10. Imagery & Media
 
-**Library:** UI Icons by Flaticon
-
-### Usage Rules
-
-- Sizes: `w-4 h-4` inline with text, `w-5 h-5` in buttons, `w-6 h-6` standalone
-- Color inherits from parent text color (`currentColor`)
-- Functional icons only - no decorative filler
-- Button icons: left-positioned for actions ("+ Add Child"), right-positioned for navigation ("Register Now >")
-
-### Common Icons Needed
-
-| Context | Icon |
-|---------|------|
-| Calendar/dates | Calendar |
-| Location/venue | Map pin |
-| Price/money | Dollar sign |
-| Time/countdown | Clock |
-| Arrow right (CTA) | Chevron right / arrow right |
-| Add/create | Plus |
-| Search | Magnifying glass |
-| User/profile | Person |
-| Check/success | Checkmark |
-| Close/remove | X |
-| Menu (mobile) | Hamburger (3 lines) |
-| Back navigation | Arrow left |
+- Conference photos: Full-bleed, warm-toned, showing community/gathering
+- Gradient overlay on hero: `bg-gradient-to-t from-black/70 via-black/30 to-transparent`
+- Card images: `aspect-[16/10]` for conferences, `aspect-square` for merch
+- Zoom on hover: `group-hover:scale-105 transition-transform duration-500`
+- Empty state: Phosphor icon (`weight="thin"`, size 48) centered
 
 ---
 
-## 7. Component Library (HeroUI v3 Mapping)
+## 11. HeroUI v3 Usage
 
-### Primary Components Used
+HeroUI is installed (`@heroui/react`) but used selectively. Its CSS doesn't auto-load in Tailwind v4's PostCSS pipeline.
 
-| UI Need | HeroUI Component | Variant/Config |
-|---------|-----------------|----------------|
-| Primary actions | `Button` | `primary` variant, sizes: sm/md/lg |
-| Secondary actions | `Button` | `secondary` or `ghost` variant |
-| Destructive actions | `Button` | `danger` variant |
-| Text links | `Link` | Inline or standalone |
-| Form inputs | `TextField` | With label, description, error states |
-| Dropdowns | `Select` or `ComboBox` | ComboBox for searchable (church branches) |
-| Date selection | `DatePicker` / `DateRangePicker` | Calendar popup |
-| Cards | `Card` | Compound: Card.Header, Card.Content, Card.Footer |
-| Modals/dialogs | `Modal` or `AlertDialog` | AlertDialog for confirmations |
-| Chips/tags | `Chip` | Status indicators, countdown badges |
-| Progress | `ProgressBar` | Payment progress display |
-| Tabs | `Tabs` | Section switching |
-| Toast notifications | `Toast` | Success/error feedback |
-| Loading states | `Skeleton` | Content placeholders |
-| Spinner | `Spinner` | Button loading, inline loading |
-| Search | `SearchField` | Roommate search |
-| Toggle | `Switch` | Children attending toggle |
-| Radio options | `RadioGroup` | Room type, bed preference |
-| Checkbox | `Checkbox` / `CheckboxGroup` | Multi-select options |
-| Avatars | `Avatar` | User profiles, roommate display |
-| Badges | `Badge` | Notification counts, status |
-| Pagination | `Pagination` | Lists with many items |
-| Separator | `Separator` | Content dividers |
-| Drawer | `Drawer` | Mobile navigation |
-| Disclosure | `Disclosure` | FAQ, expandable details |
-| Breadcrumbs | `Breadcrumbs` | Multi-step flow context |
-| Alert | `Alert` | Inline warnings, info messages |
-| Number input | `NumberField` | Payment amount, children age |
-| Meter | `Meter` | Visual payment progress |
+**Use HeroUI for:**
+- `Spinner` - loading indicators in buttons
+- `Disclosure` / `DisclosureGroup` - accessible accordion (when needed beyond native details)
+- `Input` - with `variant="secondary"` inside surface contexts
+- Future: `Modal`, `Drawer`, `Toast`, `Select`, `ComboBox` as features are built
 
-### Button Variants Per Context
-
-| Context | Variant | Size |
-|---------|---------|------|
-| Hero CTA | `primary` | `lg` |
-| Card actions | `ghost` or `secondary` | `md` |
-| Form submit | `primary` | `md` |
-| Destructive (decline invite) | `danger` | `md` |
-| Skip/secondary flow | `secondary` | `md` |
-| Disabled/closed | `primary` with `isDisabled` | `md`/`lg` |
-| Navbar login/register | `primary` | `sm` |
-
-### Card Patterns
-
-| Context | Style |
-|---------|-------|
-| Conference card (grid) | Image top + content + action link |
-| Booking summary | Header + content rows + footer with price |
-| Dashboard quick link | Icon + title + description (compact) |
-| Room type selection | Image + details + radio/select action |
-| Invitation card | Avatar + details + accept/decline buttons |
-| Payment history item | Date + amount + status chip |
+**Use custom components for:**
+- Buttons → `PillButton`
+- Badges/chips → `Badge`
+- Cards → plain `div` with border + rounded-2xl
+- Form fields → `FormField`
 
 ---
 
-## 8. Interaction Patterns
-
-### Loading States
-
-| Context | Pattern |
-|---------|---------|
-| Page data loading | `Skeleton` placeholders matching content layout |
-| Button action pending | Spinner inside button, text changes, `isDisabled` |
-| Inline loading (search) | Spinner inside search field |
-| Image loading | Skeleton rectangle with shimmer |
-
-### Error States
-
-| Context | Pattern |
-|---------|---------|
-| Page data error | Centered message + retry button (`Alert`) |
-| Form validation | Inline red error text below field (`FieldError`) |
-| Network error | `Toast` (danger variant) |
-| Action failure | `Toast` with retry suggestion |
-
-### Empty States
-
-| Context | Pattern |
-|---------|---------|
-| No conferences | Icon + "Stay tuned" + email signup |
-| No bookings (dashboard) | Message + "Browse Conferences" CTA |
-| No invitations | "You have no pending invitations" |
-| No orders | Message + "Browse Merch" CTA |
-| No search results | "No members found matching your search" |
-
-### Success States
-
-| Context | Pattern |
-|---------|---------|
-| Registration complete | Toast + redirect to dashboard |
-| Booking confirmed | Confirmation page with summary |
-| Payment successful | Toast + updated progress bar |
-| Invitation sent | Toast + updated status in list |
-| Invite accepted | Toast + booking created notification |
-
-### Micro-Interactions (Moderate Level)
-
-| Element | Interaction |
-|---------|-------------|
-| Buttons | Scale down on press (`scale-[0.97]`), color transition on hover (`transition-colors duration-150`) |
-| Cards | Lift on hover (`hover:-translate-y-0.5 hover:shadow-md transition-all duration-200`) |
-| Page transitions | Fade-in content (`animate-in fade-in duration-150`) |
-| Modal open/close | Scale + fade (200ms) |
-| Toast | Slide in from top-right, auto-dismiss after 5s |
-| Progress bar | Animated fill (`transition-all duration-300 ease-out`) |
-| Skeleton | Shimmer animation (HeroUI built-in) |
-| Countdown | Subtle pulse on number change |
-| Step indicator | Current step pulses, completed steps get check icon |
-| Form fields | Border transition on focus (`transition-colors duration-150`) |
-
-### Disabled States
-
-- Opacity: `opacity-50`
-- Cursor: `cursor-not-allowed`
-- No hover effects
-- No focus ring
-
----
-
-## 9. Page-Specific Patterns
-
-### Multi-Step Booking Flow
-
-- Step indicator at top: horizontal on desktop, "Step 2 of 4" on mobile
-- Steps: Room Selection > Children > Roommate > Confirmation
-- "Back" and "Continue" buttons at bottom (`flex justify-between`)
-- Progress persists in URL (each step is a route segment)
-
-### Forms (Auth, Profile, Registration)
-
-- Centered single-column layout, `max-w-md mx-auto`
-- Card container with surface background
-- Fields stacked vertically, `gap-4`
-- Submit button full-width at bottom
-- Inline validation (red border + error message)
-- Church branch: `ComboBox` (searchable) with 22 options
-
-### Dashboard Layout
-
-- Welcome header with user name
-- Cards in responsive grid (`grid-cols-1 md:grid-cols-2`)
-- Primary card (booking) full width or visually dominant
-- Payment `ProgressBar` prominently visible
-- Pending invitations as a list below
-
-### Payment Page
-
-- Balance display: large number with `ProgressBar` or `Meter`
-- Preset amount buttons in a row (`flex gap-3`)
-- Custom amount: `NumberField` with min/max validation
-- "Pay Now" button > Stripe Checkout redirect
-- Payment history below (stacked cards on mobile, `Table` on desktop)
-
-### Search (Roommate)
-
-- `SearchField` at top with real-time results below
-- Result items: `Avatar` + name + limited info (privacy rules)
-- "Invite" button on each result
-- Gender mismatch triggers `AlertDialog` before invite proceeds
-
----
-
-## 10. Responsive Behavior
-
-### Mobile (390px)
-
-- Single column (`grid-cols-1`)
-- Cards stack vertically
-- Hero: text above, image below
-- Navigation: hamburger > `Drawer`
-- Buttons: full-width in forms (`w-full`), auto in cards
-- No horizontal scrolling
-
-### Tablet (810px)
-
-- 2-column grids (`md:grid-cols-2`)
-- Hero: still stacked or early split
-- Navigation: full visible
-- Cards: 2 per row
-
-### Desktop (1280px)
-
-- Hero: split layout (text left, image right)
-- Cards: 2-3 per row (`lg:grid-cols-3`)
-- Forms: centered with `max-w-md`
-- Generous side margins (`px-8`, centered container)
-- Footer: multi-column
-
-### Responsive Rules
-
-- Images: `object-cover`, responsive height
-- Touch targets: minimum `w-11 h-11` (44px) on mobile
-- Cards: equal height in grid (`items-stretch`)
-
----
-
-## 11. Image & Media
-
-### Photography Style
-
-- Large, high-quality conference/event photography
-- Warm tones, well-lit, showing community/gathering
-- Rounded corners (`rounded-xl` to `rounded-2xl`)
-- `aspect-video` (16:9) for card thumbnails
-
-### Placeholder Strategy
-
-- `Skeleton` rectangle during loading
-- Fallback: `bg-surface-secondary` if no image
-- Never show broken image icons
-
----
-
-## 12. Localization
-
-| Element | Format |
-|---------|--------|
-| Currency | USD ($X,XXX) |
-| Dates | Month Day-Day, Year (e.g., "Dec 15-18, 2026") |
-| Cities | US cities (Atlanta, Houston, Dallas, etc.) |
-| Phone | US format (+1 XXX-XXX-XXXX) |
-| Language | English (US) only |
-
----
-
-## 13. Platform Context (for design decisions)
+## 12. Platform Context
 
 | Feature | Design Implication |
 |---------|-------------------|
-| 22 church branches | Searchable `ComboBox`, not basic dropdown |
-| Room types: Private, Shared-2, Shared-4 | `RadioGroup` cards with visual distinction |
-| Bed preference: King/Double | Secondary `RadioGroup` within room selection |
-| Roommate privacy rules | Search results show limited info, full details post-acceptance |
-| Gender validation | `AlertDialog` modal with relationship options |
-| Payments: partial, installments | `ProgressBar` + preset buttons + custom input |
-| Children 12+ surcharge | Inline `Alert` when age >= 12 entered |
-| Countdown to registration close | `Chip` with warning color |
-| Merch: separate from room payment | Distinct flow, own order history |
+| 22 church branches | Searchable dropdown (ComboBox) |
+| Room types: Private, Shared-2, Shared-4 | RadioGroup cards with visual distinction |
+| Roommate privacy rules | Limited info in search results, full after acceptance |
+| Gender validation | AlertDialog modal with relationship options |
+| Payments: partial, installments | ProgressBar + preset buttons + custom amount |
+| Children 12+ surcharge | Inline warning when age >= 12 |
+| Countdown to deadline | Badge with warning color |
+| Merch: separate flow | Own listing, own purchase flow, own order history |

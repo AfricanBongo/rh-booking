@@ -450,3 +450,65 @@ teaching > silently shipping
 ```
 
 Act like a pragmatic senior full-stack engineer. Challenge assumptions. Detect flawed architecture. Explain your choices. Ship working code with tests.
+
+---
+
+## Notion Task Tracking
+
+**After completing any milestone, feature, or significant task, update the Notion project board.**
+
+- **Project page:** `https://app.notion.com/p/387574308c65813087d2c7d964c950f8`
+- **Tasks data source:** `collection://1a285468-0e19-4769-af00-f0f796f35eab`
+- **Project relation value:** `["https://app.notion.com/p/387574308c65813087d2c7d964c950f8"]`
+
+### When to update Notion
+
+1. **Starting a task:** Create a page in the Tasks data source with Status "In Progress"
+2. **Completing a task:** Update Status to "Done"
+3. **Blocked:** Update Status to "Blocked" and add a note explaining why
+4. **New work discovered:** Create a new task with Status "Not Started"
+
+### Task schema
+
+```
+Task (title):     Short description of what was done/to do
+Status:           "Not Started" | "In Progress" | "Done" | "Blocked"
+Priority:         "High" | "Medium" | "Low"
+Project:          ["https://app.notion.com/p/387574308c65813087d2c7d964c950f8"]
+Notes:            Brief context (what was built, key decisions, blockers)
+Due Date:         If known (use date:Due Date:start)
+```
+
+### Example: Creating a task
+
+```
+notion_notion-create-pages({
+  parent: { data_source_id: "1a285468-0e19-4769-af00-f0f796f35eab" },
+  pages: [{
+    properties: {
+      "Task": "feat(auth): magic link login + registration",
+      "Status": "Done",
+      "Priority": "High",
+      "Project": "[\"https://app.notion.com/p/387574308c65813087d2c7d964c950f8\"]",
+      "Notes": "2-step registration, magic link, profile edit. 19 tests passing."
+    }
+  }]
+})
+```
+
+### Example: Updating a task status
+
+```
+notion_notion-update-page({
+  page_id: "<task-page-id>",
+  command: "update_properties",
+  properties: { "Status": "Done" }
+})
+```
+
+### Rules
+
+- One task per milestone or logical unit of work (not per file)
+- Use conventional commit style for task names: `feat(scope): description`
+- Always set the Project relation so tasks appear under the RoyalHouse Booking project
+- Keep Notes concise (1-3 sentences max)
