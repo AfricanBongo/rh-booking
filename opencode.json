@@ -19,6 +19,10 @@
       "type": "remote",
       "url": "https://mcp.magnific.com",
       "enabled": true
+    },
+    "recraft": {
+      "type": "remote",
+      "url": "https://mcp.recraft.ai/mcp"
     }
   }
 }
