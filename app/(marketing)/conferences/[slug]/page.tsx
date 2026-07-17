@@ -4,6 +4,7 @@ import { getConferenceBySlug } from "@/lib/data/conferences";
 import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/RegistrationForm";
 import { PillButton, LocalizedDate, LocalizedDateRange } from "@/components/ui";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { CalendarDotsIcon, MapPinIcon, ClockIcon, ArrowLeftIcon, CheckIcon, WarningIcon } from "@phosphor-icons/react/dist/ssr";
 
 interface PageProps {
@@ -111,10 +112,8 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
           </div>
         </div>
 
-        {/* About */}
         <section className="mb-10">
-          <h2 className="font-heading text-2xl font-semibold mb-3">About This Conference</h2>
-          <p className="text-foreground leading-relaxed max-w-2xl">{conference.description}</p>
+          <MarkdownContent content={conference.description} className="max-w-2xl" />
         </section>
 
         {/* Registration */}
