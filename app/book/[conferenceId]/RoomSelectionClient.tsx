@@ -44,12 +44,16 @@ export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceNa
   if (!mounted) return <div className="h-96 animate-pulse bg-surface-secondary rounded-2xl" />;
 
   const canContinue = selectedRoomTypeId && bedPreference;
+  const selectedRoom = selectedRoomTypeId ? roomTypes.find((r) => r.id === selectedRoomTypeId) : null;
+  const isPrivate = selectedRoom?.type === "private";
+  const totalSteps = isPrivate ? 3 : 4;
+  const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
   const lightboxRoom = lightbox ? roomTypes.find((r) => r.id === lightbox.roomId) : null;
 
   return (
     <div className="animate-fade-up">
       <div className="mb-8">
-        <StepIndicator currentStep={1} totalSteps={4} />
+        <StepIndicator currentStep={1} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
       <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Choose your room</h1>

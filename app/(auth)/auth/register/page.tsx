@@ -11,7 +11,7 @@ import {
   RESEND_COOLDOWN_SECONDS,
 } from "@/lib/constants";
 import Link from "next/link";
-import { Button, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 import { EnvelopeSimpleIcon } from "@phosphor-icons/react";
 
 const step1Schema = registrationSchema.pick({

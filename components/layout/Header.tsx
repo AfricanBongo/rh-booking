@@ -3,14 +3,21 @@ import { createClient } from "@/lib/supabase/server";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PillButton } from "@/components/ui";
+import { UserDropdown } from "@/components/layout/UserDropdown";
 
 export async function Header(): Promise<React.ReactElement> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const initials = user?.email
-    ? user.email.slice(0, 2).toUpperCase()
-    : null;
+  let fullName = "";
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .single();
+    fullName = profile?.full_name ?? "";
+  }
 
   return (
     <header className="sticky top-0 z-50 h-16 md:h-18 bg-surface/90 backdrop-blur-md border-b border-border/50">
@@ -32,12 +39,7 @@ export async function Header(): Promise<React.ReactElement> {
                 Dashboard
               </Link>
               <ThemeToggle />
-              <Link
-                href="/dashboard/profile"
-                className="w-9 h-9 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-medium hover:opacity-90 transition-opacity"
-              >
-                {initials}
-              </Link>
+              <UserDropdown fullName={fullName} email={user.email ?? ""} />
             </>
           ) : (
             <div className="flex items-center gap-3">

@@ -65,11 +65,13 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   const isPrivate = room?.type === "private";
+  const totalSteps = isPrivate ? 3 : 4;
+  const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
 
   return (
     <div className="animate-fade-up">
       <div className="mb-8">
-        <StepIndicator currentStep={2} totalSteps={4} />
+        <StepIndicator currentStep={2} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
       <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Children attending</h1>

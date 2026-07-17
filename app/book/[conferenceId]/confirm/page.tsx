@@ -4,6 +4,8 @@ import { getConference } from "@/lib/data/conferences";
 import { ConfirmPageClient } from "./ConfirmPageClient";
 import { redirect } from "next/navigation";
 import { PAYMENT_URGENCY_HOURS } from "@/lib/constants";
+import Link from "next/link";
+import { XIcon } from "@phosphor-icons/react/dist/ssr";
 
 interface PageProps {
   params: Promise<{ conferenceId: string }>;
@@ -42,6 +44,9 @@ export default async function ConfirmPage({ params }: PageProps): Promise<React.
 
   return (
     <main className="min-h-screen bg-background py-8 px-4 md:px-8">
+      <Link href="/dashboard" className="text-sm text-muted hover:text-foreground inline-flex items-center gap-1.5 mb-4">
+        <XIcon size={14} /> Exit
+      </Link>
       <div className="max-w-2xl mx-auto">
         <ConfirmPageClient
           conferenceId={conferenceId}
