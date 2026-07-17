@@ -113,7 +113,7 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
         </div>
 
         <section className="mb-10">
-          <MarkdownContent content={conference.description} className="max-w-2xl" />
+          <MarkdownContent content={conference.description} />
         </section>
 
         {/* Registration */}
