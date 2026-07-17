@@ -117,74 +117,41 @@ export default function RegisterPage() {
   const selectedBranchName =
     branches.find((b) => b.id === selectedBranchId)?.name ?? "";
 
-  const LeftPanel = (
-    <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src="https://cdn.cms.corefutures.co/auth-video.webm"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.35_0.15_285)] via-[oklch(0.35_0.15_285)]/60 to-transparent" />
-      <div className="relative z-10 flex flex-col justify-end h-full p-10 text-white">
-        <Link href="/" className="absolute top-10 left-10 font-heading font-bold text-xl">RoyalHouse</Link>
-        <div>
-          <p className="font-heading text-4xl font-semibold leading-tight mb-3">
-            Where faith<br />meets fellowship.
-          </p>
-          <p className="text-white/70 text-sm">RoyalHouse Chapel International</p>
-          <p className="text-white/40 text-xs mt-1">Conference Booking Platform</p>
-        </div>
-      </div>
-    </div>
-  );
-
   if (sent) {
     return (
-      <div className="min-h-screen flex">
-        {LeftPanel}
-        <div className="flex-1 flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-sm animate-scale-in text-center">
-            <div className="mx-auto mb-6 w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
-              <EnvelopeSimpleIcon size={28} weight="duotone" className="text-accent" />
-            </div>
-            <h1 className="font-heading text-2xl font-semibold text-foreground mb-2">
-              Check your inbox
-            </h1>
-            <p className="font-medium text-foreground text-sm mb-1">{sentEmail}</p>
-            <p className="text-xs text-muted mb-8">
-              Click the link to complete your registration. Expires in {MAGIC_LINK_EXPIRY_MINUTES} minutes.
-            </p>
-            {countdown > 0 ? (
-              <p className="text-sm text-muted">Resend in {countdown}s</p>
-            ) : (
-              <button onClick={handleResend} className="text-sm font-medium text-accent hover:underline">
-                Resend link
-              </button>
-            )}
-            <button
-              onClick={() => setSent(false)}
-              className="block mx-auto mt-4 text-sm text-muted hover:text-foreground transition-colors"
-            >
-              Use a different email
-            </button>
-          </div>
+      <div className="w-full max-w-sm animate-scale-in text-center">
+        <div className="mx-auto mb-6 w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
+          <EnvelopeSimpleIcon size={28} weight="duotone" className="text-accent" />
         </div>
+        <h1 className="font-heading text-2xl font-semibold text-foreground mb-2">
+          Check your inbox
+        </h1>
+        <p className="font-medium text-foreground text-sm mb-1">{sentEmail}</p>
+        <p className="text-xs text-muted mb-8">
+          Click the link to complete your registration. Expires in {MAGIC_LINK_EXPIRY_MINUTES} minutes.
+        </p>
+        {countdown > 0 ? (
+          <p className="text-sm text-muted">Resend in {countdown}s</p>
+        ) : (
+          <button onClick={handleResend} className="text-sm font-medium text-accent hover:underline">
+            Resend link
+          </button>
+        )}
+        <button
+          onClick={() => setSent(false)}
+          className="block mx-auto mt-4 text-sm text-muted hover:text-foreground transition-colors"
+        >
+          Use a different email
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
-      {LeftPanel}
-
-      <div className="flex-1 flex items-center justify-center px-6 py-12 overflow-y-auto">
-        <div className="w-full max-w-sm animate-fade-up">
-          <div className="lg:hidden mb-8">
-            <Link href="/" className="font-heading font-bold text-xl text-foreground">RoyalHouse</Link>
-          </div>
+    <div className="w-full max-w-sm animate-fade-up">
+      <div className="lg:hidden mb-8">
+        <Link href="/" className="font-heading font-bold text-xl text-foreground">RoyalHouse</Link>
+      </div>
 
           {/* Step indicator */}
           <div className="flex items-center gap-2 mb-6">
@@ -374,7 +341,5 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
   );
 }
