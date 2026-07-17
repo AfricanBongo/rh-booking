@@ -116,8 +116,8 @@ async function handleMerchPayment(
         quantity: 1,
       },
     ],
-    success_url: `${origin}/merch/orders?success=true`,
-    cancel_url: `${origin}/merch/${merchItemSlug || merchItemId}?cancelled=true`,
+    success_url: `${origin}/dashboard/merch/orders?success=true`,
+    cancel_url: `${origin}/dashboard/merch/${merchItemSlug || merchItemId}?cancelled=true`,
     metadata: {
       merch_item_id: merchItemId,
       pickup_location_id: pickupLocationId,

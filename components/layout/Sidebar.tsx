@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   HouseIcon,
+  GlobeIcon,
   CalendarDotsIcon,
   CurrencyDollarIcon,
   EnvelopeSimpleIcon,
@@ -119,6 +120,14 @@ export function Sidebar({ fullName, email }: SidebarProps): React.ReactElement {
             </Link>
           );
         })}
+        <Link
+          href="/"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted hover:text-foreground hover:bg-surface-secondary transition-colors duration-200"
+          title={!expanded ? "Landing Page" : undefined}
+        >
+          <GlobeIcon size={20} weight="regular" className="shrink-0" />
+          {expanded && <span className="truncate">Landing Page</span>}
+        </Link>
       </nav>
 
       <div className="border-t border-border px-2 py-3 flex flex-col gap-2">
