@@ -15,7 +15,7 @@ function isProtectedRoute(pathname: string): boolean {
   );
 }
 
-export async function proxy(request: NextRequest): Promise<NextResponse> {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

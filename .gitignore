@@ -49,3 +49,7 @@ next-env.d.ts
 # dev_setup logs
 stripe_listen.log
 supabase_functions.log
+.open-next
+cloudflare-env.d.ts
+.wrangler
+tmp-cms-images
