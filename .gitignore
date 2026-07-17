@@ -53,3 +53,4 @@ supabase_functions.log
 cloudflare-env.d.ts
 .wrangler
 tmp-cms-images
+.dev.vars
