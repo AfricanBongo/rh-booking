@@ -14,6 +14,11 @@
       "type": "remote",
       "url": "http://localhost:54321/mcp",
       "enabled": true
+    },
+    "magnific": {
+      "type": "remote",
+      "url": "https://mcp.magnific.com",
+      "enabled": true
     }
   }
 }

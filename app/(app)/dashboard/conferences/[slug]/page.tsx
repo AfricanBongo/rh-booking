@@ -111,7 +111,7 @@ export default async function DashboardConferenceDetailPage({ params }: Props): 
 
       <section className="mb-10">
         <section className="mb-10">
-          <MarkdownContent content={conference.description} className="max-w-2xl" />
+          <MarkdownContent content={conference.description} />
         </section>
       </section>
 

@@ -117,20 +117,26 @@ export default function RegisterPage() {
   const selectedBranchName =
     branches.find((b) => b.id === selectedBranchId)?.name ?? "";
 
-  // Shared left panel
   const LeftPanel = (
     <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-accent via-[oklch(0.50_0.18_270)] to-[oklch(0.35_0.15_285)]" />
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
-      <div className="relative z-10 flex flex-col justify-between p-10 text-white">
-        <Link href="/" className="font-heading font-bold text-xl">RoyalHouse</Link>
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        src="https://cdn.cms.corefutures.co/auth-video.webm"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.35_0.15_285)] via-[oklch(0.35_0.15_285)]/60 to-transparent" />
+      <div className="relative z-10 flex flex-col justify-end h-full p-10 text-white">
+        <Link href="/" className="absolute top-10 left-10 font-heading font-bold text-xl">RoyalHouse</Link>
         <div>
           <p className="font-heading text-4xl font-semibold leading-tight mb-3">
-            Join the<br />gathering.
+            Where faith<br />meets fellowship.
           </p>
-          <p className="text-white/60 text-sm">22 branches. One family. One conference.</p>
+          <p className="text-white/70 text-sm">RoyalHouse Chapel International</p>
+          <p className="text-white/40 text-xs mt-1">Conference Booking Platform</p>
         </div>
-        <p className="text-white/40 text-xs">Conference Booking Platform</p>
       </div>
     </div>
   );
