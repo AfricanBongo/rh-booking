@@ -5,3 +5,4 @@ export { InfoCard } from "./InfoCard";
 export { SectionHeader } from "./SectionHeader";
 export { ImageSlider } from "./ImageSlider";
 export { ImageLightbox } from "./ImageLightbox";
+export { LocalizedDate, LocalizedDateRange } from "./LocalizedDate";

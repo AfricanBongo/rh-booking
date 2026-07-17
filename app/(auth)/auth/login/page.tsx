@@ -10,7 +10,7 @@ import {
   RESEND_COOLDOWN_SECONDS,
 } from "@/lib/constants";
 import Link from "next/link";
-import { Button, Input, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 import { EnvelopeSimpleIcon } from "@phosphor-icons/react";
 
 export default function LoginPage() {

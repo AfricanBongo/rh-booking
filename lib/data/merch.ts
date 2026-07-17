@@ -80,7 +80,8 @@ export async function getMerchItems(conferenceId: string): Promise<MerchItem[]> 
 
 export async function getMerchItem(id: string): Promise<MerchItem> {
   const result = await strapiGet<StrapiMerchItem>(`/api/merch-items/${id}`, {
-    populate: "images",
+    "populate[0]": "images",
+    "populate[1]": "conferences",
   });
   return mapMerchItem(result.data, result.data.conferences?.[0]?.documentId ?? "");
 }
@@ -88,7 +89,8 @@ export async function getMerchItem(id: string): Promise<MerchItem> {
 export async function getMerchItemBySlug(slug: string): Promise<MerchItem> {
   const result = await strapiGet<StrapiMerchItem[]>("/api/merch-items", {
     "filters[slug][$eq]": slug,
-    "populate": "images,conferences",
+    "populate[0]": "images",
+    "populate[1]": "conferences",
   });
   if (!result.data[0]) {
     throw { status: 404, name: "NotFound", message: "Merch item not found" };

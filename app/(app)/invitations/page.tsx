@@ -13,8 +13,8 @@ export default async function InvitationsPage(): Promise<React.ReactElement> {
   const received = invitations.filter((inv) => inv.inviteeId === user.id);
 
   return (
-    <main className="min-h-screen bg-background py-8 px-4 md:px-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="px-6 md:px-8 py-8">
+      <div className="max-w-4xl">
         <InvitationsClient invitations={received} />
       </div>
     </main>

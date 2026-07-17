@@ -3,20 +3,8 @@ import Link from "next/link";
 import { getConferenceBySlug } from "@/lib/data/conferences";
 import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/RegistrationForm";
-import { PillButton } from "@/components/ui";
+import { PillButton, LocalizedDate, LocalizedDateRange } from "@/components/ui";
 import { CalendarDotsIcon, MapPinIcon, ClockIcon, ArrowLeftIcon, CheckIcon, WarningIcon } from "@phosphor-icons/react/dist/ssr";
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-}
-
-function formatDateRange(startDate: string, endDate: string): string {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const month = start.toLocaleString("en-US", { month: "short" });
-  const year = start.getFullYear();
-  return `${month} ${start.getDate()}–${end.getDate()}, ${year}`;
-}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -78,7 +66,7 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
               {conference.name}
             </h1>
             <p className="text-white/70 text-base md:text-lg">
-              {formatDateRange(conference.startDate, conference.endDate)} &middot; {conference.location}
+              <LocalizedDateRange startIso={conference.startDate} endIso={conference.endDate} /> &middot; {conference.location}
             </p>
           </div>
         </div>
@@ -94,7 +82,9 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             </div>
             <div>
               <p className="text-xs font-medium text-muted uppercase tracking-wide mb-0.5">Dates</p>
-              <p className="text-sm font-medium text-foreground">{formatDateRange(conference.startDate, conference.endDate)}</p>
+              <p className="text-sm font-medium text-foreground">
+                <LocalizedDateRange startIso={conference.startDate} endIso={conference.endDate} />
+              </p>
             </div>
           </div>
 
@@ -114,7 +104,9 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             </div>
             <div>
               <p className="text-xs font-medium text-muted uppercase tracking-wide mb-0.5">Payment Deadline</p>
-              <p className="text-sm font-medium text-foreground">{formatDate(conference.paymentDeadline)}</p>
+              <p className="text-sm font-medium text-foreground">
+                <LocalizedDate iso={conference.paymentDeadline} />
+              </p>
             </div>
           </div>
         </div>

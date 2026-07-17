@@ -21,8 +21,8 @@ describe("createBookingSchema", () => {
     }
   });
 
-  it("rejects check_in before conference start", () => {
-    const result = schema.safeParse({ check_in: "2026-07-31", check_out: "2026-08-03" });
+  it("rejects check_in before conference start minus 1 day", () => {
+    const result = schema.safeParse({ check_in: "2026-07-30", check_out: "2026-08-03" });
     expect(result.success).toBe(false);
     if (!result.success) {
       const paths = result.error.issues.map((i: { path: PropertyKey[] }) => i.path.map(String).join("."));

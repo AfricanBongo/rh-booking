@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { type ChurchBranch } from "@/lib/data/profiles";
+import { getAvatarUrl } from "@/lib/utils/avatar";
+import { PillButton } from "@/components/ui";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -49,6 +51,7 @@ export default function ProfilePage() {
 
   const selectedGender = watch("gender");
   const selectedBranchId = watch("church_branch_id");
+  const fullName = watch("full_name");
 
   useEffect(() => {
     const load = async () => {
@@ -123,8 +126,8 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <main className="flex-1 flex items-center justify-center px-4 py-12 md:py-20">
-        <div className="w-full max-w-md bg-surface rounded-xl shadow-sm p-6 animate-pulse space-y-4">
+      <main className="px-6 md:px-8 py-8 max-w-4xl animate-fade-up">
+        <div className="w-full bg-surface rounded-2xl p-6 animate-pulse space-y-4">
           <div className="h-8 bg-default rounded w-1/3" />
           <div className="h-12 bg-default rounded" />
           <div className="h-12 bg-default rounded" />
@@ -136,11 +139,19 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="flex-1 flex items-center justify-center px-4 py-12 md:py-20">
-      <div className="w-full max-w-md bg-surface rounded-xl shadow-sm p-6">
+    <main className="px-6 md:px-8 py-8 max-w-4xl animate-fade-up">
+      <div className="w-full bg-surface rounded-2xl p-6">
         <h1 className="font-heading text-2xl font-semibold text-foreground mb-6">
           Edit Profile
         </h1>
+
+        <div className="flex justify-center mb-6">
+          <img
+            src={getAvatarUrl(fullName ?? "")}
+            alt="Avatar"
+            className="w-20 h-20 rounded-full border-2 border-border transition-all"
+          />
+        </div>
 
         {success && (
           <div className="mb-4 p-3 rounded-lg bg-success/10 text-success text-sm font-medium">
@@ -157,7 +168,7 @@ export default function ProfilePage() {
               type="email"
               value={email}
               disabled
-              className="w-full rounded-lg border border-border px-4 py-3 bg-default text-muted cursor-not-allowed"
+              className="w-full rounded-xl border border-border px-4 py-3 bg-default text-muted cursor-not-allowed"
             />
             <p className="text-xs text-muted mt-1">Email cannot be changed</p>
           </div>
@@ -173,7 +184,7 @@ export default function ProfilePage() {
               id="full_name"
               type="text"
               {...register("full_name")}
-              className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+              className="w-full rounded-xl border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
             />
             {errors.full_name && (
               <p className="text-sm text-danger mt-1">
@@ -193,7 +204,7 @@ export default function ProfilePage() {
               id="phone"
               type="tel"
               {...register("phone")}
-              className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+              className="w-full rounded-xl border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
             />
             {errors.phone && (
               <p className="text-sm text-danger mt-1">
@@ -212,7 +223,7 @@ export default function ProfilePage() {
                 onClick={() =>
                   setValue("gender", "male", { shouldValidate: true })
                 }
-                className={`flex-1 rounded-lg h-11 font-medium transition-colors ${
+                className={`flex-1 rounded-xl h-11 font-medium transition-colors ${
                   selectedGender === "male"
                     ? "bg-accent text-accent-foreground"
                     : "border border-border text-foreground hover:bg-default"
@@ -225,7 +236,7 @@ export default function ProfilePage() {
                 onClick={() =>
                   setValue("gender", "female", { shouldValidate: true })
                 }
-                className={`flex-1 rounded-lg h-11 font-medium transition-colors ${
+                className={`flex-1 rounded-xl h-11 font-medium transition-colors ${
                   selectedGender === "female"
                     ? "bg-accent text-accent-foreground"
                     : "border border-border text-foreground hover:bg-default"
@@ -253,7 +264,7 @@ export default function ProfilePage() {
               type="number"
               min="1"
               {...register("age", { valueAsNumber: true })}
-              className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+              className="w-full rounded-xl border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
             />
             {errors.age && (
               <p className="text-sm text-danger mt-1">{errors.age.message}</p>
@@ -278,11 +289,11 @@ export default function ProfilePage() {
               onBlur={() =>
                 setTimeout(() => setBranchDropdownOpen(false), 150)
               }
-              className="w-full rounded-lg border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+              className="w-full rounded-xl border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
               placeholder="Search church branch..."
             />
             {branchDropdownOpen && filteredBranches.length > 0 && (
-              <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-auto bg-surface border border-border rounded-lg shadow-md">
+              <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-auto bg-surface border border-border rounded-xl shadow-md">
                 {filteredBranches.map((branch) => (
                   <li key={branch.id}>
                     <button
@@ -311,11 +322,7 @@ export default function ProfilePage() {
 
           {error && <p className="text-sm text-danger">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-accent text-accent-foreground rounded-lg h-11 w-full font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-          >
+          <PillButton type="submit" disabled={saving} fullWidth>
             {saving ? (
               <>
                 <svg
@@ -342,7 +349,7 @@ export default function ProfilePage() {
             ) : (
               "Save Changes"
             )}
-          </button>
+          </PillButton>
         </form>
       </div>
     </main>

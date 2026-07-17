@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { WarningIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
-import { Badge } from "@/components/ui/Badge";
 import { useBookingFlow } from "@/stores/booking-flow";
 import { calculatePerPersonPrice } from "@/lib/utils/price";
 import { calculateChildrenSurcharge } from "@/lib/utils/children";
@@ -54,12 +53,16 @@ export function ConfirmPageClient({
 
   if (!mounted) return <div className="h-96 animate-pulse bg-surface-secondary rounded-2xl" />;
 
-  if (!selectedRoomTypeId) {
+  if (!selectedRoomTypeId && !submitting) {
     router.push(`/book/${conferenceId}`);
     return <div />;
   }
 
-  const room = roomPriceMap[selectedRoomTypeId];
+  const room = selectedRoomTypeId ? roomPriceMap[selectedRoomTypeId] : undefined;
+  const isPrivate = room?.type === "private";
+  const totalSteps = isPrivate ? 3 : 4;
+  const currentStep = totalSteps;
+  const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
   const maxOccupants = room ? maxOccupantsMap[room.type] : 1;
   const perPerson = calculatePerPersonPrice(room?.price ?? 30000, maxOccupants);
   const surcharge = calculateChildrenSurcharge(children, perPerson);
@@ -75,21 +78,27 @@ export function ConfirmPageClient({
         body: JSON.stringify({
           conferenceId,
           roomTypeId: selectedRoomTypeId,
+          roomType: room?.type ?? "shared-2",
           bedPreference,
           children,
           invitedRoommateId,
         }),
       });
 
-      if (res.ok) {
-        reset();
-        if (payNow) {
-          router.push("/pay");
-        } else {
-          router.push("/dashboard");
-        }
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error ?? "Something went wrong. Please try again.");
+        setSubmitting(false);
+        return;
       }
-    } finally {
+
+      if (payNow) {
+        router.push("/pay");
+      } else {
+        router.push("/dashboard");
+      }
+      reset();
+    } catch {
       setSubmitting(false);
     }
   }
@@ -97,7 +106,7 @@ export function ConfirmPageClient({
   return (
     <div className="animate-fade-up">
       <div className="mb-8">
-        <StepIndicator currentStep={4} totalSteps={4} />
+        <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
       <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Confirm your booking</h1>
@@ -113,10 +122,12 @@ export function ConfirmPageClient({
           {children.length > 0 && (
             <Row label="Children" value={`${children.length} (${billableChildren} billable)`} />
           )}
-          <Row
-            label="Roommate"
-            value={invitedRoommateId ? "Invited (pending)" : "None"}
-          />
+          {!isPrivate && (
+            <Row
+              label="Roommate"
+              value={invitedRoommateId ? "Invited (pending)" : "None"}
+            />
+          )}
         </div>
 
         <div className="border-t border-border p-5 bg-surface-secondary space-y-2">

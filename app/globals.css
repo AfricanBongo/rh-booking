@@ -81,6 +81,16 @@ body {
   font-family: var(--font-body);
 }
 
+@media (min-width: 768px) {
+  .app-content {
+    padding-left: 64px;
+    transition: padding-left 0.3s;
+  }
+  .sidebar-pinned .app-content {
+    padding-left: 256px;
+  }
+}
+
 /* Stagger animation delays for children */
 .stagger > :nth-child(1) { animation-delay: 0ms; }
 .stagger > :nth-child(2) { animation-delay: 80ms; }
