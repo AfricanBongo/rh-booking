@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,6 +26,14 @@ const profileSchema = z.object({
 type ProfileData = z.infer<typeof profileSchema>;
 
 export default function CompleteProfilePage(): React.ReactElement {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm flex justify-center py-12"><Spinner size="lg" /></div>}>
+      <CompleteProfileForm />
+    </Suspense>
+  );
+}
+
+function CompleteProfileForm(): React.ReactElement {
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get("returnUrl") ?? "/dashboard";
   const [submitting, setSubmitting] = useState(false);

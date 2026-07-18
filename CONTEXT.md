@@ -87,11 +87,13 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - [x] Roommate flow (search + privacy rules + gender validation + invite)
 - [x] Invitations accept/decline (with price recalculation)
 - [x] Booking confirmation (receipt + urgency detection + finalization)
-- [ ] Payments (Stripe)
-- [ ] Merch store
-- [ ] Dashboard
-- [ ] Navigation + polish
-- [ ] Deployed
+- [x] Payments (Stripe Checkout for room + merch)
+- [x] Merch store (listing + detail + purchase via Stripe)
+- [x] Dashboard (conferences, merch orders, profile)
+- [x] Navigation + polish
+- [x] Deployed (Cloudflare Pages via OpenNext)
+- [ ] Account deletion UI
+- [ ] Admin notifications
 
 ## What's Done
 
@@ -110,20 +112,26 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - **2.4** Invitations: accept/decline via PATCH. Accept triggers price recalculation for all room group members (room_price / new_occupant_count). `/app/invitations/page.tsx` with pending cards + action buttons.
 - **2.5** Booking confirmation: receipt-style breakdown (room share + children surcharge = total), 24-hour urgency detection (forces payment), `/api/bookings` POST creates room_group + booking + children atomically. Zustand store resets on confirm.
 
-### Session 2.6
-- **2.6** Local Stripe sync engine: `dev_setup.sh` script starts Supabase, Edge Functions, Stripe CLI listener, and `supabase/stripe-sync-engine` Docker container. Auto-captures webhook secret, triggers initial full sync. Logs streamed color-coded (cyan Supabase, magenta Stripe). Ctrl+C cleans up all processes.
+### Session 3 (2026-07-17/18)
+- **3.1** Deployment: Cloudflare Pages via OpenNext adapter, `.dev.vars` for local wrangler secrets.
+- **3.2** Bug fixes: checkout 500 (added try/catch), registration date validation (accept ISO datetimes), hydration mismatch (LocalizedDate SSR fix), error UX (styled alert boxes with WarningCircleIcon).
+- **3.3** Phone input: `PhoneInput` component with country code picker (~170 countries), auto-formatting via `libphonenumber-js`, E.164 storage. Integrated into registration + profile pages. Validation updated to `isValidPhoneNumber()`.
+- **3.4** Profile gate: `/auth/complete-profile` page for users who sign in via magic link without a profile. Middleware + callback redirect if no profile row exists.
+- **3.5** Account deletion: migration `005_account_deletion.sql` - cascading FKs on invitations + `delete_own_account()` RPC.
+- **3.6** Email templates: redesigned magic-link + new confirm-email templates matching app design (pill button, accent gradient bar, rounded card).
+- **3.7** Versioning: `commit-and-tag-version` for automated SemVer releases with CHANGELOG generation.
 
 ## What's Next
 
-Session 3: Payments + Merch + Dashboard + Polish + Security Audit
+Session 4: Account deletion UI, admin notifications, production hardening
 
 ## Environment
 
-- Strapi: TBD (Coolify)
-- Supabase: TBD
-- Stripe: TBD
+- Strapi: https://cms.donl.me (Coolify)
+- Supabase: https://mnmeropgokozniimbqzk.supabase.co
+- Stripe: Test mode (dashboard.stripe.com)
 - Local dev: http://localhost:3000
-- Deployed: TBD (Cloudflare Pages)
+- Deployed: https://booking.donl.me (Cloudflare Pages)
 
 ## File Structure (planned)
 
@@ -135,6 +143,7 @@ app/
   auth/
     register/page.tsx
     login/page.tsx
+    complete-profile/page.tsx
     callback/route.ts
   dashboard/
     page.tsx                        # User dashboard
@@ -196,8 +205,12 @@ components/
     FormField.tsx
     InfoCard.tsx
     SectionHeader.tsx
+    LocalizedDate.tsx                # SSR-safe date formatting
     ImageSlider.tsx                  # Reusable scroll-snap image slider
     ImageLightbox.tsx                # Reusable modal gallery with animations
+  forms/
+    RegistrationForm.tsx
+    PhoneInput.tsx                   # Country code picker + auto-formatter
   booking/
     StepIndicator.tsx               # Step progress (1-4)
     RoomTypeCard.tsx                 # Selectable room card
@@ -208,6 +221,12 @@ supabase/
   migrations/
     001_initial_schema.sql
     002_rls_policies.sql
+    003_stripe_schema.sql
+    004_stripe_integration.sql
+    005_account_deletion.sql
+  templates/
+    magic-link.html
+    confirm-email.html
   functions/
     stripe-webhook/index.ts
 
@@ -219,9 +238,9 @@ CONTEXT.md                          # This file
 
 - **`proxy.ts`** — Next.js 16 renamed `middleware.ts` → `proxy.ts`, exported function must be `proxy` not `middleware`
 - **Supabase trigger** — `handle_new_user()` must use `SET search_path = public` and guard on `full_name IS NOT NULL` (login OTP also fires the trigger on existing users)
-- **Strapi not yet configured** — `getConferences()` returns `[]` gracefully; conference detail shows "not found" until Strapi has data
-- **Local Supabase** — running on `http://127.0.0.1:54321`. Magic link `emailRedirectTo` uses `window.location.origin` so it follows the dev server host correctly
-- **19 tests passing** — `lib/validations/auth.test.ts` (13) + `lib/validations/booking.test.ts` (6)
-- **52 tests passing** — added: `lib/utils/price.test.ts` (7), `lib/utils/children.test.ts` (5), `lib/utils/gender-validation.test.ts` (7), `lib/utils/search-privacy.test.ts` (6), `lib/validations/children.test.ts` (8)
-- **View Transitions** — `experimental.viewTransition: true` in `next.config.ts` for image thumbnail-to-lightbox morph
-- **Reusable UI components** — `ImageSlider` (scroll-snap + arrows) and `ImageLightbox` (animated translateX slides + view transitions) in `components/ui/`
+- **Profile gate** — Users who sign in via magic link without registering are redirected to `/auth/complete-profile`. Middleware checks on protected routes, callback checks after login.
+- **Phone numbers** — Stored as E.164 format (e.g., `+12125551234`). Validated via `libphonenumber-js`.
+- **Account deletion** — `delete_own_account()` RPC cascades through all FK chains. Invitations FK fixed to CASCADE.
+- **Local Supabase** — running on `http://127.0.0.1:54321`. Mailpit on `http://localhost:54324`.
+- **Production env vars** — `STRIPE_SECRET_KEY` must be set in Cloudflare Pages environment. Missing key causes checkout 500.
+- **Versioning** — `commit-and-tag-version` manages `CHANGELOG.md` + tags. Use `npm run release` after commits.
