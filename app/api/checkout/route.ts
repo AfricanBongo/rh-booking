@@ -16,13 +16,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const body = await request.json();
     const { type } = body;
+    const origin = getOrigin(request);
 
     if (type === "room_payment") {
-      return await handleRoomPayment(body, user, supabase, request.url);
+      return await handleRoomPayment(body, user, supabase, origin);
     }
 
     if (type === "merch") {
-      return await handleMerchPayment(body, user, supabase, request.url);
+      return await handleMerchPayment(body, user, supabase, origin);
     }
 
     return NextResponse.json({ error: "Invalid payment type" }, { status: 400 });
@@ -34,11 +35,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
+function getOrigin(request: NextRequest): string {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  const host = request.headers.get("host");
+  const proto = request.headers.get("x-forwarded-proto") || "https";
+  if (host) return `${proto}://${host}`;
+  return new URL(request.url).origin;
+}
+
 async function handleRoomPayment(
   body: { bookingId: string; amount: number },
   user: { id: string; email?: string },
   supabase: Awaited<ReturnType<typeof createClient>>,
-  requestUrl: string,
+  origin: string,
 ): Promise<NextResponse> {
   const { bookingId, amount } = body;
 
@@ -68,7 +77,6 @@ async function handleRoomPayment(
   }
 
   const customer = await getOrCreateStripeCustomer(user.id, user.email!, supabase);
-  const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(requestUrl).origin;
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -99,7 +107,7 @@ async function handleMerchPayment(
   body: { merchItemId: string; pickupLocationId: string; amount: number; merchItemName: string; merchItemSlug?: string },
   user: { id: string; email?: string },
   supabase: Awaited<ReturnType<typeof createClient>>,
-  requestUrl: string,
+  origin: string,
 ): Promise<NextResponse> {
   const { merchItemId, pickupLocationId, amount, merchItemName, merchItemSlug } = body;
 
@@ -108,7 +116,6 @@ async function handleMerchPayment(
   }
 
   const customer = await getOrCreateStripeCustomer(user.id, user.email!, supabase);
-  const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(requestUrl).origin;
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
