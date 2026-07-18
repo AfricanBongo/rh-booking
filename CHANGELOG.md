@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.3](https://github.com/AfricanBongo/rh-booking/compare/v0.5.2...v0.5.3) (2026-07-18)
+
+
+### Bug Fixes
+
+* **checkout:** derive origin from request headers instead of env var ([e6e3f51](https://github.com/AfricanBongo/rh-booking/commit/e6e3f51095d9c3f45173f7aab10f905e2920ce5a))
+
 ## [0.5.2](https://github.com/AfricanBongo/rh-booking/compare/v0.5.1...v0.5.2) (2026-07-18)
 
 
