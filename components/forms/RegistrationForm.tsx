@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { createBookingSchema, type BookingFormData } from "@/lib/validations/booking";
 import { PillButton } from "@/components/ui";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 
 const HOUR_OPTIONS = [
   { value: "06", label: "6:00 AM" },
@@ -60,6 +61,10 @@ export function RegistrationForm({
     formState: { errors, isSubmitting },
   } = useForm<BookingFormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      check_in: getDateOnly(conferenceStartDate),
+      check_out: getDateOnly(conferenceEndDate),
+    },
   });
 
   const minCheckIn = getMinCheckInDate(conferenceStartDate);
@@ -165,7 +170,10 @@ export function RegistrationForm({
       </div>
 
       {serverError && (
-        <p className="text-sm text-danger">{serverError}</p>
+        <div className="flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger/5 px-4 py-3" role="alert">
+          <WarningCircleIcon size={18} weight="duotone" className="text-danger shrink-0 mt-0.5" />
+          <p className="text-sm text-danger">{serverError}</p>
+        </div>
       )}
 
       <PillButton type="submit" disabled={isSubmitting} fullWidth>

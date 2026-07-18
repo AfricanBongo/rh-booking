@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapTrifoldIcon } from "@phosphor-icons/react";
+import { MapTrifoldIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { PillButton } from "@/components/ui";
 
 interface PickupLocation {
@@ -27,10 +27,12 @@ export function PurchaseForm({
 }: PurchaseFormProps): React.ReactElement {
   const [pickupLocationId, setPickupLocationId] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handlePurchase(): Promise<void> {
     if (!pickupLocationId && pickupLocations.length > 0) return;
     setSubmitting(true);
+    setError(null);
 
     try {
       const res = await fetch("/api/checkout", {
@@ -46,10 +48,18 @@ export function PurchaseForm({
         }),
       });
 
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setError(data?.error || "Something went wrong. Please try again.");
+        return;
+      }
+
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -75,6 +85,12 @@ export function PurchaseForm({
               </option>
             ))}
           </select>
+        </div>
+      )}
+      {error && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger/5 px-4 py-3" role="alert">
+          <WarningCircleIcon size={18} weight="duotone" className="text-danger shrink-0 mt-0.5" />
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
       <PillButton

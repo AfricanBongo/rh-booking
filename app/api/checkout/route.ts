@@ -6,25 +6,33 @@ import { validatePaymentAmount } from "@/lib/validations/payment";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { type } = body;
+
+    if (type === "room_payment") {
+      return await handleRoomPayment(body, user, supabase, request.url);
+    }
+
+    if (type === "merch") {
+      return await handleMerchPayment(body, user, supabase, request.url);
+    }
+
+    return NextResponse.json({ error: "Invalid payment type" }, { status: 400 });
+  } catch (error) {
+    console.error("[checkout] Unhandled error:", error);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 },
+    );
   }
-
-  const body = await request.json();
-  const { type } = body;
-
-  if (type === "room_payment") {
-    return handleRoomPayment(body, user, supabase, request.url);
-  }
-
-  if (type === "merch") {
-    return handleMerchPayment(body, user, supabase, request.url);
-  }
-
-  return NextResponse.json({ error: "Invalid payment type" }, { status: 400 });
 }
 
 async function handleRoomPayment(
