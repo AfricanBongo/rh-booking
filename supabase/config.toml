@@ -247,6 +247,10 @@ otp_expiry = 3600
  subject = "Your sign-in link"
  content_path = "./supabase/templates/magic-link.html"
 
+ [auth.email.template.confirmation]
+ subject = "Confirm your email"
+ content_path = "./supabase/templates/confirm-email.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
