@@ -41,11 +41,26 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
+  const pathname = request.nextUrl.pathname;
 
-  if (isProtectedRoute(request.nextUrl.pathname) && !user) {
+  if (isProtectedRoute(pathname) && !user) {
     const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("returnUrl", request.nextUrl.pathname);
+    loginUrl.searchParams.set("returnUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  if (user && isProtectedRoute(pathname)) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", user.sub)
+      .maybeSingle();
+
+    if (!profile) {
+      const completeUrl = new URL("/auth/complete-profile", request.url);
+      completeUrl.searchParams.set("returnUrl", pathname);
+      return NextResponse.redirect(completeUrl);
+    }
   }
 
   return supabaseResponse;

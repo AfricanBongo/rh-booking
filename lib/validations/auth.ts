@@ -1,19 +1,13 @@
 import { z } from "zod";
-
-const phoneRegex = /^[\d\s\-+().]{10,}$/;
-
-function isValidPhone(phone: string): boolean {
-  const digits = phone.replace(/\D/g, "");
-  return digits.length >= 10 && digits.length <= 11;
-}
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export const registrationSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z
     .string()
-    .regex(phoneRegex, "Invalid phone format")
-    .refine(isValidPhone, "Phone must be 10-11 digits"),
+    .min(1, "Phone number is required")
+    .refine((val) => isValidPhoneNumber(val), "Invalid phone number"),
   gender: z.enum(["male", "female"], {
     error: "Gender must be male or female",
   }),

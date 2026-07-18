@@ -4,23 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { isValidPhoneNumber } from "libphonenumber-js";
 import { createClient } from "@/lib/supabase/client";
 import { type ChurchBranch } from "@/lib/data/profiles";
 import { getAvatarUrl } from "@/lib/utils/avatar";
 import { PillButton } from "@/components/ui";
+import { PhoneInput } from "@/components/forms/PhoneInput";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
   phone: z
     .string()
-    .min(10, "Invalid phone")
-    .refine(
-      (p) => {
-        const digits = p.replace(/\D/g, "");
-        return digits.length >= 10 && digits.length <= 11;
-      },
-      "Phone must be 10-11 digits"
-    ),
+    .min(1, "Phone number is required")
+    .refine((val) => isValidPhoneNumber(val), "Invalid phone number"),
   gender: z.enum(["male", "female"]),
   age: z.number().int().positive("Age must be positive"),
   church_branch_id: z.string().uuid("Invalid church branch"),
@@ -200,11 +196,11 @@ export default function ProfilePage() {
             >
               Phone
             </label>
-            <input
+            <PhoneInput
               id="phone"
-              type="tel"
-              {...register("phone")}
-              className="w-full rounded-xl border border-border px-4 py-3 text-foreground bg-background focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-shadow"
+              value={watch("phone") || ""}
+              onChange={(e164) => setValue("phone", e164, { shouldValidate: true })}
+              error={!!errors.phone}
             />
             {errors.phone && (
               <p className="text-sm text-danger mt-1">

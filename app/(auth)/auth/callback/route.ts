@@ -21,5 +21,20 @@ export async function GET(request: Request): Promise<NextResponse> {
     );
   }
 
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      const completeUrl = new URL("/auth/complete-profile", request.url);
+      completeUrl.searchParams.set("returnUrl", returnUrl);
+      return NextResponse.redirect(completeUrl);
+    }
+  }
+
   return NextResponse.redirect(new URL(returnUrl, request.url));
 }

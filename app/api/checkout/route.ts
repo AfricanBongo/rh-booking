@@ -27,9 +27,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ error: "Invalid payment type" }, { status: 400 });
   } catch (error) {
-    console.error("[checkout] Unhandled error:", error);
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: error instanceof Error ? error.message : "Something went wrong. Please try again." },
       { status: 500 },
     );
   }

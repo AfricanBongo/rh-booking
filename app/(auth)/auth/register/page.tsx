@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { Spinner } from "@heroui/react";
 import { EnvelopeSimpleIcon } from "@phosphor-icons/react";
+import { PhoneInput } from "@/components/forms/PhoneInput";
 
 const step1Schema = registrationSchema.pick({
   full_name: true,
@@ -203,13 +204,11 @@ export default function RegisterPage() {
                   <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                     Phone number
                   </label>
-                  <input
+                  <PhoneInput
                     id="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    {...register("phone")}
-                    className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
-                    placeholder="+1 555-123-4567"
+                    value={watch("phone") || ""}
+                    onChange={(e164) => setValue("phone", e164, { shouldValidate: true })}
+                    error={!!errors.phone}
                   />
                   {errors.phone && <p className="text-sm text-danger mt-1.5">{errors.phone.message}</p>}
                 </div>
