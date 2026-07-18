@@ -10,7 +10,16 @@
     "test": "vitest",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "release": "commit-and-tag-version",
+    "release:patch": "commit-and-tag-version --release-as patch",
+    "release:minor": "commit-and-tag-version --release-as minor",
+    "release:major": "commit-and-tag-version --release-as major",
+    "release:alpha": "commit-and-tag-version --prerelease alpha",
+    "release:beta": "commit-and-tag-version --prerelease beta",
+    "release:prerelease": "commit-and-tag-version --prerelease",
+    "release:first": "commit-and-tag-version --first-release",
+    "release:dry": "commit-and-tag-version --dry-run"
   },
   "dependencies": {
     "@dicebear/core": "^9.4.3",
@@ -40,6 +49,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "commit-and-tag-version": "^12.7.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "jsdom": "^29.1.1",
