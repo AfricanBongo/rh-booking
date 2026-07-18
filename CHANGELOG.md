@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.2](https://github.com/AfricanBongo/rh-booking/compare/v0.5.1...v0.5.2) (2026-07-18)
+
+
+### Bug Fixes
+
+* **test:** update phone validation tests for E.164 format ([f56542d](https://github.com/AfricanBongo/rh-booking/commit/f56542d619bc14f791dff923da8bbc278c5a5873))
+
 ## [0.5.1](https://github.com/AfricanBongo/rh-booking/compare/v0.5.0...v0.5.1) (2026-07-18)
 
 ## [0.5.0](https://github.com/AfricanBongo/rh-booking/compare/v0.4.0...v0.5.0) (2026-07-18)
