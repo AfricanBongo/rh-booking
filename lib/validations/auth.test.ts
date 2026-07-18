@@ -4,7 +4,7 @@ import { registrationSchema, loginSchema } from "./auth";
 const validRegistration = {
   full_name: "John Doe",
   email: "john@example.com",
-  phone: "+1 555-123-4567",
+  phone: "+12125551234",
   gender: "male" as const,
   age: 25,
   church_branch_id: "550e8400-e29b-41d4-a716-446655440000",
@@ -43,23 +43,23 @@ describe("registrationSchema", () => {
   it("accepts phone format +1 XXX-XXX-XXXX", () => {
     const result = registrationSchema.safeParse({
       ...validRegistration,
-      phone: "+1 555-123-4567",
+      phone: "+1 212-555-1234",
     });
     expect(result.success).toBe(true);
   });
 
-  it("accepts phone format (XXX) XXX-XXXX", () => {
+  it("accepts phone in E.164 format", () => {
     const result = registrationSchema.safeParse({
       ...validRegistration,
-      phone: "(555) 123-4567",
+      phone: "+233241234567",
     });
     expect(result.success).toBe(true);
   });
 
-  it("accepts phone format XXXXXXXXXX", () => {
+  it("accepts international phone format", () => {
     const result = registrationSchema.safeParse({
       ...validRegistration,
-      phone: "5551234567",
+      phone: "+44 7911 123456",
     });
     expect(result.success).toBe(true);
   });
