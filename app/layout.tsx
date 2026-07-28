@@ -21,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `globalThis.__name=function(fn){return fn};` }} />
         <link
           href="https://fonts.cdnfonts.com/css/switzer"
           rel="stylesheet"
