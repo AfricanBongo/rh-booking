@@ -106,7 +106,7 @@ export default function LoginPage(): React.ReactElement {
   return (
     <div className="w-full max-w-sm animate-fade-up">
       <div className="lg:hidden mb-8">
-        <Link href="/" className="font-heading font-bold text-xl text-foreground">RoyalHouse</Link>
+        <Link href="/" className="font-heading font-bold text-xl text-foreground">Royalhouse</Link>
       </div>
       <h1 className="font-heading text-3xl font-semibold text-foreground mb-2">
         Welcome back

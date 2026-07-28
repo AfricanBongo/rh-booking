@@ -7,9 +7,9 @@ export function Footer(): React.ReactElement {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <p className="font-heading font-bold text-lg mb-2">RoyalHouse</p>
+            <p className="font-heading font-bold text-lg mb-2">Royalhouse</p>
             <p className="text-sm text-muted leading-relaxed">
-              Conference booking for RoyalHouse Chapel International. All branches, one family.
+              Conference booking for Royalhouse Chapel International. All branches, one family.
             </p>
           </div>
 
@@ -86,7 +86,7 @@ export function Footer(): React.ReactElement {
         {/* Bottom bar */}
         <div className="border-t border-border mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-xs text-muted">
-            &copy; {new Date().getFullYear()} RoyalHouse Chapel International. All rights reserved.
+            &copy; {new Date().getFullYear()} Royalhouse Chapel International. All rights reserved.
           </p>
           <p className="text-xs text-muted">
             Built with care for the body of Christ.

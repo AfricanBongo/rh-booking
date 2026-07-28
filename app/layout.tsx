@@ -9,8 +9,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "RoyalHouse Booking",
-  description: "Conference room booking platform for RoyalHouse Church",
+  title: "Royalhouse Booking",
+  description: "Conference room booking platform for Royalhouse Church",
 };
 
 export default function RootLayout({

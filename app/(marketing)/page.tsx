@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 const FAQS = [
-  { question: "Who can attend?", answer: "Everyone is welcome. All RoyalHouse Church branches across the US and Canada are invited to register." },
+  { question: "Who can attend?", answer: "Everyone is welcome. All Royalhouse Church branches across the US and Canada are invited to register." },
   { question: "Can I attend without booking a room?", answer: "Absolutely. Conference registration and room booking are separate. Register for the event and sort accommodation on your own if you prefer." },
   { question: "How does room payment work?", answer: "Room costs are split evenly among everyone in your room. Pay as little as $25 at a time, on your own schedule, before the deadline." },
   { question: "What about children?", answer: "Children under 12 attend free. Children 12 and older are charged at the per-person room rate as an additional occupant." },

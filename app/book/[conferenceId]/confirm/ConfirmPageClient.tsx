@@ -69,7 +69,7 @@ export function ConfirmPageClient({
   const total = perPerson + surcharge;
   const billableChildren = children.filter((c) => c.age >= 12).length;
 
-  async function handleConfirm(payNow: boolean) {
+  async function handleConfirm() {
     setSubmitting(true);
     try {
       const res = await fetch("/api/bookings", {
@@ -92,11 +92,7 @@ export function ConfirmPageClient({
         return;
       }
 
-      if (payNow) {
-        router.push("/pay");
-      } else {
-        router.push("/dashboard");
-      }
+      router.push("/pay");
       reset();
     } catch {
       setSubmitting(false);
@@ -163,23 +159,11 @@ export function ConfirmPageClient({
           fullWidth
           size="lg"
           disabled={submitting}
-          onClick={() => handleConfirm(true)}
+          onClick={handleConfirm}
         >
           <CheckCircleIcon size={18} weight="bold" />
-          {isUrgent ? "Confirm & Pay Now" : "Confirm & Pay Now"}
+          Confirm & Make Deposit
         </PillButton>
-
-        {!isUrgent && (
-          <PillButton
-            variant="outline"
-            fullWidth
-            size="lg"
-            disabled={submitting}
-            onClick={() => handleConfirm(false)}
-          >
-            Confirm & Pay Later
-          </PillButton>
-        )}
       </div>
     </div>
   );
@@ -196,7 +180,7 @@ function Row({ label, value }: { label: string; value: string }): React.ReactEle
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
   } catch {
     return iso;
   }

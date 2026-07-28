@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getConference } from "@/lib/data/conferences";
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
@@ -10,38 +11,20 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = (await request.json()) as {
-      conferenceId: unknown;
-      checkIn: unknown;
-      checkOut: unknown;
-    };
+    const body = (await request.json()) as { conferenceId: unknown };
+    const { conferenceId } = body;
 
-    const { conferenceId, checkIn, checkOut } = body;
-
-    if (
-      typeof conferenceId !== "string" ||
-      typeof checkIn !== "string" ||
-      typeof checkOut !== "string"
-    ) {
+    if (typeof conferenceId !== "string") {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
 
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-
-    if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
-      return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
-    }
-
-    if (checkInDate >= checkOutDate) {
-      return NextResponse.json({ error: "Check-out must be after check-in" }, { status: 400 });
-    }
+    const conference = await getConference(conferenceId);
 
     const { error } = await supabase.from("conference_registrations").insert({
       user_id: user.id,
       conference_id: conferenceId,
-      check_in: checkIn,
-      check_out: checkOut,
+      check_in: conference.checkIn,
+      check_out: conference.checkOut,
     });
 
     if (error) {

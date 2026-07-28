@@ -97,7 +97,7 @@ export function Sidebar({ fullName, email }: SidebarProps): React.ReactElement {
     >
       <div className={`flex items-center h-14 px-4 border-b border-border ${expanded ? "justify-start" : "justify-center"}`}>
         <Link href="/dashboard" className="font-heading font-bold text-lg tracking-tight truncate">
-          {expanded ? "RoyalHouse" : "R"}
+          {expanded ? "Royalhouse" : "R"}
         </Link>
       </div>
 

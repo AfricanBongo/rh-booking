@@ -164,11 +164,11 @@ export default async function DashboardConferenceDetailPage({ params }: Props): 
           {!isRegistered && conference.isActive && (
             <>
               <h2 className="font-heading text-xl font-semibold mb-1">Register for This Conference</h2>
-              <p className="text-muted text-sm mb-6">Select your check-in and check-out dates within the conference window.</p>
+              <p className="text-muted text-sm mb-6">Check-in and check-out times are set for all attendees.</p>
               <RegistrationForm
                 conferenceId={conference.id}
-                conferenceStartDate={conference.startDate}
-                conferenceEndDate={conference.endDate}
+                conferenceCheckIn={conference.checkIn}
+                conferenceCheckOut={conference.checkOut}
               />
             </>
           )}

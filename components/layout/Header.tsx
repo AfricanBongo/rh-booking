@@ -23,7 +23,7 @@ export async function Header(): Promise<React.ReactElement> {
     <header className="sticky top-0 z-50 h-16 md:h-18 bg-surface/90 backdrop-blur-md border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
         <Link href="/" className="font-heading font-bold text-xl tracking-tight">
-          RoyalHouse
+          Royalhouse
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">

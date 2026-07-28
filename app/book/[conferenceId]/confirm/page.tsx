@@ -23,15 +23,8 @@ export default async function ConfirmPage({ params }: PageProps): Promise<React.
     getRoomTypes(conferenceId),
   ]);
 
-  const { data: registration } = await supabase
-    .from("conference_registrations")
-    .select("check_in, check_out")
-    .eq("user_id", user.id)
-    .eq("conference_id", conferenceId)
-    .single();
-
-  const checkIn = registration?.check_in ?? conference.startDate;
-  const checkOut = registration?.check_out ?? conference.endDate;
+  const checkIn = conference.checkIn;
+  const checkOut = conference.checkOut;
 
   const now = new Date();
   const checkInDate = new Date(checkIn);

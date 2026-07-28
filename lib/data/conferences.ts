@@ -7,6 +7,8 @@ export interface Conference {
   description: string;
   startDate: string;
   endDate: string;
+  checkIn: string;
+  checkOut: string;
   paymentDeadline: string;
   location: string;
   isActive: boolean;
@@ -21,6 +23,8 @@ interface StrapiConferenceItem {
   description: string;
   start_date: string;
   end_date: string;
+  check_in: string;
+  check_out: string;
   payment_deadline: string;
   location: string;
   is_active: boolean;
@@ -41,6 +45,8 @@ function mapConference(item: StrapiConferenceItem): Conference {
     description: item.description,
     startDate: item.start_date,
     endDate: item.end_date,
+    checkIn: item.check_in,
+    checkOut: item.check_out,
     paymentDeadline: item.payment_deadline,
     location: item.location,
     isActive: item.is_active,

@@ -151,7 +151,7 @@ export default function RegisterPage() {
   return (
     <div className="w-full max-w-sm animate-fade-up">
       <div className="lg:hidden mb-8">
-        <Link href="/" className="font-heading font-bold text-xl text-foreground">RoyalHouse</Link>
+        <Link href="/" className="font-heading font-bold text-xl text-foreground">Royalhouse</Link>
       </div>
 
           {/* Step indicator */}
