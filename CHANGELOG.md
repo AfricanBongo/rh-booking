@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.9](https://github.com/AfricanBongo/rh-booking/compare/v0.5.8...v0.5.9) (2026-07-28)
+
+
+### Bug Fixes
+
+* **deploy:** add __name polyfill for Cloudflare Workers bundling issue ([67b3943](https://github.com/AfricanBongo/rh-booking/commit/67b3943d9582e871b892674333a797f5d43a08bc))
+
 ## [0.5.8](https://github.com/AfricanBongo/rh-booking/compare/v0.5.7...v0.5.8) (2026-07-28)
 
 ## [0.5.7](https://github.com/AfricanBongo/rh-booking/compare/v0.5.6...v0.5.7) (2026-07-28)
