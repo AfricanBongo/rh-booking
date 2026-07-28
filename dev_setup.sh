@@ -81,9 +81,18 @@ else
     fi
 fi
 
+# Extract service role key for edge function calls
+SUPABASE_SERVICE_ROLE_KEY=$(supabase status 2>/dev/null | grep "Secret" | grep "sb_secret" | awk '{print $NF}')
+if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+    if ! grep -q "^SUPABASE_SERVICE_ROLE_KEY=" .env.local 2>/dev/null; then
+        echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
+        log_success "Added SUPABASE_SERVICE_ROLE_KEY to .env.local"
+    fi
+fi
+
 # --- 2. Supabase Edge Functions ---
 log_info "Starting Supabase functions serve in background..."
-supabase functions serve > supabase_functions.log 2>&1 &
+supabase functions serve --env-file supabase/.env.local > supabase_functions.log 2>&1 &
 SUPABASE_FUNCTIONS_PID=$!
 log_success "Supabase functions serve started (PID: $SUPABASE_FUNCTIONS_PID). Logs at supabase_functions.log"
 

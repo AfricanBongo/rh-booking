@@ -27,6 +27,7 @@
     "@heroui/react": "^3.2.2",
     "@hookform/resolvers": "^5.4.0",
     "@phosphor-icons/react": "^2.1.10",
+    "@supabase/server": "^1.4.1",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
     "framer-motion": "^12.42.2",
@@ -37,7 +38,6 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.81.0",
-    "stripe": "^22.3.1",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
