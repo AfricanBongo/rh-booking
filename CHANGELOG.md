@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.10](https://github.com/AfricanBongo/rh-booking/compare/v0.5.9...v0.5.10) (2026-08-26)
+
+
+### Bug Fixes
+
+* **db:** grant service_role privileges on bookings, profiles, merch_orders ([fcaf804](https://github.com/AfricanBongo/rh-booking/commit/fcaf8047ebeab0259299e2cd0e99e4b72b5fd418))
+
 ## [0.5.9](https://github.com/AfricanBongo/rh-booking/compare/v0.5.8...v0.5.9) (2026-07-28)
 
 
