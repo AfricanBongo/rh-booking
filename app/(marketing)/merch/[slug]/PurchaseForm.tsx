@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapTrifoldIcon, WarningCircleIcon, CheckCircleIcon, ReceiptIcon } from "@phosphor-icons/react";
+import { MapTrifoldIcon, WarningCircleIcon, CheckCircleIcon, ReceiptIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
 import { PillButton } from "@/components/ui";
 
 interface PickupLocation {
@@ -108,8 +108,8 @@ export function PurchaseForm({
       {cashSuccess ? (
         <div className="flex flex-col items-center gap-2 py-4 text-center">
           <CheckCircleIcon size={32} weight="bold" className="text-success" />
-          <p className="text-sm font-medium">Cash payment of ${((cashSuccess as number) / 100).toFixed(2)} registered for {merchItemName}</p>
-          <p className="text-xs text-muted">Show this to your church admin to mark as received.</p>
+          <p className="text-sm font-medium">Cash payment has been requested</p>
+          <p className="text-xs text-muted">We have let the admin know. You may proceed to submit the cash for this payment. If payment does not reflect within a couple of minutes after admin clearing your invoice, please let the admin know.</p>
         </div>
       ) : (
         <>
@@ -139,7 +139,7 @@ export function PurchaseForm({
               <p className="text-sm text-danger">{error}</p>
             </div>
           )}
-          <div className="flex gap-3">
+          <div className="flex flex-col md:flex-row gap-3">
             <PillButton
               size="lg"
               fullWidth
@@ -152,27 +152,31 @@ export function PurchaseForm({
                   Processing...
                 </span>
               ) : (
-                "Purchase"
+                <>
+                  <CurrencyDollarIcon size={18} />
+                  Pay ${(price / 100).toFixed(2)} online
+                </>
               )}
             </PillButton>
-            <button
-              type="button"
+            <PillButton
+              size="lg"
+              fullWidth
+              variant="outline"
               disabled={submitting || cashSubmitting || (pickupLocations.length > 0 && !pickupLocationId)}
               onClick={handleCashPurchase}
-              className="flex-1 rounded-full border border-border px-4 py-3.5 text-sm font-medium text-foreground hover:border-accent/30 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none inline-flex items-center justify-center gap-2"
             >
               {cashSubmitting ? (
                 <span className="inline-flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
-                  Registering...
+                  Requesting...
                 </span>
               ) : (
                 <>
                   <ReceiptIcon size={18} />
-                  Pay with Cash
+                  Pay ${(price / 100).toFixed(2)} in cash
                 </>
               )}
-            </button>
+            </PillButton>
           </div>
         </>
       )}
