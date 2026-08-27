@@ -55,6 +55,10 @@ Deno.serve(async (req) => {
       return await handleMerchPayment(body, userId, userEmail, origin);
     }
 
+    if (type === "cash_invoice") {
+      return await handleCashInvoice(body as CashInvoiceBody, userId, userEmail);
+    }
+
     console.error("[stripe-checkout] Invalid payment type:", type);
     return Response.json({ error: "Invalid payment type" }, { status: 400 });
   } catch (error) {
@@ -182,6 +186,93 @@ async function handleMerchPayment(
   return Response.json({ url: session.url });
 }
 
+async function handleCashInvoice(
+  body: CashInvoiceBody,
+  userId: string,
+  userEmail: string,
+): Promise<Response> {
+  const { bookingId, merchItemId, merchItemName, pickupLocationId, amount, description } = body;
+  console.info("[stripe-checkout:cash] amount:", amount, "| description:", description);
+
+  if (!amount || !description) {
+    console.error("[stripe-checkout:cash] Missing amount or description");
+    return Response.json({ error: "Missing amount or description" }, { status: 400 });
+  }
+
+  const supabase = getSupabaseAdmin();
+
+  if (bookingId) {
+    const { data: booking, error } = await supabase
+      .from("bookings")
+      .select("id, user_id, total_price, amount_paid")
+      .eq("id", bookingId)
+      .single();
+
+    if (error || !booking) {
+      console.error("[stripe-checkout:cash] Booking not found:", bookingId, error?.message);
+      return Response.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (booking.user_id !== userId) {
+      console.error("[stripe-checkout:cash] User mismatch: booking owner", booking.user_id, "!= requester", userId);
+      return Response.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const remainingBalance = booking.total_price - booking.amount_paid;
+    console.info("[stripe-checkout:cash] total:", booking.total_price, "| paid:", booking.amount_paid, "| remaining:", remainingBalance);
+    const validation = validatePaymentAmount(amount, remainingBalance);
+    if (!validation.success) {
+      console.error("[stripe-checkout:cash] Validation failed:", validation.error);
+      return Response.json({ error: validation.error }, { status: 400 });
+    }
+  }
+
+  if (merchItemId && (!merchItemName || !pickupLocationId)) {
+    console.error("[stripe-checkout:cash] Missing merch fields");
+    return Response.json({ error: "Missing required merch fields" }, { status: 400 });
+  }
+
+  if (!bookingId && !merchItemId) {
+    console.error("[stripe-checkout:cash] Neither bookingId nor merchItemId provided");
+    return Response.json({ error: "Missing bookingId or merchItemId" }, { status: 400 });
+  }
+
+  const customer = await getOrCreateStripeCustomer(userId, userEmail, supabase);
+  console.info("[stripe-checkout:cash] Stripe customer:", customer.id);
+
+  const metadata: Record<string, string> = { user_id: userId };
+
+  if (bookingId) {
+    metadata.type = "room_payment";
+    metadata.booking_id = bookingId;
+  } else if (merchItemId) {
+    metadata.type = "merch";
+    metadata.merch_item_id = merchItemId;
+    metadata.pickup_location_id = pickupLocationId!;
+  }
+
+  const invoice = await stripe.invoices.create({
+    customer: customer.id,
+    collection_method: "send_invoice",
+    days_until_due: 30,
+    metadata,
+    auto_advance: false,
+  });
+
+  await stripe.invoiceItems.create({
+    customer: customer.id,
+    invoice: invoice.id,
+    amount,
+    currency: "usd",
+    description,
+  });
+
+  await stripe.invoices.finalizeInvoice(invoice.id);
+
+  console.info("[stripe-checkout:cash] Invoice created and finalized:", invoice.id);
+  return Response.json({ invoiceId: invoice.id, status: "open" });
+}
+
 async function getOrCreateStripeCustomer(
   userId: string,
   email: string,
@@ -215,6 +306,15 @@ async function getOrCreateStripeCustomer(
 type PaymentValidation =
   | { success: true; data: { amount: number } }
   | { success: false; error: string };
+
+interface CashInvoiceBody {
+  bookingId?: string;
+  merchItemId?: string;
+  merchItemName?: string;
+  pickupLocationId?: string;
+  amount: number;
+  description: string;
+}
 
 function validatePaymentAmount(amount: number, remainingBalance: number): PaymentValidation {
   if (!Number.isInteger(amount)) {
