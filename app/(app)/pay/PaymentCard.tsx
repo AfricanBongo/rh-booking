@@ -143,8 +143,8 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
           {cashSuccess ? (
             <div className="flex flex-col items-center gap-2 py-4 text-center">
               <CheckCircleIcon size={32} weight="bold" className="text-success" />
-              <p className="text-sm font-medium">Cash payment of ${((cashSuccess as number) / 100).toFixed(2)} registered</p>
-              <p className="text-xs text-muted">Show this to your church admin to mark as received.</p>
+              <p className="text-sm font-medium">Cash payment has been requested</p>
+              <p className="text-xs text-muted">We have let the admin know. You may proceed to submit the cash for this payment. If payment does not reflect within a couple of minutes after admin clearing your invoice, please let the admin know.</p>
             </div>
           ) : (
             <>
@@ -201,7 +201,7 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
                 <p className="text-sm text-danger">{cashError}</p>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <PillButton
                   size="md"
                   fullWidth
@@ -216,28 +216,29 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
                   ) : (
                     <>
                       <CurrencyDollarIcon size={18} />
-                      Pay ${isValidAmount ? (amount / 100).toFixed(2) : "..."}
+                      Pay ${isValidAmount ? (amount / 100).toFixed(2) : "..."} online
                     </>
                   )}
                 </PillButton>
-                <button
-                  type="button"
+                <PillButton
+                  size="md"
+                  fullWidth
+                  variant="outline"
                   disabled={!isValidAmount || submitting || cashSubmitting}
                   onClick={handleCashPayment}
-                  className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:border-accent/30 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none inline-flex items-center justify-center gap-2"
                 >
                   {cashSubmitting ? (
                     <span className="inline-flex items-center gap-2">
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
-                      Registering...
+                      Requesting...
                     </span>
                   ) : (
                     <>
                       <ReceiptIcon size={18} />
-                      Pay with Cash
+                      Pay ${isValidAmount ? (amount / 100).toFixed(2) : "..."} in cash
                     </>
                   )}
-                </button>
+                </PillButton>
               </div>
             </>
           )}
