@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.11](https://github.com/AfricanBongo/rh-booking/compare/v0.5.10...v0.5.11) (2026-08-27)
+
+
+### Features
+
+* **db:** add trigger for stripe invoice paid events ([ffa4656](https://github.com/AfricanBongo/rh-booking/commit/ffa4656948d363cf6e5b3654a6b716e11c2a3da1))
+* **db:** void open cash invoices when booking paid in full via checkout ([32a01ba](https://github.com/AfricanBongo/rh-booking/commit/32a01ba3ca10b237a1943e1048f9f90bda9a8dd3))
+* **payments:** add cash invoice creation handler to stripe-checkout edge function ([c551c65](https://github.com/AfricanBongo/rh-booking/commit/c551c65676ea014aeb01ee64cc4974d018c8a56a))
+* **ui:** add pay with cash button to merch purchase form ([8897cac](https://github.com/AfricanBongo/rh-booking/commit/8897cacccfcea1dcf4737f101cc51b5602729d99))
+* **ui:** add pay with cash button to room payment card ([0c6887a](https://github.com/AfricanBongo/rh-booking/commit/0c6887a4ac0dab5b005b0c75570c3d65dada1439))
+
+
+### Bug Fixes
+
+* **db:** grant service_role access to stripe.invoices for void logic ([add555f](https://github.com/AfricanBongo/rh-booking/commit/add555f222d049be56414504776f38a266df0cbe))
+
 ## [0.5.10](https://github.com/AfricanBongo/rh-booking/compare/v0.5.9...v0.5.10) (2026-08-26)
 
 
