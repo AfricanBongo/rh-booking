@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "usesend-js": "npm:usesend-js@latest"
+  }
+}
