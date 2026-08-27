@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapTrifoldIcon, WarningCircleIcon } from "@phosphor-icons/react";
+import { MapTrifoldIcon, WarningCircleIcon, CheckCircleIcon, ReceiptIcon } from "@phosphor-icons/react";
 import { PillButton } from "@/components/ui";
 
 interface PickupLocation {
@@ -28,6 +28,8 @@ export function PurchaseForm({
   const [pickupLocationId, setPickupLocationId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cashSubmitting, setCashSubmitting] = useState(false);
+  const [cashSuccess, setCashSuccess] = useState<number | false>(false);
 
   async function handlePurchase(): Promise<void> {
     if (!pickupLocationId && pickupLocations.length > 0) return;
@@ -65,49 +67,115 @@ export function PurchaseForm({
     }
   }
 
+  async function handleCashPurchase(): Promise<void> {
+    if (!pickupLocationId && pickupLocations.length > 0) return;
+    setCashSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "cash_invoice",
+          merchItemId,
+          merchItemName,
+          pickupLocationId: pickupLocationId || "none",
+          amount: price,
+          description: merchItemName,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setError(data?.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      const data = await res.json();
+      if (data.invoiceId) {
+        setCashSuccess(price);
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setCashSubmitting(false);
+    }
+  }
+
   return (
     <div className="space-y-4">
-      {pickupLocations.length > 0 && (
-        <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-            <MapTrifoldIcon size={16} weight="duotone" />
-            Pickup Location
-          </label>
-          <select
-            value={pickupLocationId}
-            onChange={(e) => setPickupLocationId(e.target.value)}
-            className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
-          >
-            <option value="">Select a pickup location</option>
-            {pickupLocations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name} - {loc.address}
-              </option>
-            ))}
-          </select>
+      {cashSuccess ? (
+        <div className="flex flex-col items-center gap-2 py-4 text-center">
+          <CheckCircleIcon size={32} weight="bold" className="text-success" />
+          <p className="text-sm font-medium">Cash payment of ${((cashSuccess as number) / 100).toFixed(2)} registered for {merchItemName}</p>
+          <p className="text-xs text-muted">Show this to your church admin to mark as received.</p>
         </div>
+      ) : (
+        <>
+          {pickupLocations.length > 0 && (
+            <div>
+              <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+                <MapTrifoldIcon size={16} weight="duotone" />
+                Pickup Location
+              </label>
+              <select
+                value={pickupLocationId}
+                onChange={(e) => setPickupLocationId(e.target.value)}
+                className="w-full rounded-xl border border-border px-4 py-3.5 text-foreground bg-background focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all duration-200"
+              >
+                <option value="">Select a pickup location</option>
+                {pickupLocations.map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name} - {loc.address}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {error && (
+            <div className="flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger/5 px-4 py-3" role="alert">
+              <WarningCircleIcon size={18} weight="duotone" className="text-danger shrink-0 mt-0.5" />
+              <p className="text-sm text-danger">{error}</p>
+            </div>
+          )}
+          <div className="flex gap-3">
+            <PillButton
+              size="lg"
+              fullWidth
+              disabled={submitting || cashSubmitting || (pickupLocations.length > 0 && !pickupLocationId)}
+              onClick={handlePurchase}
+            >
+              {submitting ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-foreground border-t-transparent" />
+                  Processing...
+                </span>
+              ) : (
+                "Purchase"
+              )}
+            </PillButton>
+            <button
+              type="button"
+              disabled={submitting || cashSubmitting || (pickupLocations.length > 0 && !pickupLocationId)}
+              onClick={handleCashPurchase}
+              className="flex-1 rounded-full border border-border px-4 py-3.5 text-sm font-medium text-foreground hover:border-accent/30 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none inline-flex items-center justify-center gap-2"
+            >
+              {cashSubmitting ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
+                  Registering...
+                </span>
+              ) : (
+                <>
+                  <ReceiptIcon size={18} />
+                  Pay with Cash
+                </>
+              )}
+            </button>
+          </div>
+        </>
       )}
-      {error && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-danger/20 bg-danger/5 px-4 py-3" role="alert">
-          <WarningCircleIcon size={18} weight="duotone" className="text-danger shrink-0 mt-0.5" />
-          <p className="text-sm text-danger">{error}</p>
-        </div>
-      )}
-      <PillButton
-        size="lg"
-        fullWidth
-        disabled={submitting || (pickupLocations.length > 0 && !pickupLocationId)}
-        onClick={handlePurchase}
-      >
-        {submitting ? (
-          <span className="inline-flex items-center gap-2">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-foreground border-t-transparent" />
-            Processing...
-          </span>
-        ) : (
-          "Purchase"
-        )}
-      </PillButton>
     </div>
   );
 }
