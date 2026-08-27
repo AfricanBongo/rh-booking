@@ -23,6 +23,9 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [cashSubmitting, setCashSubmitting] = useState(false);
+  const [cashSuccess, setCashSuccess] = useState<number | false>(false);
+  const [cashError, setCashError] = useState<string | null>(null);
 
   function getAmount(): number {
     if (selectedPreset) return selectedPreset;
@@ -70,6 +73,37 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
     }
   }
 
+  async function handleCashPayment(): Promise<void> {
+    const amount = getAmount();
+    if (amount < MIN_PAYMENT_AMOUNT || amount > remainingBalance) return;
+
+    setCashSubmitting(true);
+    setCashError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "cash_invoice",
+          bookingId,
+          amount,
+          description: `${conferenceName} - Room Payment`,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.invoiceId) {
+        setCashSuccess(amount);
+      } else {
+        setCashError(data?.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setCashError("Network error. Please check your connection and try again.");
+    } finally {
+      setCashSubmitting(false);
+    }
+  }
+
   const amount = getAmount();
   const isValidAmount = amount >= MIN_PAYMENT_AMOUNT && amount <= remainingBalance;
 
@@ -106,73 +140,107 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
         </div>
       ) : (
         <div className="space-y-4 pt-2 border-t border-border">
-          <div className="flex flex-wrap gap-2">
-            {PRESETS.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => handlePresetClick(preset)}
-                disabled={preset > remainingBalance}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                  selectedPreset === preset
-                    ? "bg-accent text-accent-foreground"
-                    : "border border-border text-foreground hover:border-accent/30"
-                } disabled:opacity-40 disabled:pointer-events-none`}
-              >
-                ${preset / 100}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={handlePayFull}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                selectedPreset === remainingBalance
-                  ? "bg-accent text-accent-foreground"
-                  : "border border-border text-foreground hover:border-accent/30"
-              }`}
-            >
-              Pay Full
-            </button>
-          </div>
-
-          <div className="space-y-1.5">
-            <label htmlFor={`custom-${bookingId}`} className="text-xs font-medium text-muted">
-              Custom amount
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">$</span>
-              <input
-                id={`custom-${bookingId}`}
-                type="number"
-                min={MIN_PAYMENT_AMOUNT / 100}
-                max={remainingBalance / 100}
-                step="0.01"
-                value={customAmount}
-                onChange={(e) => handleCustomChange(e.target.value)}
-                placeholder="25.00"
-                className="w-full rounded-xl border border-border bg-surface py-2.5 pl-7 pr-4 text-sm text-foreground placeholder:text-muted/50 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
-              />
+          {cashSuccess ? (
+            <div className="flex flex-col items-center gap-2 py-4 text-center">
+              <CheckCircleIcon size={32} weight="bold" className="text-success" />
+              <p className="text-sm font-medium">Cash payment of ${((cashSuccess as number) / 100).toFixed(2)} registered</p>
+              <p className="text-xs text-muted">Show this to your church admin to mark as received.</p>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => handlePresetClick(preset)}
+                    disabled={preset > remainingBalance}
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                      selectedPreset === preset
+                        ? "bg-accent text-accent-foreground"
+                        : "border border-border text-foreground hover:border-accent/30"
+                    } disabled:opacity-40 disabled:pointer-events-none`}
+                  >
+                    ${preset / 100}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={handlePayFull}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    selectedPreset === remainingBalance
+                      ? "bg-accent text-accent-foreground"
+                      : "border border-border text-foreground hover:border-accent/30"
+                  }`}
+                >
+                  Pay Full
+                </button>
+              </div>
 
-          <PillButton
-            size="md"
-            fullWidth
-            disabled={!isValidAmount || submitting}
-            onClick={handleSubmit}
-          >
-            {submitting ? (
-              <span className="inline-flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-foreground border-t-transparent" />
-                Processing...
-              </span>
-            ) : (
-              <>
-                <ReceiptIcon size={18} />
-                Pay ${isValidAmount ? (amount / 100).toFixed(2) : "..."}
-              </>
-            )}
-          </PillButton>
+              <div className="space-y-1.5">
+                <label htmlFor={`custom-${bookingId}`} className="text-xs font-medium text-muted">
+                  Custom amount
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">$</span>
+                  <input
+                    id={`custom-${bookingId}`}
+                    type="number"
+                    min={MIN_PAYMENT_AMOUNT / 100}
+                    max={remainingBalance / 100}
+                    step="0.01"
+                    value={customAmount}
+                    onChange={(e) => handleCustomChange(e.target.value)}
+                    placeholder="25.00"
+                    className="w-full rounded-xl border border-border bg-surface py-2.5 pl-7 pr-4 text-sm text-foreground placeholder:text-muted/50 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
+                  />
+                </div>
+              </div>
+
+              {cashError && (
+                <p className="text-sm text-danger">{cashError}</p>
+              )}
+
+              <div className="flex gap-3">
+                <PillButton
+                  size="md"
+                  fullWidth
+                  disabled={!isValidAmount || submitting || cashSubmitting}
+                  onClick={handleSubmit}
+                >
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-foreground border-t-transparent" />
+                      Processing...
+                    </span>
+                  ) : (
+                    <>
+                      <CurrencyDollarIcon size={18} />
+                      Pay ${isValidAmount ? (amount / 100).toFixed(2) : "..."}
+                    </>
+                  )}
+                </PillButton>
+                <button
+                  type="button"
+                  disabled={!isValidAmount || submitting || cashSubmitting}
+                  onClick={handleCashPayment}
+                  className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:border-accent/30 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none inline-flex items-center justify-center gap-2"
+                >
+                  {cashSubmitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
+                      Registering...
+                    </span>
+                  ) : (
+                    <>
+                      <ReceiptIcon size={18} />
+                      Pay with Cash
+                    </>
+                  )}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
