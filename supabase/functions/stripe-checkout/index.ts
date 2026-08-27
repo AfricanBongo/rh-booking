@@ -270,6 +270,38 @@ async function handleCashInvoice(
   await stripe.invoices.finalizeInvoice(invoice.id);
 
   console.info("[stripe-checkout:cash] Invoice created and finalized:", invoice.id);
+
+  // Fire-and-forget: notify finance admin
+  const notifyPayload = {
+    userName: "", // will be fetched below
+    userEmail,
+    amount,
+    description,
+    invoiceId: invoice.id,
+    type: metadata.type || "room_payment",
+  };
+
+  // Fetch user's full name for the email
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", userId)
+    .single();
+
+  notifyPayload.userName = profile?.full_name || userEmail;
+
+  // Non-blocking notification
+  fetch(`${supabaseUrl}/functions/v1/notify-cash-payment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${supabaseServiceKey}`,
+    },
+    body: JSON.stringify(notifyPayload),
+  }).catch((err) => {
+    console.error("[stripe-checkout:cash] Failed to send notification:", err);
+  });
+
   return Response.json({ invoiceId: invoice.id, status: "open" });
 }
 
