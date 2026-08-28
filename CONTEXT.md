@@ -18,12 +18,12 @@ Members register for conferences, book and share hotel rooms, manage payments in
 ## Architecture
 
 ```
-Next.js 16 (Cloudflare Pages)  -->  Strapi (Coolify) : read-only content
-                                -->  Supabase        : auth + transactional data
-                                -->  Stripe Checkout  : payments
+Next.js 16 (Netlify)  -->  Strapi (Coolify) : read-only content
+                      -->  Supabase        : auth + transactional data
+                      -->  Stripe Checkout  : payments
 ```
 
-- **Next.js 16** - Frontend client on Cloudflare Pages
+- **Next.js 16** - Frontend client on Netlify
 - **Strapi** - Headless CMS on Coolify. Admin creates conferences, room types, merch items, pickup locations. Frontend reads via REST API.
 - **Supabase** - Auth (email), database (profiles, bookings, invitations, children, merch orders), Edge Functions (Stripe webhooks)
 - **Stripe** - Checkout (hosted payment page) for room payments and merch. stripe-sync-engine mirrors payment data to Supabase.
@@ -35,7 +35,7 @@ Next.js 16 (Cloudflare Pages)  -->  Strapi (Coolify) : read-only content
 - Supabase (Auth + Postgres + Edge Functions + stripe-sync-engine)
 - Strapi v5 (headless CMS, self-hosted on Coolify)
 - Stripe Checkout
-- Cloudflare Pages (deployment)
+- Netlify (deployment)
 
 ## Key Decisions
 
@@ -91,7 +91,7 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - [x] Merch store (listing + detail + purchase via Stripe)
 - [x] Dashboard (conferences, merch orders, profile)
 - [x] Navigation + polish
-- [x] Deployed (Cloudflare Pages via OpenNext)
+- [x] Deployed (Netlify)
 - [ ] Account deletion UI
 - [ ] Admin notifications
 
@@ -113,7 +113,7 @@ Royalhouse, CT | Victory Center; Royalhouse, DC | DC Mission; Royalhouse DE | De
 - **2.5** Booking confirmation: receipt-style breakdown (room share + children surcharge = total), 24-hour urgency detection (forces payment), `/api/bookings` POST creates room_group + booking + children atomically. Zustand store resets on confirm.
 
 ### Session 3 (2026-07-17/18)
-- **3.1** Deployment: Cloudflare Pages via OpenNext adapter, `.dev.vars` for local wrangler secrets.
+- **3.1** Deployment: Netlify via OpenNext adapter (auto-configured).
 - **3.2** Bug fixes: checkout 500 (added try/catch), registration date validation (accept ISO datetimes), hydration mismatch (LocalizedDate SSR fix), error UX (styled alert boxes with WarningCircleIcon).
 - **3.3** Phone input: `PhoneInput` component with country code picker (~170 countries), auto-formatting via `libphonenumber-js`, E.164 storage. Integrated into registration + profile pages. Validation updated to `isValidPhoneNumber()`.
 - **3.4** Profile gate: `/auth/complete-profile` page for users who sign in via magic link without a profile. Middleware + callback redirect if no profile row exists.
@@ -131,7 +131,7 @@ Session 4: Account deletion UI, admin notifications, production hardening
 - Supabase: https://mnmeropgokozniimbqzk.supabase.co
 - Stripe: Test mode (dashboard.stripe.com)
 - Local dev: http://localhost:3000
-- Deployed: https://booking.donl.me (Cloudflare Pages)
+- Deployed: https://booking.donl.me (Netlify)
 
 ## File Structure (planned)
 
@@ -242,5 +242,5 @@ CONTEXT.md                          # This file
 - **Phone numbers** — Stored as E.164 format (e.g., `+12125551234`). Validated via `libphonenumber-js`.
 - **Account deletion** — `delete_own_account()` RPC cascades through all FK chains. Invitations FK fixed to CASCADE.
 - **Local Supabase** — running on `http://127.0.0.1:54321`. Mailpit on `http://localhost:54324`.
-- **Production env vars** — `STRIPE_SECRET_KEY` must be set in Cloudflare Pages environment. Missing key causes checkout 500.
+- **Production env vars** — `STRIPE_SECRET_KEY` must be set in Netlify environment variables. Missing key causes checkout 500.
 - **Versioning** — `commit-and-tag-version` manages `CHANGELOG.md` + tags. Use `npm run release` after commits.

@@ -31,7 +31,7 @@ Conference room booking platform for RoyalHouse Church. Members register for con
 | CMS | Strapi v5 (headless, self-hosted on Coolify) |
 | Payments | Stripe Checkout + stripe-sync-engine |
 | Testing | Vitest (unit + integration) |
-| Deployment | Cloudflare Pages via GitHub Actions |
+| Deployment | Netlify |
 | Package Manager | npm |
 
 ---
@@ -39,7 +39,7 @@ Conference room booking platform for RoyalHouse Church. Members register for con
 ## Architecture
 
 ```
-Next.js 16 (Cloudflare Pages)
+Next.js 16 (Netlify)
   |
   |-- reads content from --> Strapi (Coolify)
   |-- auth + CRUD --------> Supabase (Auth + DB + Edge Functions)
@@ -405,13 +405,13 @@ One logical change per commit. Every commit must pass build + tests.
 
 ## Deployment
 
-### Cloudflare Pages via GitHub Actions
+### Netlify
 
-Deployment is handled manually by the developer. Do NOT create or modify deployment workflows.
+Deployment is handled automatically via Git-based deploys on Netlify. Do NOT create or modify deployment workflows.
 
 ### Environment Variables
 
-All env vars documented in `.env.local.example`. Production values set in Cloudflare dashboard.
+All env vars documented in `.env.local.example`. Production values set in Netlify dashboard.
 
 ---
 
