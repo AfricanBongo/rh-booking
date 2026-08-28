@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.12](https://github.com/AfricanBongo/rh-booking/compare/v0.6.0...v0.5.12) (2026-08-28)
+
+
+### Bug Fixes
+
+* **deps:** pin @opennextjs/cloudflare to 1.20.1 for Next.js 16.2.x compat ([ad8c673](https://github.com/AfricanBongo/rh-booking/commit/ad8c67332dff7f29d26efb9828397df6ea6ffc18))
+
 ## [0.5.11](https://github.com/AfricanBongo/rh-booking/compare/v0.5.10...v0.5.11) (2026-08-27)
 
 
