@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.0](https://github.com/AfricanBongo/rh-booking/compare/v0.5.11...v0.6.0) (2026-08-28)
+
+
+### Features
+
+* **deploy:** migrate from Cloudflare Pages to Netlify ([58330ff](https://github.com/AfricanBongo/rh-booking/commit/58330ff407670c5ae3f04c359751fd325aff0275))
+* **email:** add notify-cash-payment edge function with useSend ([b296dc8](https://github.com/AfricanBongo/rh-booking/commit/b296dc864d9fca28fbbc98bdf49e4a212893d107))
+* **payments:** notify finance admin on cash payment request ([9802282](https://github.com/AfricanBongo/rh-booking/commit/98022822a3b00443814470023a4845671dda3119))
+* **ui:** update merch buttons to 'online'/'in cash' labels with responsive stacking ([84cff6b](https://github.com/AfricanBongo/rh-booking/commit/84cff6bffdd949c8812db2a1389634b0a9ae12a1))
+* **ui:** update payment buttons to 'online'/'in cash' labels with responsive stacking ([7f77e0c](https://github.com/AfricanBongo/rh-booking/commit/7f77e0ccbe19d4ecea953556206de5ecaa15889e))
+
+
+### Bug Fixes
+
+* **db:** open room_groups RLS to all authenticated users for booking flow ([4e00939](https://github.com/AfricanBongo/rh-booking/commit/4e0093973475922415158b240f3085f2417f40d2))
+
 ## [0.5.11](https://github.com/AfricanBongo/rh-booking/compare/v0.5.10...v0.5.11) (2026-08-27)
 
 

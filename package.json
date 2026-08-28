@@ -1,6 +1,6 @@
 {
   "name": "rh-booking",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
-
     "release": "commit-and-tag-version",
     "release:patch": "commit-and-tag-version --release-as patch",
     "release:minor": "commit-and-tag-version --release-as minor",
