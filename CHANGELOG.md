@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.1](https://github.com/AfricanBongo/rh-booking/compare/v0.5.14...v0.6.1) (2026-09-01)
+
 ## [0.5.14](https://github.com/AfricanBongo/rh-booking/compare/v0.5.13...v0.5.14) (2026-09-01)
 
 
