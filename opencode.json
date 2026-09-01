@@ -12,17 +12,16 @@
     },
     "supabase": {
       "type": "remote",
-      "url": "http://localhost:54321/mcp",
+      "url": "http://127.0.0.1:54321/mcp",
       "enabled": true
     },
-    "magnific": {
-      "type": "remote",
-      "url": "https://mcp.magnific.com",
-      "enabled": true
-    },
-    "recraft": {
-      "type": "remote",
-      "url": "https://mcp.recraft.ai/mcp"
+    "coolify": {
+      "type": "local",
+      "command": ["npx", "-y", "@masonator/coolify-mcp"],
+      "environment": {
+        "COOLIFY_BASE_URL": "https://coolify.infra.worldsofhello.com",
+        "COOLIFY_ACCESS_TOKEN": "{env:COOLIFY_WOH_API_KEY}"
+      }
     }
   }
 }

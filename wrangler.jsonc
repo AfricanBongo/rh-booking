@@ -9,5 +9,28 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "routes": [
+    {
+      "pattern": "book.royalhousena.org",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "env": {
+    "staging": {
+      "name": "rh-booking-staging",
+      "routes": [
+        {
+          "pattern": "staging.book.royalhousena.org",
+          "custom_domain": true
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging"
+      }
+    }
   }
 }
