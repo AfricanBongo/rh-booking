@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.14](https://github.com/AfricanBongo/rh-booking/compare/v0.5.13...v0.5.14) (2026-09-01)
+
+
+### Features
+
+* **supabase:** update config with remotes ids ([2d19c3f](https://github.com/AfricanBongo/rh-booking/commit/2d19c3f4e5f07ce0a2e1d0a445cf3a9d32576f76))
+
 ## [0.5.13](https://github.com/AfricanBongo/rh-booking/compare/v0.5.12...v0.5.13) (2026-09-01)
 
 
