@@ -4,40 +4,40 @@
 
 ---
 
-## Execution Order
+## Execution Order + Model Assignments
 
-### Phase 0: Infrastructure (Owner tasks, blockers)
+### Phase 0: Infrastructure (Owner tasks, blockers) -- No AI model
 1. Migrate AWS services to bigger Lightsail instance
 2. Set up staging environment
 3. Branch protection rules on staging + main
 4. Uptime Kuma status service on Coolify
 
-### Phase 1: Strapi Monorepo (Task 7)
-Blocked on Phase 0 (Lightsail migration). Clone live Strapi to local, create `strapi/` subfolder in repo.
+### Phase 1: Strapi Monorepo (Task 7) -- Sonnet
+Blocked on Phase 0 (Lightsail migration). Clone live Strapi to local, create `strapi/` subfolder in repo. Mechanical scaffolding, Docker boilerplate.
 
-### Phase 2: Strapi Schema Changes (Tasks 3, 8, 1 - Strapi side)
-Add new content types and fields together once monorepo is running locally.
+### Phase 2: Strapi Schema Changes (Tasks 3, 8, 1 - Strapi side) -- Sonnet
+Add new content types and fields together once monorepo is running locally. Click-through Admin Panel work + pattern-following data layer files.
 
-### Phase 3: Price Fix (Task 4)
-Remove per-person division logic. Price in Strapi IS per-person.
+### Phase 3: Price Fix (Task 4) -- Opus
+Remove per-person division logic. Price in Strapi IS per-person. High-risk cross-cutting change across 7+ files. Opus traces caller chains and invitation recalc edge cases.
 
-### Phase 4: Additional Guests (Task 2)
-Rename children UI, drop gender, add dining pass opt-in.
+### Phase 4: Additional Guests (Task 2) -- Opus
+Rename children UI, drop gender, add dining pass opt-in. Type rename across store/validation/API/UI layers needs Opus to hold the full picture without drift.
 
-### Phase 5: Dining Pass Booking Flow (Task 1 - frontend)
-New booking step for dining pass selection.
+### Phase 5: Dining Pass Booking Flow (Task 1 - frontend) -- Opus
+New booking step for dining pass selection. Most complex new feature: new page, store extensions, migration, API changes, conditional step visibility across 4 existing pages.
 
-### Phase 6: Conference Images + Carousel (Task 3 - frontend)
-Responsive portrait/landscape, gallery carousel.
+### Phase 6: Conference Images + Carousel (Task 3 - frontend) -- Sonnet
+Responsive portrait/landscape, gallery carousel. Straightforward data layer extension + standard HTML `<picture>` element. Reuses existing components.
 
-### Phase 7: Main Page CMS (Task 8 - frontend)
-Connect landing page to Strapi Main Page single type.
+### Phase 7: Main Page CMS (Task 8 - frontend) -- Sonnet
+Connect landing page to Strapi Main Page single type. New data layer file follows established patterns. Conditional rendering, no edge cases.
 
-### Phase 8: Real-time Payments (Task 6)
-Supabase Realtime for instant payment status updates.
+### Phase 8: Real-time Payments (Task 6) -- Opus
+Supabase Realtime for instant payment status updates. Channel lifecycle, useEffect cleanup race conditions, RLS interaction with Realtime filters. Opus handles hook lifecycle nuances.
 
-### Phase 9: Stripe Configuration (Task 5)
-Enable auto-receipts and auto-invoicing in Stripe Dashboard.
+### Phase 9: Stripe Configuration (Task 5) -- No AI model
+Enable auto-receipts and auto-invoicing in Stripe Dashboard. Three toggles, no code.
 
 ---
 

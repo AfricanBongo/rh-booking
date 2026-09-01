@@ -10,9 +10,30 @@
 
 ---
 
-## Phase 1: Strapi Monorepo (Task 7)
+## Model Selection Guide
+
+Each phase specifies which model to use. This is deliberate -- do not override.
+
+| Phase | Model | Why |
+|-------|-------|-----|
+| 1 (Strapi Monorepo) | **Sonnet** | Mechanical scaffolding, Docker boilerplate, no business logic |
+| 2 (Strapi Schema) | **Sonnet** | Admin Panel click-through + pattern-following data layer files |
+| 3 (Price Fix) | **Opus** | High-risk cross-cutting change across 7+ files, invitation recalc edge cases |
+| 4 (Additional Guests) | **Opus** | Type rename across store/validation/API/UI layers, backward compat aliases |
+| 5 (Dining Pass Flow) | **Opus** | Most complex feature: new page + store + migration + API + conditional step logic |
+| 6 (Conference Images) | **Sonnet** | Straightforward data layer extension + standard HTML, reuses existing components |
+| 7 (Main Page CMS) | **Sonnet** | New data layer follows established patterns, conditional rendering |
+| 8 (Realtime Payments) | **Opus** | useEffect lifecycle nuances, channel cleanup race conditions, RLS + Realtime interaction |
+| 9 (Stripe Config) | **None** | Owner task: 3 toggles in Stripe Dashboard |
+
+**Rule:** When starting a phase, switch to the specified model before writing any code. Sonnet phases should not be run on Opus (wasteful). Opus phases must not be run on Sonnet (will miss cross-file ripple effects).
+
+---
+
+## Phase 1: Strapi Monorepo (Task 7) -- MODEL: Sonnet
 
 > **Blocked on:** Owner migrating AWS to bigger Lightsail instance. Owner will copy live Strapi to local first.
+> **Why Sonnet:** Mechanical scaffolding. Create files, write Docker configs, install a plugin. No complex business logic.
 
 ### Task 1.1: Scaffold Strapi App
 
@@ -308,9 +329,10 @@ git commit -m "feat(strapi): add Cloudflare R2 upload provider for production"
 
 ---
 
-## Phase 2: Strapi Schema Changes (Tasks 3, 8, 1)
+## Phase 2: Strapi Schema Changes (Tasks 3, 8, 1) -- MODEL: Sonnet
 
 > **Prerequisite:** Phase 1 complete, local Strapi running.
+> **Why Sonnet:** Click-through content type creation in Strapi Admin Panel. Data layer files follow exact same patterns as existing rooms.ts and merch.ts.
 
 ### Task 2.1: Add Conference Image Fields (Task 3)
 
@@ -416,7 +438,9 @@ git commit -m "feat(strapi): add Dining Pass collection with conference relation
 
 ---
 
-## Phase 3: Price Fix (Task 4)
+## Phase 3: Price Fix (Task 4) -- MODEL: Opus
+
+> **Why Opus:** High-risk business logic change touching 7+ files across 4 layers (utility, component, API route, data layer). The invitation recalculation logic is the trickiest part -- Opus traces the full flow and catches edge cases like children surcharge interaction with invitation acceptance. Sonnet would fix obvious callers but miss the invitation ripple effect.
 
 ### Task 3.1: Update Price Tests (TDD - write failing tests first)
 
@@ -627,7 +651,9 @@ git commit -m "fix(price): room price is per-person, remove division logic"
 
 ---
 
-## Phase 4: Additional Guests (Task 2)
+## Phase 4: Additional Guests (Task 2) -- MODEL: Opus
+
+> **Why Opus:** Refactors Zustand store type, validation schema, surcharge function interface, children page UI, DB migration, and bookings API child insertion in one coherent change. Opus holds the full picture of the type rename (ChildEntry -> AdditionalGuest) across store/validation/API/UI layers without drift.
 
 ### Task 4.1: Update Validation Schema
 
@@ -956,7 +982,9 @@ git commit -m "feat(ui): rename children to additional guests, add dining pass o
 
 ---
 
-## Phase 5: Dining Pass Booking Flow (Task 1 - frontend)
+## Phase 5: Dining Pass Booking Flow (Task 1 - frontend) -- MODEL: Opus
+
+> **Why Opus:** Most complex new feature in Session 4. Touches: new server page, new client component, Zustand store extensions, Supabase migration + RLS, bookings API modification, confirm page price breakdown update, dynamic step count logic across 4 existing pages. Opus handles multi-layer coordination and conditional visibility (pass exists? show step, adjust numbering; no pass? hide step entirely).
 
 ### Task 5.1: Dining Pass Data Layer
 
@@ -1248,7 +1276,9 @@ git commit -m "feat(ui): show dining pass in booking confirmation breakdown"
 
 ---
 
-## Phase 6: Conference Images + Carousel (Task 3 - frontend)
+## Phase 6: Conference Images + Carousel (Task 3 - frontend) -- MODEL: Sonnet
+
+> **Why Sonnet:** Straightforward frontend work. Data layer extension follows existing patterns. `<picture>` element is standard HTML. Gallery reuses existing ImageSlider + ImageLightbox components. No business logic complexity.
 
 ### Task 6.1: Update Conference Data Layer
 
@@ -1369,7 +1399,9 @@ git commit -m "feat(ui): add event gallery carousel on conference detail page"
 
 ---
 
-## Phase 7: Main Page CMS (Task 8 - frontend)
+## Phase 7: Main Page CMS (Task 8 - frontend) -- MODEL: Sonnet
+
+> **Why Sonnet:** New data layer file follows established pattern (strapiGet + interface mapping). Landing page changes are conditional rendering (if/else hero override). No edge cases needing Opus-level reasoning.
 
 ### Task 7.1: Main Page Data Layer
 
@@ -1573,7 +1605,9 @@ git commit -m "feat(cms): connect landing page to Strapi Main Page (hero + FAQ)"
 
 ---
 
-## Phase 8: Real-time Payments (Task 6)
+## Phase 8: Real-time Payments (Task 6) -- MODEL: Opus
+
+> **Why Opus:** Supabase Realtime has nuanced lifecycle management: channel creation timing, effect dependency arrays, cleanup race conditions on fast navigation, RLS interaction with Realtime filters. The hook must work correctly across 3+ pages that mount/unmount independently. Opus handles useEffect cleanup edge cases and the optimistic-vs-authoritative state pattern.
 
 ### Task 8.1: Enable Realtime on Bookings Table
 
@@ -1725,7 +1759,7 @@ git commit -m "feat(realtime): live payment updates on dashboard"
 
 ---
 
-## Phase 9: Stripe Configuration (Task 5)
+## Phase 9: Stripe Configuration (Task 5) -- MODEL: None (Owner task)
 
 No code changes. Document for the owner:
 
