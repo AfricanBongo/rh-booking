@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pickup_locations",
+  "info": {
+    "singularName": "pickup-location",
+    "pluralName": "pickup-locations",
+    "displayName": "Pickup Location"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "conferences": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conference.conference"
+    },
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    }
+  }
+}
