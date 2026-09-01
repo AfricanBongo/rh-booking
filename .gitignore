@@ -50,6 +50,7 @@ next-env.d.ts
 stripe_listen.log
 supabase_functions.log
 strapi_compose.log
+dev_setup_output.log
 .open-next
 cloudflare-env.d.ts
 .wrangler
