@@ -22,12 +22,6 @@
   "env": {
     "staging": {
       "name": "rh-booking-staging",
-      "routes": [
-        {
-          "pattern": "staging.book.royalhousena.org",
-          "custom_domain": true
-        }
-      ],
       "vars": {
         "ENVIRONMENT": "staging"
       }
