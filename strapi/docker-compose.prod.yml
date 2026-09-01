@@ -1,0 +1,71 @@
+services:
+  strapi:
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_STRAPI
+      - SERVICE_URL_STRAPI_1337
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - 'DATABASE_NAME=${POSTGRESQL_DATABASE:-strapi}'
+      - DATABASE_USERNAME=$SERVICE_USER_POSTGRESQL
+      - DATABASE_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
+      - JWT_SECRET=$SERVICE_BASE64_64_SECRET
+      - ADMIN_JWT_SECRET=$SERVICE_BASE64_64_SECRET
+      - APP_KEYS=$SERVICE_BASE64_64_KEY
+      - API_TOKEN_SALT=$SERVICE_BASE64_64_API_TOKEN_SALT
+      - TRANSFER_TOKEN_SALT=$SERVICE_BASE64_64_TRANSFER_TOKEN_SALT
+      - ENCRYPTION_KEY=$SERVICE_BASE64_64_ENCRYPTION_KEY
+      - 'STRAPI_TELEMETRY_DISABLED=${STRAPI_TELEMETRY_DISABLED:-true}'
+      - 'STRAPI_LICENSE=${STRAPI_LICENSE}'
+      - 'NODE_ENV=${NODE_ENV:-production}'
+      - 'STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE=${STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE:-en}'
+      - 'CF_R2_ACCESS_KEY_ID=${CF_R2_ACCESS_KEY_ID}'
+      - 'CF_R2_SECRET_ACCESS_KEY=${CF_R2_SECRET_ACCESS_KEY}'
+      - 'CF_R2_BUCKET=${CF_R2_BUCKET}'
+      - 'CF_R2_ENDPOINT=${CF_R2_ENDPOINT}'
+      - 'CF_R2_PUBLIC_URL=${CF_R2_PUBLIC_URL}'
+    volumes:
+      - 'strapi-config:/opt/app/config'
+      - 'strapi-src:/opt/app/src'
+      - 'strapi-uploads:/opt/app/public/uploads'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '--spider'
+        - 'http://127.0.0.1:1337/'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    image: 'elestio/postgres:latest'
+    restart: unless-stopped
+    environment:
+      - 'POSTGRES_DB=${POSTGRESQL_DATABASE:-strapi}'
+      - POSTGRES_USER=$SERVICE_USER_POSTGRESQL
+      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - 'strapi-postgresql-data:/var/lib/postgresql/data'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+volumes:
+  strapi-config:
+  strapi-src:
+  strapi-postgresql-data:
+  strapi-uploads:
