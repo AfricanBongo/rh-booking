@@ -4,6 +4,12 @@
 # working directory name when running `supabase init`.
 project_id = "rh-booking"
 
+[remotes.staging]
+project_id = "eswjpuapwsehqrfzufpw"
+
+[remotes.production]
+project_id = "cagwgqubupwayqewsvlq"
+
 [api]
 enabled = true
 # Port to use for the API URL.
