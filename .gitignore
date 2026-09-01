@@ -49,8 +49,19 @@ next-env.d.ts
 # dev_setup logs
 stripe_listen.log
 supabase_functions.log
+strapi_compose.log
+dev_setup_output.log
 .open-next
 cloudflare-env.d.ts
 .wrangler
 tmp-cms-images
 .dev.vars
+
+# strapi
+strapi/node_modules
+strapi/.cache
+strapi/dist
+strapi/build
+strapi/database
+strapi/public/uploads
+strapi/.tmp
