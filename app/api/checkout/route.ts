@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseServiceKey = process.env.SUPABASE_SECRET_KEY!;
 
     const res = await fetch(`${supabaseUrl}/functions/v1/stripe-checkout`, {
       method: "POST",
