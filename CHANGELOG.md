@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.3](https://github.com/AfricanBongo/rh-booking/compare/v0.6.2...v0.6.3) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** use plain env vars for salts -- Coolify does not auto-generate SERVICE_BASE64_64_* custom suffixes ([2505717](https://github.com/AfricanBongo/rh-booking/commit/250571713265828ac16432964300b5c1a5d784f8))
+
 ## [0.6.2](https://github.com/AfricanBongo/rh-booking/compare/v0.6.1...v0.6.2) (2026-09-01)
 
 ## [0.6.1](https://github.com/AfricanBongo/rh-booking/compare/v0.5.14...v0.6.1) (2026-09-01)
