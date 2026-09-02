@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "room_types",
+  "info": {
+    "singularName": "room-type",
+    "pluralName": "room-types",
+    "displayName": "Room Type"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "conferences": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::conference.conference"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["private", "shared-2", "shared-4"]
+    },
+    "price": {
+      "type": "integer"
+    },
+    "total_available": {
+      "type": "integer"
+    },
+    "description": {
+      "type": "text"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    }
+  }
+}

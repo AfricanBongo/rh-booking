@@ -20,6 +20,7 @@ cleanup() {
     log_info "Shutting down..."
     if [ -n "$SUPABASE_LOG_PID" ]; then kill "$SUPABASE_LOG_PID" 2>/dev/null; fi
     if [ -n "$STRIPE_LOG_PID" ]; then kill "$STRIPE_LOG_PID" 2>/dev/null; fi
+    if [ -n "$STRAPI_LOG_PID" ]; then kill "$STRAPI_LOG_PID" 2>/dev/null; fi
     if [ -n "$STRIPE_LISTEN_PID" ]; then
         kill -0 "$STRIPE_LISTEN_PID" 2>/dev/null && kill "$STRIPE_LISTEN_PID"
     fi
@@ -29,6 +30,10 @@ cleanup() {
     if [ -n "$CONTAINER_ID" ]; then
         log_info "Stopping Docker container ($CONTAINER_ID)..."
         docker stop "$CONTAINER_ID" >/dev/null
+    fi
+    if [ "$STRAPI_STARTED" = "true" ]; then
+        log_info "Stopping Strapi Docker Compose..."
+        docker compose -f strapi/docker-compose.dev.yml down >/dev/null 2>&1
     fi
     log_success "Cleanup complete. Bye!"
     trap - EXIT INT TERM HUP
@@ -161,11 +166,28 @@ curl -s -o /dev/null -w "%{http_code}" --location --request POST 'http://localho
     fi
 }
 
+# --- 5b. Strapi (Docker Compose) ---
+STRAPI_STARTED="false"
+if [ -f strapi/docker-compose.dev.yml ]; then
+    log_info "Starting Strapi via Docker Compose..."
+    if docker compose -f strapi/docker-compose.dev.yml up -d --build > strapi_compose.log 2>&1; then
+        STRAPI_STARTED="true"
+        log_success "Strapi started at http://localhost:1337"
+    else
+        log_error "Failed to start Strapi. Check strapi_compose.log"
+    fi
+else
+    log_info "Skipping Strapi (strapi/docker-compose.dev.yml not found)"
+fi
+
 log_success "Setup complete! Services running:"
 echo -e "  ${CYAN}Supabase DB${NC}        postgres://localhost:54322"
 echo -e "  ${CYAN}Edge Functions${NC}     http://localhost:54321/functions/v1"
 echo -e "  ${CYAN}Sync Engine${NC}        http://localhost:8080"
 echo -e "  ${MAGENTA}Stripe Listen${NC}      forwarding to localhost:8080/webhooks"
+if [ "$STRAPI_STARTED" = "true" ]; then
+echo -e "  ${CYAN}Strapi CMS${NC}         http://localhost:1337"
+fi
 echo ""
 log_info "Press Ctrl+C to stop all services."
 
@@ -175,5 +197,10 @@ SUPABASE_LOG_PID=$!
 
 tail -f -n 0 stripe_listen.log | awk -v color="$MAGENTA" -v nc="$NC" '{print color "[STRIPE]:" nc, $0; fflush()}' &
 STRIPE_LOG_PID=$!
+
+if [ "$STRAPI_STARTED" = "true" ]; then
+    docker compose -f strapi/docker-compose.dev.yml logs -f --tail 0 2>/dev/null | awk -v color="$GREEN" -v nc="$NC" '{print color "[STRAPI]:" nc, $0; fflush()}' &
+    STRAPI_LOG_PID=$!
+fi
 
 wait

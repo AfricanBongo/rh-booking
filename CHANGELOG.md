@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.3](https://github.com/AfricanBongo/rh-booking/compare/v0.6.2...v0.6.3) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** use plain env vars for salts -- Coolify does not auto-generate SERVICE_BASE64_64_* custom suffixes ([2505717](https://github.com/AfricanBongo/rh-booking/commit/250571713265828ac16432964300b5c1a5d784f8))
+
+## [0.6.2](https://github.com/AfricanBongo/rh-booking/compare/v0.6.1...v0.6.2) (2026-09-01)
+
+## [0.6.1](https://github.com/AfricanBongo/rh-booking/compare/v0.5.14...v0.6.1) (2026-09-01)
+
+## [0.5.14](https://github.com/AfricanBongo/rh-booking/compare/v0.5.13...v0.5.14) (2026-09-01)
+
+
+### Features
+
+* **supabase:** update config with remotes ids ([2d19c3f](https://github.com/AfricanBongo/rh-booking/commit/2d19c3f4e5f07ce0a2e1d0a445cf3a9d32576f76))
+
+## [0.5.13](https://github.com/AfricanBongo/rh-booking/compare/v0.5.12...v0.5.13) (2026-09-01)
+
+
+### Features
+
+* **strapi:** add content type schemas and dev seed data from production ([ef27294](https://github.com/AfricanBongo/rh-booking/commit/ef2729443b574adb47be85f24be43f1c55eaff3c))
+
 ## [0.5.12](https://github.com/AfricanBongo/rh-booking/compare/v0.6.0...v0.5.12) (2026-08-28)
 
 

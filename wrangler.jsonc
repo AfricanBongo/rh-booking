@@ -9,5 +9,16 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "env": {
+    "staging": {
+      "name": "rh-booking-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      }
+    }
   }
 }

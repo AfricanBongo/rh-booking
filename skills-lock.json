@@ -1,6 +1,30 @@
 {
   "version": 1,
   "skills": {
+    "strapi-docs-mcp": {
+      "source": "strapi/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cms/strapi-docs-mcp/SKILL.md",
+      "computedHash": "1aa149a4433ebce5c5bb048943a87b1dc355c8c54a4eac0eab81a6e0c1ce8aa3"
+    },
+    "strapi-mcp-capabilities": {
+      "source": "strapi/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cms/strapi-mcp-capabilities/SKILL.md",
+      "computedHash": "16989f14e68f01867723c2d2fa32260e2775f43b9b5939c367918aba5e4c24c6"
+    },
+    "strapi-product-builder": {
+      "source": "strapi/skills",
+      "sourceType": "github",
+      "skillPath": "skills/in-progress/strapi-product-builder/SKILL.md",
+      "computedHash": "5cff5b79c3d61970cf8929df1f0f74b7ef1cb84da0c8c59d22a13b57c1c11886"
+    },
+    "strapi-version-upgrade": {
+      "source": "strapi/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cms/strapi-version-upgrade/SKILL.md",
+      "computedHash": "9e9132907d719281bc64a97533e3fc2894621591ae0f2d56b1eae632b1b2b1a8"
+    },
     "stripe-best-practices": {
       "source": "docs.stripe.com",
       "sourceType": "well-known",

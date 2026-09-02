@@ -1,0 +1,64 @@
+services:
+  strapi:
+    build:
+      context: .
+      target: dev
+    restart: unless-stopped
+    environment:
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - 'DATABASE_NAME=${DATABASE_NAME:-strapi_dev}'
+      - 'DATABASE_USERNAME=${DATABASE_USERNAME:-strapi}'
+      - 'DATABASE_PASSWORD=${DATABASE_PASSWORD:-strapi_dev_pass}'
+      - 'JWT_SECRET=${JWT_SECRET}'
+      - 'ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}'
+      - 'APP_KEYS=${APP_KEYS}'
+      - 'API_TOKEN_SALT=${API_TOKEN_SALT}'
+      - 'TRANSFER_TOKEN_SALT=${TRANSFER_TOKEN_SALT}'
+      - 'ENCRYPTION_KEY=${ENCRYPTION_KEY}'
+      - 'STRAPI_TELEMETRY_DISABLED=true'
+      - NODE_ENV=development
+    volumes:
+      - './config:/opt/app/config'
+      - './src:/opt/app/src'
+      - 'strapi-uploads:/opt/app/public/uploads'
+    ports:
+      - '1337:1337'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '--spider'
+        - 'http://127.0.0.1:1337/'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    image: 'postgres:16-alpine'
+    restart: unless-stopped
+    environment:
+      - 'POSTGRES_DB=${DATABASE_NAME:-strapi_dev}'
+      - 'POSTGRES_USER=${DATABASE_USERNAME:-strapi}'
+      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD:-strapi_dev_pass}'
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - 'strapi-postgresql-data:/var/lib/postgresql/data'
+    ports:
+      - '5433:5432'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+volumes:
+  strapi-postgresql-data:
+  strapi-uploads:
