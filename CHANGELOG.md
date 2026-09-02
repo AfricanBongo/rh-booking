@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.8](https://github.com/AfricanBongo/rh-booking/compare/v0.6.7...v0.6.8) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** fix R2 provider config format, add R2 to staging environment ([886e0f5](https://github.com/AfricanBongo/rh-booking/commit/886e0f55c7dc5d6911f0c8838e2705356e73f9aa))
+
 ## [0.6.7](https://github.com/AfricanBongo/rh-booking/compare/v0.6.6...v0.6.7) (2026-09-02)
 
 
