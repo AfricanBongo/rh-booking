@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.6](https://github.com/AfricanBongo/rh-booking/compare/v0.6.5...v0.6.6) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** add sharp for image processing (required for upload plugin) ([5d2d141](https://github.com/AfricanBongo/rh-booking/commit/5d2d14139cf20de210c993d38b6a6c14e1d56343))
+
+## [0.6.5](https://github.com/AfricanBongo/rh-booking/compare/v0.6.4...v0.6.5) (2026-09-02)
+
+## [0.6.4](https://github.com/AfricanBongo/rh-booking/compare/v0.6.3...v0.6.4) (2026-09-02)
+
+
+### Bug Fixes
+
+* **build:** exclude strapi/ from root tsconfig, remove invalid viewTransition experimental key ([22bdcf8](https://github.com/AfricanBongo/rh-booking/commit/22bdcf801255f676bbc400215bdd23792c3f8a1a))
+
 ## [0.6.3](https://github.com/AfricanBongo/rh-booking/compare/v0.6.2...v0.6.3) (2026-09-02)
 
 
