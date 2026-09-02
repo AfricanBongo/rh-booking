@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.7](https://github.com/AfricanBongo/rh-booking/compare/v0.6.6...v0.6.7) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** wrap R2 credentials in s3Options to fix deprecated provider config ([43bde50](https://github.com/AfricanBongo/rh-booking/commit/43bde502e96d028817d8d2f3cdb5e7f08c22539d))
+
 ## [0.6.6](https://github.com/AfricanBongo/rh-booking/compare/v0.6.5...v0.6.6) (2026-09-02)
 
 
