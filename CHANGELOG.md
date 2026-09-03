@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.10](https://github.com/AfricanBongo/rh-booking/compare/v0.6.9...v0.6.10) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** remove config/src volume mounts so git-managed files are used ([f110beb](https://github.com/AfricanBongo/rh-booking/commit/f110beb69076e3c1dbcc1de8b77d922c9359730a))
+
 ## [0.6.9](https://github.com/AfricanBongo/rh-booking/compare/v0.6.8...v0.6.9) (2026-09-03)
 
 
