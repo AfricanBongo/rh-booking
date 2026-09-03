@@ -45,55 +45,85 @@ export default async function Home(): Promise<React.ReactElement> {
   return (
     <main>
       {/* ─── HERO ─── */}
-      <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-end">
-        {hero?.imageUrl ? (
-          <picture>
-            {hero.portraitImageUrl && (
-              <source media="(max-width: 768px)" srcSet={hero.portraitImageUrl} />
-            )}
-            <Image src={hero.imageUrl} alt={hero.name} fill className="object-cover" unoptimized priority />
-          </picture>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface-secondary to-surface-tertiary" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-16 md:pb-24">
-          {hero ? (
+      {useCustomHero && mainPage?.heroSection ? (
+        <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-end">
+          {mainPage.heroSection.backgroundImageUrl ? (
+            <Image src={mainPage.heroSection.backgroundImageUrl} alt="" fill className="object-cover" unoptimized priority />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface-secondary to-surface-tertiary" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-16 md:pb-24">
             <div className="max-w-2xl animate-fade-up">
-              <p className="text-sm font-medium tracking-wide text-white/60 uppercase mb-3">
-                {formatConferenceDates(hero.startDate, hero.endDate)} &middot; {hero.location}
-              </p>
               <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-4">
-                {hero.name}
+                {mainPage.heroSection.heading}
               </h1>
               <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-8 max-w-lg">
-                Three days of worship, teaching, and community that will stay with you long after you leave.
+                {mainPage.heroSection.subheading}
               </p>
               <div className="flex flex-wrap items-center gap-4">
-                <PillButton href={`/conferences/${hero.slug}`} size="lg">
-                  Secure Your Spot
+                <PillButton href={mainPage.heroSection.primaryCtaLink} size="lg">
+                  {mainPage.heroSection.primaryCtaText}
                 </PillButton>
-                {daysLeft > 0 && daysLeft <= 60 && (
-                  <Badge variant="glass" size="md">
-                    <CalendarDotsIcon size={14} />
-                    {daysLeft} days away
-                  </Badge>
+                {mainPage.heroSection.secondaryCtaText && mainPage.heroSection.secondaryCtaLink && (
+                  <PillButton href={mainPage.heroSection.secondaryCtaLink} size="lg" variant="outline">
+                    {mainPage.heroSection.secondaryCtaText}
+                  </PillButton>
                 )}
               </div>
             </div>
+          </div>
+        </section>
+      ) : (
+        <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-end">
+          {hero?.imageUrl ? (
+            <picture>
+              {hero.portraitImageUrl && (
+                <source media="(max-width: 768px)" srcSet={hero.portraitImageUrl} />
+              )}
+              <Image src={hero.imageUrl} alt={hero.name} fill className="object-cover" unoptimized priority />
+            </picture>
           ) : (
-            <div className="max-w-xl animate-fade-up">
-              <h1 className="font-heading text-3xl md:text-5xl font-bold text-foreground leading-tight mb-4">
-                Where faith meets fellowship.
-              </h1>
-              <p className="text-lg text-muted mb-6">
-                Conferences, community, and unforgettable experiences. Stay tuned for upcoming events.
-              </p>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface-secondary to-surface-tertiary" />
           )}
-        </div>
-      </section>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-16 md:pb-24">
+            {hero ? (
+              <div className="max-w-2xl animate-fade-up">
+                <p className="text-sm font-medium tracking-wide text-white/60 uppercase mb-3">
+                  {formatConferenceDates(hero.startDate, hero.endDate)} &middot; {hero.location}
+                </p>
+                <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-4">
+                  {hero.name}
+                </h1>
+                <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-8 max-w-lg">
+                  Three days of worship, teaching, and community that will stay with you long after you leave.
+                </p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <PillButton href={`/conferences/${hero.slug}`} size="lg">
+                    Secure Your Spot
+                  </PillButton>
+                  {daysLeft > 0 && daysLeft <= 60 && (
+                    <Badge variant="glass" size="md">
+                      <CalendarDotsIcon size={14} />
+                      {daysLeft} days away
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-xl animate-fade-up">
+                <h1 className="font-heading text-3xl md:text-5xl font-bold text-foreground leading-tight mb-4">
+                  Where faith meets fellowship.
+                </h1>
+                <p className="text-lg text-muted mb-6">
+                  Conferences, community, and unforgettable experiences. Stay tuned for upcoming events.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ─── HOW IT WORKS ─── */}
       <section className="py-16 md:py-24">
@@ -200,31 +230,32 @@ export default async function Home(): Promise<React.ReactElement> {
         </div>
       </section>
 
-      {/* ─── FAQ ─── */}
-      <section className="py-16 md:py-24 bg-surface-secondary">
-        <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl md:text-4xl font-semibold text-center mb-3">Common questions</h2>
-          <p className="text-muted text-center mb-10">Everything you need to know before you book.</p>
-          <div>
-            {FAQS.map(({ question, answer }) => (
-              <details key={question} className="group border-b border-border">
-                <summary className="cursor-pointer py-5 font-medium text-foreground flex items-center justify-between list-none select-none">
-                  {question}
-                  <svg
-                    width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    className="text-muted shrink-0 ml-4 transition-transform duration-200 group-open:rotate-45"
-                  >
-                    <path d="M10 4v12M4 10h12" />
-                  </svg>
-                </summary>
-                <p className="text-muted text-[15px] leading-relaxed pb-5 pr-8 animate-slide-up">
-                  {answer}
-                </p>
-              </details>
-            ))}
+      {mainPage?.faqItems && mainPage.faqItems.length > 0 && (
+        <section className="py-16 md:py-24 bg-surface-secondary">
+          <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
+            <h2 className="font-heading text-2xl md:text-4xl font-semibold text-center mb-3">Common questions</h2>
+            <p className="text-muted text-center mb-10">Everything you need to know before you book.</p>
+            <div>
+              {mainPage.faqItems.map(({ question, answer }) => (
+                <details key={question} className="group border-b border-border">
+                  <summary className="cursor-pointer py-5 font-medium text-foreground flex items-center justify-between list-none select-none">
+                    {question}
+                    <svg
+                      width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                      className="text-muted shrink-0 ml-4 transition-transform duration-200 group-open:rotate-45"
+                    >
+                      <path d="M10 4v12M4 10h12" />
+                    </svg>
+                  </summary>
+                  <p className="text-muted text-[15px] leading-relaxed pb-5 pr-8 animate-slide-up">
+                    {answer}
+                  </p>
+                </details>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ─── CTA BAND ─── */}
       <section className="py-16 md:py-20">
@@ -234,8 +265,8 @@ export default async function Home(): Promise<React.ReactElement> {
             Spots fill up fast. Register today and take your time with the rest.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <PillButton href={hero ? `/conferences/${hero.slug}` : "/conferences"} size="lg">
-              {hero ? "Secure Your Spot" : "Browse Conferences"}
+            <PillButton href={hero ? `/conferences/${hero.slug}` : (conferences[0] ? `/conferences/${conferences[0].slug}` : "/conferences")} size="lg">
+              {hero || conferences[0] ? "Secure Your Spot" : "Browse Conferences"}
             </PillButton>
             <PillButton href="/merch" variant="outline" size="lg">
               Shop Merch
