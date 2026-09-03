@@ -1,10 +1,14 @@
 import { z } from "zod";
 
-export const childSchema = z.object({
+export const additionalGuestSchema = z.object({
   age: z.number().int().min(1, "Age must be at least 1").max(17, "Must be under 18"),
-  gender: z.enum(["male", "female"], { message: "Gender is required" }),
+  diningPassId: z.string().nullable(),
 });
 
-export const childrenSchema = z.array(childSchema);
+export const additionalGuestsSchema = z.array(additionalGuestSchema);
 
-export type ChildFormData = z.infer<typeof childSchema>;
+export type AdditionalGuestFormData = z.infer<typeof additionalGuestSchema>;
+
+export const childSchema = additionalGuestSchema;
+export const childrenSchema = additionalGuestsSchema;
+export type ChildFormData = AdditionalGuestFormData;

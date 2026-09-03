@@ -1,0 +1,2 @@
+ALTER TABLE children ALTER COLUMN gender DROP NOT NULL;
+ALTER TABLE children ADD COLUMN dining_pass_id TEXT NULL;

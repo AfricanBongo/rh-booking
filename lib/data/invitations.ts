@@ -111,23 +111,6 @@ export async function acceptInvitation(id: string, inviteeId: string): Promise<v
 
   if (!roomGroup) throw new Error("Room group not found");
 
-  const { data: existingBookings } = await supabase
-    .from("bookings")
-    .select("id, user_id")
-    .eq("room_group_id", roomGroup.id)
-    .eq("status", "confirmed");
-
-  const currentOccupants = existingBookings?.length ?? 0;
-  const newOccupantCount = currentOccupants + 1;
-
-  const { data: roomTypes } = await supabase
-    .from("room_groups")
-    .select("room_type_id")
-    .eq("id", roomGroup.id)
-    .single();
-
-  // ponytail: fetch room price from Strapi would be ideal, but we read from existing bookings
-  // to get the total room price (first occupant's total_price * current occupant count = original room price)
   const { data: firstBooking } = await supabase
     .from("bookings")
     .select("total_price")
@@ -136,8 +119,7 @@ export async function acceptInvitation(id: string, inviteeId: string): Promise<v
     .limit(1)
     .single();
 
-  const roomTotalPrice = (firstBooking?.total_price ?? 0) * currentOccupants;
-  const newPerPersonPrice = Math.floor(roomTotalPrice / newOccupantCount);
+  const perPersonPrice = firstBooking?.total_price ?? 0;
 
   await supabase
     .from("invitations")
@@ -150,19 +132,10 @@ export async function acceptInvitation(id: string, inviteeId: string): Promise<v
       user_id: inviteeId,
       room_group_id: roomGroup.id,
       conference_id: roomGroup.conference_id,
-      total_price: newPerPersonPrice,
+      total_price: perPersonPrice,
       amount_paid: 0,
       status: "confirmed",
     });
-
-  if (existingBookings && existingBookings.length > 0) {
-    for (const booking of existingBookings) {
-      await supabase
-        .from("bookings")
-        .update({ total_price: newPerPersonPrice })
-        .eq("id", booking.id);
-    }
-  }
 }
 
 export async function declineInvitation(id: string, inviteeId: string): Promise<void> {

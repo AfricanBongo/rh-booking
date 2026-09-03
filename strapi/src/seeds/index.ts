@@ -53,6 +53,22 @@ const seedData = {
     { name: 'RCI Crown Pin', slug: 'rci-crown-pin', description: 'Gold enamel lapel pin with RCI crown design. Collectible conference keepsake.', price: 1000, merch_status: 'open' },
     { name: 'Conference Sermon USB', slug: 'conference-sermon-usb', description: 'USB drive pre-loaded with all conference messages and worship sessions.', price: 1500, merch_status: 'closed' },
   ],
+  diningPasses: [
+    {
+      name: 'Full Dining Pass',
+      description: 'All meals included for the duration of the conference. Breakfast, lunch, and dinner.',
+      price: 12000,
+      meals_covered: 6,
+      publishedAt: new Date().toISOString(),
+    },
+    {
+      name: 'Dinner Only Pass',
+      description: 'Dinner included for each evening of the conference.',
+      price: 6000,
+      meals_covered: 2,
+      publishedAt: new Date().toISOString(),
+    },
+  ],
   pickupLocations: [
     { name: 'Hotel Main Lobby', address: 'Washington Dulles Airport Marriott, 45020 Aviation Dr, Dulles, VA 20166' },
     { name: 'Kingdom Center (NY)', address: 'Royalhouse Kingdom Center, Bronx, NY' },
@@ -104,6 +120,36 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
       data: { ...mi, conferences: [confId], publishedAt: new Date().toISOString() },
     });
   }
+
+  strapi.log.info('Seed: inserting dining passes...');
+  for (const dp of seedData.diningPasses) {
+    await em.query('api::dining-pass.dining-pass').create({
+      data: { ...dp, conferences: [confId] },
+    });
+  }
+
+  strapi.log.info('Seed: inserting main page...');
+  await em.query('api::main-page.main-page').create({
+    data: {
+      hero_section: {
+        heading: 'Where faith meets fellowship',
+        subheading: 'Conferences, community, and unforgettable experiences across 22 branches.',
+        primary_cta_text: 'Browse Conferences',
+        primary_cta_link: '/conferences',
+        secondary_cta_text: 'Shop Merch',
+        secondary_cta_link: '/merch',
+        is_active: false,
+      },
+      faq_section: [
+        { question: 'Who can attend?', answer: 'Everyone is welcome. All Royalhouse Church branches across the US and Canada are invited to register.' },
+        { question: 'Can I attend without booking a room?', answer: 'Absolutely. Conference registration and room booking are separate. Register for the event and sort accommodation on your own if you prefer.' },
+        { question: 'How does room payment work?', answer: 'Room costs are per person. Pay as little as $25 at a time, on your own schedule, before the deadline.' },
+        { question: 'What about additional guests?', answer: 'Guests under 12 attend free. Guests 12 and older are charged at the per-person room rate.' },
+        { question: 'Can I switch rooms later?', answer: 'Yes, as long as you have not paid in full yet. Once fully paid, your room assignment is locked in.' },
+      ],
+      publishedAt: new Date().toISOString(),
+    },
+  });
 
   strapi.log.info('Seed: inserting pickup locations...');
   for (const pl of seedData.pickupLocations) {

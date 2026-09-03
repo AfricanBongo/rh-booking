@@ -69,6 +69,7 @@ export default async function PayPage(): Promise<React.ReactElement> {
             conferenceName={booking.conferenceName}
             totalPrice={booking.total_price}
             amountPaid={booking.amount_paid}
+            userId={user.id}
           />
         ))}
       </div>

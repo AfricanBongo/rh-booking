@@ -13,6 +13,8 @@ export interface Conference {
   location: string;
   isActive: boolean;
   imageUrl: string | null;
+  portraitImageUrl: string | null;
+  otherImageUrls: string[];
 }
 
 interface StrapiConferenceItem {
@@ -29,6 +31,8 @@ interface StrapiConferenceItem {
   location: string;
   is_active: boolean;
   image: { url: string; formats: Record<string, unknown> } | null;
+  portrait_image: { url: string } | null;
+  other_images: { url: string }[] | null;
 }
 
 function resolveImageUrl(url: string | undefined | null): string | null {
@@ -51,6 +55,10 @@ function mapConference(item: StrapiConferenceItem): Conference {
     location: item.location,
     isActive: item.is_active,
     imageUrl: resolveImageUrl(item.image?.url),
+    portraitImageUrl: resolveImageUrl(item.portrait_image?.url),
+    otherImageUrls: (item.other_images ?? [])
+      .map((img) => resolveImageUrl(img.url))
+      .filter((url): url is string => url !== null),
   };
 }
 
@@ -59,7 +67,7 @@ export async function getConferences(): Promise<Conference[]> {
     const result = await strapiGet<StrapiConferenceItem[]>("/api/conferences", {
       "filters[is_active][$eq]": "true",
       "sort": "start_date:asc",
-      "populate": "image",
+      "populate": "image,portrait_image,other_images",
     });
     return result.data.map(mapConference);
   } catch {
@@ -70,7 +78,7 @@ export async function getConferences(): Promise<Conference[]> {
 export async function getConference(id: string): Promise<Conference> {
   const result = await strapiGet<StrapiConferenceItem>(
     `/api/conferences/${id}`,
-    { populate: "*" }
+    { populate: "image,portrait_image,other_images" }
   );
   return mapConference(result.data);
 }
@@ -78,7 +86,7 @@ export async function getConference(id: string): Promise<Conference> {
 export async function getConferenceBySlug(slug: string): Promise<Conference> {
   const result = await strapiGet<StrapiConferenceItem[]>("/api/conferences", {
     "filters[slug][$eq]": slug,
-    "populate": "*",
+    "populate": "image,portrait_image,other_images",
   });
   if (!result.data[0]) {
     throw { status: 404, name: "NotFound", message: "Conference not found" };

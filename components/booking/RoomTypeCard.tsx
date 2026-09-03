@@ -2,7 +2,6 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { ImageSlider } from "@/components/ui/ImageSlider";
-import { calculatePerPersonPrice } from "@/lib/utils/price";
 
 interface RoomTypeCardProps {
   id: string;
@@ -22,12 +21,6 @@ const typeLabels: Record<string, string> = {
   "shared-4": "Shared Room (4 guests)",
 };
 
-const maxOccupants: Record<string, number> = {
-  private: 1,
-  "shared-2": 2,
-  "shared-4": 4,
-};
-
 export function RoomTypeCard({
   id,
   type,
@@ -40,7 +33,7 @@ export function RoomTypeCard({
   onImageClick,
 }: RoomTypeCardProps): React.ReactElement {
   const soldOut = remaining === 0;
-  const perPerson = calculatePerPersonPrice(price, maxOccupants[type]);
+  const perPerson = price;
 
   return (
     <div
