@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.9](https://github.com/AfricanBongo/rh-booking/compare/v0.6.8...v0.6.9) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** remove forcePathStyle and set ACL to undefined for R2 compatibility ([34b36e9](https://github.com/AfricanBongo/rh-booking/commit/34b36e946cf4445fa8d6d9d2721d29a9cb7886a1))
+
 ## [0.6.8](https://github.com/AfricanBongo/rh-booking/compare/v0.6.7...v0.6.8) (2026-09-02)
 
 

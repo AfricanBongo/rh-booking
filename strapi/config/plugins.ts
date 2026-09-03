@@ -50,9 +50,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
                 },
                 endpoint: env('CF_R2_ENDPOINT'),
                 region: 'auto',
-                forcePathStyle: true,
                 params: {
                   Bucket: env('CF_R2_BUCKET'),
+                  ACL: undefined,
                 },
               },
             },
