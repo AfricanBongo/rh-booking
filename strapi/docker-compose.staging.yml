@@ -23,10 +23,11 @@ services:
       - 'STRAPI_LICENSE=${STRAPI_LICENSE}'
       - 'NODE_ENV=${NODE_ENV:-production}'
       - 'STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE=${STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE:-en}'
-    volumes:
-      - 'strapi-config:/opt/app/config'
-      - 'strapi-src:/opt/app/src'
-      - 'strapi-uploads:/opt/app/public/uploads'
+      - 'CF_R2_ACCESS_KEY_ID=${CF_R2_ACCESS_KEY_ID}'
+      - 'CF_R2_SECRET_ACCESS_KEY=${CF_R2_SECRET_ACCESS_KEY}'
+      - 'CF_R2_BUCKET=${CF_R2_BUCKET}'
+      - 'CF_R2_ENDPOINT=${CF_R2_ENDPOINT}'
+      - 'CF_R2_PUBLIC_URL=${CF_R2_PUBLIC_URL}'
     healthcheck:
       test:
         - CMD
@@ -60,7 +61,4 @@ services:
       retries: 10
 
 volumes:
-  strapi-config:
-  strapi-src:
   strapi-postgresql-data:
-  strapi-uploads:

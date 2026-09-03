@@ -40,8 +40,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       },
       ...(env('CF_R2_ACCESS_KEY_ID')
         ? {
-            provider: '@strapi/provider-upload-aws-s3',
+            provider: 'aws-s3',
             providerOptions: {
+              baseUrl: env('CF_R2_PUBLIC_URL'),
               s3Options: {
                 credentials: {
                   accessKeyId: env('CF_R2_ACCESS_KEY_ID'),
@@ -49,10 +50,11 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
                 },
                 endpoint: env('CF_R2_ENDPOINT'),
                 region: 'auto',
-                forcePathStyle: true,
+                params: {
+                  Bucket: env('CF_R2_BUCKET'),
+                  ACL: undefined,
+                },
               },
-              params: { Bucket: env('CF_R2_BUCKET') },
-              baseUrl: env('CF_R2_PUBLIC_URL'),
             },
             actionOptions: {
               upload: {},

@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.11](https://github.com/AfricanBongo/rh-booking/compare/v0.6.10...v0.6.11) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** allow R2 media domains in CSP for admin panel thumbnails ([f9012ab](https://github.com/AfricanBongo/rh-booking/commit/f9012ab0605b3935c470a0a9c8888ee2514739f9))
+
+## [0.6.10](https://github.com/AfricanBongo/rh-booking/compare/v0.6.9...v0.6.10) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** remove config/src volume mounts so git-managed files are used ([f110beb](https://github.com/AfricanBongo/rh-booking/commit/f110beb69076e3c1dbcc1de8b77d922c9359730a))
+
+## [0.6.9](https://github.com/AfricanBongo/rh-booking/compare/v0.6.8...v0.6.9) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** remove forcePathStyle and set ACL to undefined for R2 compatibility ([34b36e9](https://github.com/AfricanBongo/rh-booking/commit/34b36e946cf4445fa8d6d9d2721d29a9cb7886a1))
+
+## [0.6.8](https://github.com/AfricanBongo/rh-booking/compare/v0.6.7...v0.6.8) (2026-09-02)
+
+
+### Bug Fixes
+
+* **strapi:** fix R2 provider config format, add R2 to staging environment ([886e0f5](https://github.com/AfricanBongo/rh-booking/commit/886e0f55c7dc5d6911f0c8838e2705356e73f9aa))
+
 ## [0.6.7](https://github.com/AfricanBongo/rh-booking/compare/v0.6.6...v0.6.7) (2026-09-02)
 
 
