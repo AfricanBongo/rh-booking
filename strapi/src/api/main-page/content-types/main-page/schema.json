@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "main_pages",
+  "info": {
+    "singularName": "main-page",
+    "pluralName": "main-pages",
+    "displayName": "Main Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "hero_section": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.hero-section"
+    },
+    "faq_section": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.faq-item"
+    }
+  }
+}

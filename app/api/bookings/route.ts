@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { calculatePerPersonPrice } from "@/lib/utils/price";
 import { calculateChildrenSurcharge } from "@/lib/utils/children";
 
 const maxOccupantsMap: Record<string, number> = {
@@ -18,9 +17,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const body = await request.json();
-  const { conferenceId, roomTypeId, bedPreference, children } = body;
+  const {
+    conferenceId, roomTypeId, bedPreference, children, roomPrice,
+    myDiningPassId, myDiningPassName, myDiningPassPrice,
+    guestDiningPasses,
+  } = body;
 
-  if (!conferenceId || !roomTypeId || !bedPreference) {
+  if (!conferenceId || !roomTypeId || !bedPreference || typeof roomPrice !== "number") {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -52,14 +55,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to create room group" }, { status: 500 });
   }
 
-  // ponytail: room price would ideally come from Strapi, but we trust client-provided roomTypeId
-  // and look it up via the room_type stored data. For now, we compute from a default.
-  // In production, fetch from Strapi or cache the price in the room_groups table.
-  const roomPrice = 30000; // fallback, overridden below if possible
-  const maxOccupants = maxOccupantsMap[body.roomType] ?? 2;
-  const perPerson = calculatePerPersonPrice(roomPrice, maxOccupants);
+  const perPerson = roomPrice;
   const surcharge = calculateChildrenSurcharge(children ?? [], perPerson);
-  const totalPrice = perPerson + surcharge;
+
+  let diningTotal = 0;
+  if (typeof myDiningPassPrice === "number") diningTotal += myDiningPassPrice;
+  if (Array.isArray(guestDiningPasses)) {
+    for (const gp of guestDiningPasses) {
+      if (gp?.price) diningTotal += gp.price;
+    }
+  }
+
+  const totalPrice = perPerson + surcharge + diningTotal;
 
   const { data: booking, error: bkError } = await supabase
     .from("bookings")
@@ -79,14 +86,50 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   if (children && children.length > 0) {
-    const childRows = children.map((c: { age: number; gender: string }) => ({
+    const childRows = children.map((c: { age: number; diningPassId?: string | null }) => ({
       parent_id: user.id,
       booking_id: booking.id,
       age: c.age,
-      gender: c.gender,
+      dining_pass_id: c.diningPassId ?? null,
     }));
 
     await supabase.from("children").insert(childRows);
+  }
+
+  const diningRows: Array<{
+    booking_id: string;
+    dining_pass_id: string;
+    dining_pass_name: string;
+    price: number;
+    for_guest_index: number | null;
+  }> = [];
+
+  if (myDiningPassId && myDiningPassName && typeof myDiningPassPrice === "number") {
+    diningRows.push({
+      booking_id: booking.id,
+      dining_pass_id: myDiningPassId,
+      dining_pass_name: myDiningPassName,
+      price: myDiningPassPrice,
+      for_guest_index: null,
+    });
+  }
+
+  if (Array.isArray(guestDiningPasses)) {
+    guestDiningPasses.forEach((gp: { id: string; name: string; price: number } | null, index: number) => {
+      if (gp) {
+        diningRows.push({
+          booking_id: booking.id,
+          dining_pass_id: gp.id,
+          dining_pass_name: gp.name,
+          price: gp.price,
+          for_guest_index: index,
+        });
+      }
+    });
+  }
+
+  if (diningRows.length > 0) {
+    await supabase.from("booking_dining_passes").insert(diningRows);
   }
 
   return NextResponse.json({ bookingId: booking.id, roomGroupId: roomGroup.id });

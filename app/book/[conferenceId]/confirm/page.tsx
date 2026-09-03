@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getRoomTypes } from "@/lib/data/rooms";
 import { getConference } from "@/lib/data/conferences";
+import { getDiningPassesForConference } from "@/lib/data/dining-passes";
 import { ConfirmPageClient } from "./ConfirmPageClient";
 import { redirect } from "next/navigation";
 import { PAYMENT_URGENCY_HOURS } from "@/lib/constants";
@@ -18,9 +19,10 @@ export default async function ConfirmPage({ params }: PageProps): Promise<React.
 
   if (!user) redirect("/auth/login");
 
-  const [conference, roomTypes] = await Promise.all([
+  const [conference, roomTypes, diningPasses] = await Promise.all([
     getConference(conferenceId),
     getRoomTypes(conferenceId),
+    getDiningPassesForConference(conferenceId),
   ]);
 
   const checkIn = conference.checkIn;
@@ -48,6 +50,7 @@ export default async function ConfirmPage({ params }: PageProps): Promise<React.
           checkOut={checkOut}
           roomPriceMap={roomPriceMap}
           isUrgent={isUrgent}
+          diningPasses={diningPasses}
         />
       </div>
     </main>

@@ -65,3 +65,4 @@ strapi/build
 strapi/database
 strapi/public/uploads
 strapi/.tmp
+.worktrees/

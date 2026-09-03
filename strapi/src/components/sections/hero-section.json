@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_sections_hero_sections",
+  "info": {
+    "displayName": "Hero Section",
+    "icon": "picture"
+  },
+  "attributes": {
+    "heading": { "type": "string", "required": true },
+    "subheading": { "type": "text", "required": true },
+    "primary_cta_text": { "type": "string", "required": true },
+    "primary_cta_link": { "type": "string", "required": true },
+    "secondary_cta_text": { "type": "string" },
+    "secondary_cta_link": { "type": "string" },
+    "background_image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "is_active": { "type": "boolean", "default": false }
+  }
+}
