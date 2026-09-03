@@ -1,24 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CurrencyDollarIcon, CheckCircleIcon, ReceiptIcon } from "@phosphor-icons/react";
 import { PillButton } from "@/components/ui/PillButton";
 import { Badge } from "@/components/ui/Badge";
 import { MIN_PAYMENT_AMOUNT } from "@/lib/constants";
+import { usePaymentUpdates } from "@/lib/hooks/usePaymentUpdates";
 
 interface PaymentCardProps {
   bookingId: string;
   conferenceName: string;
   totalPrice: number;
   amountPaid: number;
+  userId: string;
 }
 
 const PRESETS = [2500, 5000, 10000];
 
-export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid }: PaymentCardProps): React.ReactElement {
-  const remainingBalance = totalPrice - amountPaid;
+export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid, userId }: PaymentCardProps): React.ReactElement {
+  const [currentAmountPaid, setCurrentAmountPaid] = useState(amountPaid);
+  const [currentTotalPrice, setCurrentTotalPrice] = useState(totalPrice);
+
+  const handleRealtimeUpdate = useCallback((id: string, paid: number, total: number) => {
+    if (id === bookingId) {
+      setCurrentAmountPaid(paid);
+      setCurrentTotalPrice(total);
+    }
+  }, [bookingId]);
+
+  usePaymentUpdates(userId, handleRealtimeUpdate);
+
+  const remainingBalance = currentTotalPrice - currentAmountPaid;
   const isPaidInFull = remainingBalance <= 0;
-  const progressPercent = Math.round((amountPaid / totalPrice) * 100);
+  const progressPercent = Math.round((currentAmountPaid / currentTotalPrice) * 100);
 
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState("");
@@ -118,7 +132,7 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
 
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-muted">${(amountPaid / 100).toFixed(2)} of ${(totalPrice / 100).toFixed(2)}</span>
+          <span className="text-muted">${(currentAmountPaid / 100).toFixed(2)} of ${(currentTotalPrice / 100).toFixed(2)}</span>
           <span className="font-medium">{progressPercent}%</span>
         </div>
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-surface-secondary">
@@ -128,7 +142,7 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid 
           />
         </div>
         <div className="flex justify-between text-xs text-muted">
-          <span>${(amountPaid / 100).toFixed(2)} paid</span>
+          <span>${(currentAmountPaid / 100).toFixed(2)} paid</span>
           <span>${(remainingBalance / 100).toFixed(2)} remaining</span>
         </div>
       </div>
