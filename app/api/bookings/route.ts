@@ -17,7 +17,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const body = await request.json();
-  const { conferenceId, roomTypeId, bedPreference, children, roomPrice } = body;
+  const {
+    conferenceId, roomTypeId, bedPreference, children, roomPrice,
+    myDiningPassId, myDiningPassName, myDiningPassPrice,
+    guestDiningPasses,
+  } = body;
 
   if (!conferenceId || !roomTypeId || !bedPreference || typeof roomPrice !== "number") {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -53,7 +57,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const perPerson = roomPrice;
   const surcharge = calculateChildrenSurcharge(children ?? [], perPerson);
-  const totalPrice = perPerson + surcharge;
+
+  let diningTotal = 0;
+  if (typeof myDiningPassPrice === "number") diningTotal += myDiningPassPrice;
+  if (Array.isArray(guestDiningPasses)) {
+    for (const gp of guestDiningPasses) {
+      if (gp?.price) diningTotal += gp.price;
+    }
+  }
+
+  const totalPrice = perPerson + surcharge + diningTotal;
 
   const { data: booking, error: bkError } = await supabase
     .from("bookings")
@@ -81,6 +94,42 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }));
 
     await supabase.from("children").insert(childRows);
+  }
+
+  const diningRows: Array<{
+    booking_id: string;
+    dining_pass_id: string;
+    dining_pass_name: string;
+    price: number;
+    for_guest_index: number | null;
+  }> = [];
+
+  if (myDiningPassId && myDiningPassName && typeof myDiningPassPrice === "number") {
+    diningRows.push({
+      booking_id: booking.id,
+      dining_pass_id: myDiningPassId,
+      dining_pass_name: myDiningPassName,
+      price: myDiningPassPrice,
+      for_guest_index: null,
+    });
+  }
+
+  if (Array.isArray(guestDiningPasses)) {
+    guestDiningPasses.forEach((gp: { id: string; name: string; price: number } | null, index: number) => {
+      if (gp) {
+        diningRows.push({
+          booking_id: booking.id,
+          dining_pass_id: gp.id,
+          dining_pass_name: gp.name,
+          price: gp.price,
+          for_guest_index: index,
+        });
+      }
+    });
+  }
+
+  if (diningRows.length > 0) {
+    await supabase.from("booking_dining_passes").insert(diningRows);
   }
 
   return NextResponse.json({ bookingId: booking.id, roomGroupId: roomGroup.id });
