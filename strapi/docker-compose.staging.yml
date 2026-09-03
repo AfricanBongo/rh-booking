@@ -28,9 +28,6 @@ services:
       - 'CF_R2_BUCKET=${CF_R2_BUCKET}'
       - 'CF_R2_ENDPOINT=${CF_R2_ENDPOINT}'
       - 'CF_R2_PUBLIC_URL=${CF_R2_PUBLIC_URL}'
-    volumes:
-      - 'strapi-config:/opt/app/config'
-      - 'strapi-src:/opt/app/src'
     healthcheck:
       test:
         - CMD
@@ -64,6 +61,4 @@ services:
       retries: 10
 
 volumes:
-  strapi-config:
-  strapi-src:
   strapi-postgresql-data:
