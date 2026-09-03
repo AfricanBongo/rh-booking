@@ -1,4 +1,5 @@
 import { getRoomTypes } from "@/lib/data/rooms";
+import { getDiningPassesForConference } from "@/lib/data/dining-passes";
 import { ChildrenPageClient } from "./ChildrenPageClient";
 import Link from "next/link";
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
@@ -9,7 +10,10 @@ interface PageProps {
 
 export default async function ChildrenPage({ params }: PageProps): Promise<React.ReactElement> {
   const { conferenceId } = await params;
-  const roomTypes = await getRoomTypes(conferenceId);
+  const [roomTypes, diningPasses] = await Promise.all([
+    getRoomTypes(conferenceId),
+    getDiningPassesForConference(conferenceId),
+  ]);
 
   const roomPriceMap = Object.fromEntries(
     roomTypes.map((rt) => [rt.id, { price: rt.price, type: rt.type }])
@@ -24,6 +28,7 @@ export default async function ChildrenPage({ params }: PageProps): Promise<React
         <ChildrenPageClient
           conferenceId={conferenceId}
           roomPriceMap={roomPriceMap}
+          hasDiningPasses={diningPasses.length > 0}
         />
       </div>
     </main>

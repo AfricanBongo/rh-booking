@@ -16,9 +16,10 @@ interface RoomInfo {
 interface ChildrenPageClientProps {
   conferenceId: string;
   roomPriceMap: Record<string, RoomInfo>;
+  hasDiningPasses: boolean;
 }
 
-export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageClientProps): React.ReactElement {
+export function ChildrenPageClient({ conferenceId, roomPriceMap, hasDiningPasses }: ChildrenPageClientProps): React.ReactElement {
   const router = useRouter();
   const { selectedRoomTypeId, guests, setGuests } = useBookingFlow();
   const [hasGuests, setHasGuests] = useState(guests.length > 0);
@@ -57,8 +58,10 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   const isPrivate = room?.type === "private";
-  const totalSteps = isPrivate ? 3 : 4;
-  const stepLabels = isPrivate ? ["Room", "Guests", "Confirm"] : ["Room", "Guests", "Roommate", "Confirm"];
+  const stepLabels = isPrivate
+    ? (hasDiningPasses ? ["Room", "Guests", "Dining", "Confirm"] : ["Room", "Guests", "Confirm"])
+    : (hasDiningPasses ? ["Room", "Guests", "Dining", "Roommate", "Confirm"] : ["Room", "Guests", "Roommate", "Confirm"]);
+  const totalSteps = stepLabels.length;
 
   return (
     <div className="animate-fade-up">
@@ -177,8 +180,12 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
         <PillButton
           fullWidth
           onClick={() => {
-            const nextStep = isPrivate ? `confirm` : `roommate`;
-            router.push(`/book/${conferenceId}/${nextStep}`);
+            if (hasDiningPasses) {
+              router.push(`/book/${conferenceId}/dining`);
+            } else {
+              const nextStep = isPrivate ? "confirm" : "roommate";
+              router.push(`/book/${conferenceId}/${nextStep}`);
+            }
           }}
         >
           Continue
