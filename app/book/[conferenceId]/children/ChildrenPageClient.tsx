@@ -7,7 +7,6 @@ import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow, type ChildEntry } from "@/stores/booking-flow";
 import { calculateChildrenSurcharge } from "@/lib/utils/children";
-import { calculatePerPersonPrice } from "@/lib/utils/price";
 
 interface RoomInfo {
   price: number;
@@ -18,12 +17,6 @@ interface ChildrenPageClientProps {
   conferenceId: string;
   roomPriceMap: Record<string, RoomInfo>;
 }
-
-const maxOccupantsMap: Record<string, number> = {
-  private: 1,
-  "shared-2": 2,
-  "shared-4": 4,
-};
 
 export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageClientProps): React.ReactElement {
   const router = useRouter();
@@ -41,8 +34,7 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   const room = roomPriceMap[selectedRoomTypeId];
-  const maxOccupants = room ? maxOccupantsMap[room.type] : 1;
-  const perPersonRate = calculatePerPersonPrice(room?.price ?? 30000, maxOccupants);
+  const perPersonRate = room?.price ?? 30000;
   const surcharge = calculateChildrenSurcharge(children, perPersonRate);
   const billableCount = children.filter((c) => c.age >= 12).length;
 

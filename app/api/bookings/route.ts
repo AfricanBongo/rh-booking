@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { calculatePerPersonPrice } from "@/lib/utils/price";
 import { calculateChildrenSurcharge } from "@/lib/utils/children";
 
 const maxOccupantsMap: Record<string, number> = {
@@ -18,9 +17,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const body = await request.json();
-  const { conferenceId, roomTypeId, bedPreference, children } = body;
+  const { conferenceId, roomTypeId, bedPreference, children, roomPrice } = body;
 
-  if (!conferenceId || !roomTypeId || !bedPreference) {
+  if (!conferenceId || !roomTypeId || !bedPreference || typeof roomPrice !== "number") {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -52,12 +51,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to create room group" }, { status: 500 });
   }
 
-  // ponytail: room price would ideally come from Strapi, but we trust client-provided roomTypeId
-  // and look it up via the room_type stored data. For now, we compute from a default.
-  // In production, fetch from Strapi or cache the price in the room_groups table.
-  const roomPrice = 30000; // fallback, overridden below if possible
-  const maxOccupants = maxOccupantsMap[body.roomType] ?? 2;
-  const perPerson = calculatePerPersonPrice(roomPrice, maxOccupants);
+  const perPerson = roomPrice;
   const surcharge = calculateChildrenSurcharge(children ?? [], perPerson);
   const totalPrice = perPerson + surcharge;
 

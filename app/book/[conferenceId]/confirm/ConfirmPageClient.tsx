@@ -6,7 +6,6 @@ import { WarningIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow } from "@/stores/booking-flow";
-import { calculatePerPersonPrice } from "@/lib/utils/price";
 import { calculateChildrenSurcharge } from "@/lib/utils/children";
 import { PAYMENT_URGENCY_HOURS } from "@/lib/constants";
 
@@ -23,12 +22,6 @@ interface ConfirmPageClientProps {
   roomPriceMap: Record<string, RoomInfo>;
   isUrgent: boolean;
 }
-
-const maxOccupantsMap: Record<string, number> = {
-  private: 1,
-  "shared-2": 2,
-  "shared-4": 4,
-};
 
 const typeLabels: Record<string, string> = {
   private: "Private Room",
@@ -63,8 +56,7 @@ export function ConfirmPageClient({
   const totalSteps = isPrivate ? 3 : 4;
   const currentStep = totalSteps;
   const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
-  const maxOccupants = room ? maxOccupantsMap[room.type] : 1;
-  const perPerson = calculatePerPersonPrice(room?.price ?? 30000, maxOccupants);
+  const perPerson = room?.price ?? 30000;
   const surcharge = calculateChildrenSurcharge(children, perPerson);
   const total = perPerson + surcharge;
   const billableChildren = children.filter((c) => c.age >= 12).length;
@@ -82,6 +74,7 @@ export function ConfirmPageClient({
           bedPreference,
           children,
           invitedRoommateId,
+          roomPrice: room?.price ?? 0,
         }),
       });
 
