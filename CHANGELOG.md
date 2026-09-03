@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.11](https://github.com/AfricanBongo/rh-booking/compare/v0.6.10...v0.6.11) (2026-09-03)
+
+
+### Bug Fixes
+
+* **strapi:** allow R2 media domains in CSP for admin panel thumbnails ([f9012ab](https://github.com/AfricanBongo/rh-booking/commit/f9012ab0605b3935c470a0a9c8888ee2514739f9))
+
 ## [0.6.10](https://github.com/AfricanBongo/rh-booking/compare/v0.6.9...v0.6.10) (2026-09-03)
 
 
