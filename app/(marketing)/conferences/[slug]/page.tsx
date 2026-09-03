@@ -4,6 +4,7 @@ import { getConferenceBySlug } from "@/lib/data/conferences";
 import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/RegistrationForm";
 import { PillButton, LocalizedDate, LocalizedDateRange } from "@/components/ui";
+import { ImageSlider } from "@/components/ui/ImageSlider";
 import { MarkdownContent } from "@/components/ui/MarkdownContent";
 import { CalendarDotsIcon, MapPinIcon, ClockIcon, ArrowLeftIcon, CheckIcon, WarningIcon } from "@phosphor-icons/react/dist/ssr";
 
@@ -53,7 +54,12 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
       {/* Hero */}
       <section className="relative h-64 md:h-[420px] overflow-hidden">
         {conference.imageUrl ? (
-          <Image src={conference.imageUrl} alt={conference.name} fill className="object-cover" unoptimized priority />
+          <picture>
+            {conference.portraitImageUrl && (
+              <source media="(max-width: 768px)" srcSet={conference.portraitImageUrl} />
+            )}
+            <Image src={conference.imageUrl} alt={conference.name} fill className="object-cover" unoptimized priority />
+          </picture>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-surface-tertiary" />
         )}
@@ -111,6 +117,17 @@ export default async function ConferenceDetailPage({ params }: PageProps): Promi
             </div>
           </div>
         </div>
+
+        {conference.otherImageUrls.length > 0 && (
+          <section className="mb-10">
+            <h2 className="font-heading text-xl font-semibold mb-4">Event Gallery</h2>
+            <ImageSlider
+              images={conference.otherImageUrls}
+              alt={`${conference.name} gallery`}
+              className="h-64 md:h-80 rounded-2xl"
+            />
+          </section>
+        )}
 
         <section className="mb-10">
           <MarkdownContent content={conference.description} />

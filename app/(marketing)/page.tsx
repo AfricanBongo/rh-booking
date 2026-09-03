@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getConferences } from "@/lib/data/conferences";
+import { getMainPage } from "@/lib/data/main-page";
 import { getMerchItems } from "@/lib/data/merch";
 import { ConferenceCard } from "@/components/cards/ConferenceCard";
 import { PillButton, Badge } from "@/components/ui";
@@ -26,18 +27,15 @@ const STEPS = [
   { icon: <CreditCardIcon size={24} weight="duotone" />, title: "Pay at your pace", description: "$25 minimum. Pay in installments before the deadline." },
 ];
 
-const FAQS = [
-  { question: "Who can attend?", answer: "Everyone is welcome. All Royalhouse Church branches across the US and Canada are invited to register." },
-  { question: "Can I attend without booking a room?", answer: "Absolutely. Conference registration and room booking are separate. Register for the event and sort accommodation on your own if you prefer." },
-  { question: "How does room payment work?", answer: "Room costs are split evenly among everyone in your room. Pay as little as $25 at a time, on your own schedule, before the deadline." },
-  { question: "What about children?", answer: "Children under 12 attend free. Children 12 and older are charged at the per-person room rate as an additional occupant." },
-  { question: "Can I switch rooms later?", answer: "Yes, as long as you haven't paid in full yet. Once fully paid, your room assignment is locked in." },
-];
-
 export default async function Home(): Promise<React.ReactElement> {
-  const conferences = await getConferences();
-  const hero = conferences[0] ?? null;
-  const rest = conferences.slice(1);
+  const [conferences, mainPage] = await Promise.all([
+    getConferences(),
+    getMainPage(),
+  ]);
+
+  const useCustomHero = mainPage?.heroSection?.isActive ?? false;
+  const hero = useCustomHero ? null : (conferences[0] ?? null);
+  const rest = useCustomHero ? conferences : conferences.slice(1);
   const daysLeft = hero ? daysUntil(hero.startDate) : 0;
 
   // Fetch real merch from Strapi for the first conference
@@ -49,7 +47,12 @@ export default async function Home(): Promise<React.ReactElement> {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-end">
         {hero?.imageUrl ? (
-          <Image src={hero.imageUrl} alt={hero.name} fill className="object-cover" unoptimized priority />
+          <picture>
+            {hero.portraitImageUrl && (
+              <source media="(max-width: 768px)" srcSet={hero.portraitImageUrl} />
+            )}
+            <Image src={hero.imageUrl} alt={hero.name} fill className="object-cover" unoptimized priority />
+          </picture>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface-secondary to-surface-tertiary" />
         )}
