@@ -73,11 +73,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   if (children && children.length > 0) {
-    const childRows = children.map((c: { age: number; gender: string }) => ({
+    const childRows = children.map((c: { age: number; diningPassId?: string | null }) => ({
       parent_id: user.id,
       booking_id: booking.id,
       age: c.age,
-      gender: c.gender,
+      dining_pass_id: c.diningPassId ?? null,
     }));
 
     await supabase.from("children").insert(childRows);
