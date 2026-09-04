@@ -129,7 +129,7 @@ export function ConfirmPageClient({
           <Row label="Check-in" value={formatDate(checkIn)} />
           <Row label="Check-out" value={formatDate(checkOut)} />
           {children.length > 0 && (
-            <Row label="Children" value={`${children.length} (${billableChildren} billable)`} />
+            <Row label="Additional guests" value={`${children.length} (${billableChildren} billable)`} />
           )}
           {myPass && <Row label="Your dining pass" value={myPass.name} />}
           {guestDiningPasses.length > 0 && (
@@ -150,7 +150,7 @@ export function ConfirmPageClient({
           </div>
           {billableChildren > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-muted">Children surcharge ({billableChildren}x)</span>
+              <span className="text-muted">Guest surcharge ({billableChildren}x)</span>
               <span>${(surcharge / 100).toFixed(2)}</span>
             </div>
           )}

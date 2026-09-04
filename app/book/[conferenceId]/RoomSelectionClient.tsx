@@ -15,9 +15,10 @@ interface RoomSelectionClientProps {
   conferenceSlug: string;
   conferenceName: string;
   roomTypes: RoomTypeWithAvailability[];
+  hasDiningPasses: boolean;
 }
 
-export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceName, roomTypes }: RoomSelectionClientProps): React.ReactElement {
+export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceName, roomTypes, hasDiningPasses }: RoomSelectionClientProps): React.ReactElement {
   const router = useRouter();
   const { selectedRoomTypeId, bedPreference, setRoomType, setBedPreference, setConferenceId } = useBookingFlow();
   const [mounted, setMounted] = useState(false);
@@ -46,8 +47,10 @@ export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceNa
   const canContinue = selectedRoomTypeId && bedPreference;
   const selectedRoom = selectedRoomTypeId ? roomTypes.find((r) => r.id === selectedRoomTypeId) : null;
   const isPrivate = selectedRoom?.type === "private";
-  const totalSteps = isPrivate ? 3 : 4;
-  const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
+  const stepLabels = isPrivate
+    ? (hasDiningPasses ? ["Room", "Guests", "Dining", "Confirm"] : ["Room", "Guests", "Confirm"])
+    : (hasDiningPasses ? ["Room", "Guests", "Dining", "Roommate", "Confirm"] : ["Room", "Guests", "Roommate", "Confirm"]);
+  const totalSteps = stepLabels.length;
   const lightboxRoom = lightbox ? roomTypes.find((r) => r.id === lightbox.roomId) : null;
 
   return (

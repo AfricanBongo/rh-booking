@@ -1,5 +1,6 @@
 import { getRoomTypesWithAvailability } from "@/lib/data/rooms";
 import { getConference } from "@/lib/data/conferences";
+import { getDiningPassesForConference } from "@/lib/data/dining-passes";
 import { RoomSelectionClient } from "./RoomSelectionClient";
 import Link from "next/link";
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
@@ -10,9 +11,10 @@ interface PageProps {
 
 export default async function RoomSelectionPage({ params }: PageProps): Promise<React.ReactElement> {
   const { conferenceId } = await params;
-  const [roomTypes, conference] = await Promise.all([
+  const [roomTypes, conference, diningPasses] = await Promise.all([
     getRoomTypesWithAvailability(conferenceId),
     getConference(conferenceId),
+    getDiningPassesForConference(conferenceId),
   ]);
 
   return (
@@ -26,6 +28,7 @@ export default async function RoomSelectionPage({ params }: PageProps): Promise<
           conferenceSlug={conference.slug}
           conferenceName={conference.name}
           roomTypes={roomTypes}
+          hasDiningPasses={diningPasses.length > 0}
         />
       </div>
     </main>
