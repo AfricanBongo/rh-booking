@@ -7,13 +7,15 @@ import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow } from "@/stores/booking-flow";
 import type { DiningPass } from "@/lib/data/dining-passes";
+import type { RoomInfo } from "@/lib/data/rooms";
 
 interface DiningPassClientProps {
   conferenceId: string;
   diningPasses: DiningPass[];
+  roomPriceMap: Record<string, RoomInfo>;
 }
 
-export function DiningPassClient({ conferenceId, diningPasses }: DiningPassClientProps): React.ReactElement {
+export function DiningPassClient({ conferenceId, diningPasses, roomPriceMap }: DiningPassClientProps): React.ReactElement {
   const router = useRouter();
   const {
     selectedRoomTypeId,
@@ -33,12 +35,18 @@ export function DiningPassClient({ conferenceId, diningPasses }: DiningPassClien
     return <div />;
   }
 
+  const room = roomPriceMap[selectedRoomTypeId];
+  const isPrivate = room?.type === "private";
+  const nextStep = isPrivate ? "confirm" : "roommate";
+
   if (diningPasses.length === 0) {
-    router.replace(`/book/${conferenceId}/roommate`);
+    router.replace(`/book/${conferenceId}/${nextStep}`);
     return <div />;
   }
 
-  const stepLabels = ["Room", "Guests", "Dining", "Confirm"];
+  const stepLabels = isPrivate
+    ? ["Room", "Guests", "Dining", "Confirm"]
+    : ["Room", "Guests", "Dining", "Roommate", "Confirm"];
 
   return (
     <div className="animate-fade-up">
@@ -106,7 +114,7 @@ export function DiningPassClient({ conferenceId, diningPasses }: DiningPassClien
         </PillButton>
         <PillButton
           fullWidth
-          onClick={() => router.push(`/book/${conferenceId}/roommate`)}
+          onClick={() => router.push(`/book/${conferenceId}/${nextStep}`)}
         >
           Continue
         </PillButton>

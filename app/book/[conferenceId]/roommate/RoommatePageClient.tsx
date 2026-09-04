@@ -7,6 +7,7 @@ import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { Badge } from "@/components/ui/Badge";
 import { useBookingFlow } from "@/stores/booking-flow";
+import type { RoomInfo } from "@/lib/data/rooms";
 
 interface SearchResult {
   id: string;
@@ -15,12 +16,19 @@ interface SearchResult {
   gender: "male" | "female";
 }
 
+const maxOccupantsMap: Record<string, number> = {
+  private: 1,
+  "shared-2": 2,
+  "shared-4": 4,
+};
+
 interface RoommatePageClientProps {
   conferenceId: string;
-  maxOccupants: number;
+  roomPriceMap: Record<string, RoomInfo>;
+  hasDiningPasses: boolean;
 }
 
-export function RoommatePageClient({ conferenceId, maxOccupants }: RoommatePageClientProps): React.ReactElement {
+export function RoommatePageClient({ conferenceId, roomPriceMap, hasDiningPasses }: RoommatePageClientProps): React.ReactElement {
   const router = useRouter();
   const { selectedRoomTypeId, invitedRoommateId, setInvitee } = useBookingFlow();
   const [mounted, setMounted] = useState(false);
@@ -60,6 +68,16 @@ export function RoommatePageClient({ conferenceId, maxOccupants }: RoommatePageC
     router.push(`/book/${conferenceId}`);
     return <div />;
   }
+
+  const room = roomPriceMap[selectedRoomTypeId];
+  const isPrivate = room?.type === "private";
+
+  if (isPrivate) {
+    router.replace(`/book/${conferenceId}/confirm`);
+    return <div />;
+  }
+
+  const maxOccupants = room ? maxOccupantsMap[room.type] : 2;
 
   async function sendInvite(invitee: SearchResult, rel?: "married" | "siblings" | "none") {
     setInviteError(null);
@@ -109,10 +127,15 @@ export function RoommatePageClient({ conferenceId, maxOccupants }: RoommatePageC
 
   const slotsRemaining = maxOccupants - 1 - (invitedRoommateId ? 1 : 0);
 
+  const stepLabels = hasDiningPasses
+    ? ["Room", "Guests", "Dining", "Roommate", "Confirm"]
+    : ["Room", "Guests", "Roommate", "Confirm"];
+  const currentStep = hasDiningPasses ? 4 : 3;
+
   return (
     <div className="animate-fade-up">
       <div className="mb-8">
-        <StepIndicator currentStep={3} totalSteps={4} />
+        <StepIndicator currentStep={currentStep} totalSteps={stepLabels.length} labels={stepLabels} />
       </div>
 
       <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Find a roommate</h1>
@@ -255,7 +278,7 @@ export function RoommatePageClient({ conferenceId, maxOccupants }: RoommatePageC
       <div className="flex gap-3 mt-8">
         <PillButton
           variant="outline"
-          onClick={() => router.push(`/book/${conferenceId}/children`)}
+          onClick={() => router.push(`/book/${conferenceId}/${hasDiningPasses ? "dining" : "children"}`)}
         >
           <ArrowLeftIcon size={16} />
           Back

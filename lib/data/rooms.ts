@@ -14,6 +14,8 @@ export interface RoomType {
   conferenceId: string;
 }
 
+export interface RoomInfo { price: number; type: "private" | "shared-2" | "shared-4"; }
+
 export interface RoomTypeWithAvailability extends RoomType {
   bookedCount: number;
   remaining: number;

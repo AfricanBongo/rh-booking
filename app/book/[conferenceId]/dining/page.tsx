@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getDiningPassesForConference } from "@/lib/data/dining-passes";
+import { getRoomTypes } from "@/lib/data/rooms";
 import { DiningPassClient } from "./DiningPassClient";
 import Link from "next/link";
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
@@ -16,7 +17,14 @@ export default async function DiningPassPage({ params }: PageProps): Promise<Rea
 
   if (!user) redirect("/auth/login");
 
-  const diningPasses = await getDiningPassesForConference(conferenceId);
+  const [diningPasses, roomTypes] = await Promise.all([
+    getDiningPassesForConference(conferenceId),
+    getRoomTypes(conferenceId),
+  ]);
+
+  const roomPriceMap = Object.fromEntries(
+    roomTypes.map((rt) => [rt.id, { price: rt.price, type: rt.type }])
+  );
 
   return (
     <main className="min-h-screen bg-background py-8 px-4 md:px-8">
@@ -24,7 +32,7 @@ export default async function DiningPassPage({ params }: PageProps): Promise<Rea
         <XIcon size={14} /> Exit
       </Link>
       <div className="max-w-2xl mx-auto">
-        <DiningPassClient conferenceId={conferenceId} diningPasses={diningPasses} />
+        <DiningPassClient conferenceId={conferenceId} diningPasses={diningPasses} roomPriceMap={roomPriceMap} />
       </div>
     </main>
   );
