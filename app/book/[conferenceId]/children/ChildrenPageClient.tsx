@@ -40,7 +40,7 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   function addGuest() {
-    setGuests([...guests, { age: 1 }]);
+    setGuests([...guests, { age: 0 }]);
   }
 
   function removeGuest(index: number) {
@@ -112,10 +112,10 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
                     <label className="text-sm font-medium mb-1 block">Age</label>
                     <input
                       type="number"
-                      min={1}
-                      max={17}
+                      min={0}
+                      max={99}
                       value={guest.age}
-                      onChange={(e) => updateGuest(i, "age", Math.max(1, Math.min(17, Number(e.target.value))))}
+                      onChange={(e) => updateGuest(i, "age", Math.max(0, Math.min(99, Number(e.target.value))))}
                       className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                     {guest.age >= 12 && (

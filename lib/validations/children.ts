@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 export const additionalGuestSchema = z.object({
-  age: z.number().int().min(1, "Age must be at least 1").max(17, "Must be under 18"),
-  diningPassId: z.string().nullable(),
+  age: z.number().int().min(0, "Age cannot be negative").max(99, "Age must be 99 or below"),
 });
 
 export const additionalGuestsSchema = z.array(additionalGuestSchema);
