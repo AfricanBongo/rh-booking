@@ -439,3 +439,8 @@ entrypoint = "./functions/stripe-checkout/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/notify-cash-payment/index.ts"
+
+[functions.notify-invoice-paid]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/notify-invoice-paid/index.ts"

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getConference } from "@/lib/data/conferences";
+import { getPaymentHistory } from "@/lib/data/payments";
 import { PillButton } from "@/components/ui";
 import { CurrencyDollarIcon, MegaphoneIcon } from "@phosphor-icons/react/dist/ssr";
 import { PaymentCard } from "./PaymentCard";
@@ -34,7 +35,8 @@ export default async function PayPage(): Promise<React.ReactElement> {
         const conf = await getConference(booking.conference_id);
         conferenceName = conf.name;
       } catch { /* noop */ }
-      return { ...booking, conferenceName };
+      const payments = await getPaymentHistory(booking.id);
+      return { ...booking, conferenceName, payments };
     })
   );
 
@@ -70,6 +72,7 @@ export default async function PayPage(): Promise<React.ReactElement> {
             totalPrice={booking.total_price}
             amountPaid={booking.amount_paid}
             userId={user.id}
+            payments={booking.payments}
           />
         ))}
       </div>

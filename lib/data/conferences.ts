@@ -1,5 +1,12 @@
 import { strapiGet } from "@/lib/strapi";
 
+export interface ImageFormats {
+  thumbnail: string | null;
+  small: string | null;
+  medium: string | null;
+  large: string | null;
+}
+
 export interface Conference {
   id: string;
   slug: string;
@@ -13,9 +20,12 @@ export interface Conference {
   location: string;
   isActive: boolean;
   imageUrl: string | null;
+  imageFormats: ImageFormats;
   portraitImageUrl: string | null;
   otherImageUrls: string[];
 }
+
+interface StrapiImageFormat { url: string; }
 
 interface StrapiConferenceItem {
   id: number;
@@ -30,7 +40,7 @@ interface StrapiConferenceItem {
   payment_deadline: string;
   location: string;
   is_active: boolean;
-  image: { url: string; formats: Record<string, unknown> } | null;
+  image: { url: string; formats: { thumbnail?: StrapiImageFormat; small?: StrapiImageFormat; medium?: StrapiImageFormat; large?: StrapiImageFormat } | null } | null;
   portrait_image: { url: string } | null;
   other_images: { url: string }[] | null;
 }
@@ -39,6 +49,15 @@ function resolveImageUrl(url: string | undefined | null): string | null {
   if (!url) return null;
   if (url.startsWith("http")) return url;
   return `${process.env.NEXT_PUBLIC_STRAPI_URL ?? ""}${url}`;
+}
+
+function mapFormats(formats: { thumbnail?: { url: string }; small?: { url: string }; medium?: { url: string }; large?: { url: string } } | null | undefined): ImageFormats {
+  return {
+    thumbnail: resolveImageUrl(formats?.thumbnail?.url),
+    small: resolveImageUrl(formats?.small?.url),
+    medium: resolveImageUrl(formats?.medium?.url),
+    large: resolveImageUrl(formats?.large?.url),
+  };
 }
 
 function mapConference(item: StrapiConferenceItem): Conference {
@@ -55,6 +74,7 @@ function mapConference(item: StrapiConferenceItem): Conference {
     location: item.location,
     isActive: item.is_active,
     imageUrl: resolveImageUrl(item.image?.url),
+    imageFormats: mapFormats(item.image?.formats),
     portraitImageUrl: resolveImageUrl(item.portrait_image?.url),
     otherImageUrls: (item.other_images ?? [])
       .map((img) => resolveImageUrl(img.url))
