@@ -129,7 +129,7 @@ describe("POST /api/bookings", () => {
     expect(res.status).toBe(409);
   });
 
-  it("sets correct total_price with no children and no dining", async () => {
+  it("sets correct total_price with no children", async () => {
     const { bookingChain } = setupSuccessMock();
     await POST(makeRequest(validBody));
 
