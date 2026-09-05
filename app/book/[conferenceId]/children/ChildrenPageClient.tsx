@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, PlusIcon, XIcon, WarningIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PlusIcon, XIcon, InfoIcon } from "@phosphor-icons/react";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow, type AdditionalGuest } from "@/stores/booking-flow";
-import { calculateChildrenSurcharge } from "@/lib/utils/children";
 
 interface RoomInfo {
   price: number;
@@ -34,9 +33,6 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   const room = roomPriceMap[selectedRoomTypeId];
-  const perPersonRate = room?.price ?? 30000;
-  const surcharge = calculateChildrenSurcharge(guests, perPersonRate);
-  const billableCount = guests.filter((g) => g.age >= 12).length;
 
   function toggleGuests(on: boolean) {
     setHasGuests(on);
@@ -75,7 +71,7 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
         <div className="flex items-center justify-between">
           <div>
             <p className="font-medium">I have additional guests</p>
-            <p className="text-sm text-muted">Guests under 12 stay free. Guests 12 and older are charged at the per-person room rate.</p>
+            <p className="text-sm text-muted">Add children who will be traveling with you.</p>
           </div>
           <button
             type="button"
@@ -123,9 +119,9 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
                       className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                     {guest.age >= 12 && (
-                      <p className="text-xs text-warning mt-1 flex items-center gap-1">
-                        <WarningIcon size={12} weight="bold" />
-                        Charged as additional occupant (+${(perPersonRate / 100).toFixed(0)})
+                      <p className="text-xs text-muted mt-1 flex items-center gap-1">
+                        <InfoIcon size={12} />
+                        Noted. The RoyalHouse team will be in touch if additional charges apply.
                       </p>
                     )}
                   </div>
@@ -152,17 +148,12 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
             </button>
           )}
 
-          {billableCount > 0 && (
-            <div className="border border-warning/30 bg-warning/5 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
-              <WarningIcon size={20} weight="duotone" className="text-warning shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">
-                  {billableCount} guest(s) aged 12+ will be charged as additional occupant{billableCount > 1 ? "s" : ""}
-                </p>
-                <p className="text-sm text-muted mt-0.5">
-                  +${(surcharge / 100).toFixed(0)} added to your booking total
-                </p>
-              </div>
+          {guests.some((g) => g.age >= 12) && (
+            <div className="border border-accent/20 bg-accent/5 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
+              <InfoIcon size={20} className="text-accent shrink-0 mt-0.5" />
+              <p className="text-sm text-muted">
+                Children aged 12 and above may be subject to additional charges. The RoyalHouse team will contact you directly.
+              </p>
             </div>
           )}
         </div>

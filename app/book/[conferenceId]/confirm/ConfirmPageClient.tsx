@@ -6,7 +6,6 @@ import { WarningIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow } from "@/stores/booking-flow";
-import { calculateChildrenSurcharge } from "@/lib/utils/children";
 import { PAYMENT_URGENCY_HOURS } from "@/lib/constants";
 
 interface RoomInfo {
@@ -60,10 +59,8 @@ export function ConfirmPageClient({
   const currentStep = totalSteps;
 
   const perPerson = room?.price ?? 30000;
-  const surcharge = calculateChildrenSurcharge(children, perPerson);
-  const billableChildren = children.filter((c) => c.age >= 12).length;
 
-  const total = perPerson + surcharge;
+  const total = perPerson;
 
   async function handleConfirm(): Promise<void> {
     setSubmitting(true);
@@ -113,7 +110,7 @@ export function ConfirmPageClient({
           <Row label="Check-in" value={formatDate(checkIn)} />
           <Row label="Check-out" value={formatDate(checkOut)} />
           {children.length > 0 && (
-            <Row label="Additional guests" value={`${children.length} (${billableChildren} billable)`} />
+            <Row label="Children" value={`${children.length}`} />
           )}
           {!isPrivate && (
             <Row
@@ -128,12 +125,6 @@ export function ConfirmPageClient({
             <span className="text-muted">Room share ({typeLabels[room?.type ?? "private"]})</span>
             <span>${(perPerson / 100).toFixed(2)}</span>
           </div>
-          {billableChildren > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-muted">Guest surcharge ({billableChildren}x)</span>
-              <span>${(surcharge / 100).toFixed(2)}</span>
-            </div>
-          )}
           <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
             <span>Total</span>
             <span>${(total / 100).toFixed(2)}</span>

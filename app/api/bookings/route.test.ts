@@ -137,13 +137,13 @@ describe("POST /api/bookings", () => {
     expect(insertArg.total_price).toBe(29500);
   });
 
-  it("total_price includes guest surcharge for child age 14+", async () => {
+  it("total_price is room price only, children do not add surcharge", async () => {
     const { bookingChain } = setupSuccessMock();
     const body = { ...validBody, children: [{ age: 14 }] };
     await POST(makeRequest(body));
 
     const insertArg = (bookingChain.insert as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(insertArg.total_price).toBe(59000);
+    expect(insertArg.total_price).toBe(29500);
   });
 
   it("returns bookingId and roomGroupId in response", async () => {

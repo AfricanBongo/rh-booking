@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { calculateChildrenSurcharge } from "@/lib/utils/children";
 
 const maxOccupantsMap: Record<string, number> = {
   private: 1,
@@ -54,9 +53,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const perPerson = roomPrice;
-  const surcharge = calculateChildrenSurcharge(children ?? [], perPerson);
 
-  const totalPrice = perPerson + surcharge;
+  const totalPrice = perPerson;
 
   const { data: booking, error: bkError } = await supabase
     .from("bookings")
