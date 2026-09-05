@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.13](https://github.com/AfricanBongo/rh-booking/compare/v0.6.12...v0.6.13) (2026-09-05)
+
+
+### Bug Fixes
+
+* **functions:** add deno.json import map and fix supabase-js import for notify-invoice-paid ([34f5cd0](https://github.com/AfricanBongo/rh-booking/commit/34f5cd08cda0331e0b9e174f892f4620cc98ce8b))
+
 ## [0.6.12](https://github.com/AfricanBongo/rh-booking/compare/v0.6.11...v0.6.12) (2026-09-05)
 
 
