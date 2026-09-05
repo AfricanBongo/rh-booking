@@ -25,10 +25,9 @@ const maxOccupantsMap: Record<string, number> = {
 interface RoommatePageClientProps {
   conferenceId: string;
   roomPriceMap: Record<string, RoomInfo>;
-  hasDiningPasses: boolean;
 }
 
-export function RoommatePageClient({ conferenceId, roomPriceMap, hasDiningPasses }: RoommatePageClientProps): React.ReactElement {
+export function RoommatePageClient({ conferenceId, roomPriceMap }: RoommatePageClientProps): React.ReactElement {
   const router = useRouter();
   const { selectedRoomTypeId, invitedRoommateId, setInvitee } = useBookingFlow();
   const [mounted, setMounted] = useState(false);
@@ -127,10 +126,8 @@ export function RoommatePageClient({ conferenceId, roomPriceMap, hasDiningPasses
 
   const slotsRemaining = maxOccupants - 1 - (invitedRoommateId ? 1 : 0);
 
-  const stepLabels = hasDiningPasses
-    ? ["Room", "Guests", "Dining", "Roommate", "Confirm"]
-    : ["Room", "Guests", "Roommate", "Confirm"];
-  const currentStep = hasDiningPasses ? 4 : 3;
+  const stepLabels = ["Room", "Children", "Roommate", "Confirm"];
+  const currentStep = 3;
 
   return (
     <div className="animate-fade-up">
@@ -278,7 +275,7 @@ export function RoommatePageClient({ conferenceId, roomPriceMap, hasDiningPasses
       <div className="flex gap-3 mt-8">
         <PillButton
           variant="outline"
-          onClick={() => router.push(`/book/${conferenceId}/${hasDiningPasses ? "dining" : "children"}`)}
+          onClick={() => router.push(`/book/${conferenceId}/children`)}
         >
           <ArrowLeftIcon size={16} />
           Back

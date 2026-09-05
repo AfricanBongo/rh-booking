@@ -16,10 +16,9 @@ interface RoomInfo {
 interface ChildrenPageClientProps {
   conferenceId: string;
   roomPriceMap: Record<string, RoomInfo>;
-  hasDiningPasses: boolean;
 }
 
-export function ChildrenPageClient({ conferenceId, roomPriceMap, hasDiningPasses }: ChildrenPageClientProps): React.ReactElement {
+export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageClientProps): React.ReactElement {
   const router = useRouter();
   const { selectedRoomTypeId, guests, setGuests } = useBookingFlow();
   const [hasGuests, setHasGuests] = useState(guests.length > 0);
@@ -45,22 +44,22 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap, hasDiningPasses
   }
 
   function addGuest() {
-    setGuests([...guests, { age: 1, diningPassId: null }]);
+    setGuests([...guests, { age: 1 }]);
   }
 
   function removeGuest(index: number) {
     setGuests(guests.filter((_, i) => i !== index));
   }
 
-  function updateGuest(index: number, field: keyof AdditionalGuest, value: number | string | null) {
+  function updateGuest(index: number, field: keyof AdditionalGuest, value: number) {
     const updated = guests.map((g, i) => (i === index ? { ...g, [field]: value } : g));
     setGuests(updated);
   }
 
   const isPrivate = room?.type === "private";
   const stepLabels = isPrivate
-    ? (hasDiningPasses ? ["Room", "Guests", "Dining", "Confirm"] : ["Room", "Guests", "Confirm"])
-    : (hasDiningPasses ? ["Room", "Guests", "Dining", "Roommate", "Confirm"] : ["Room", "Guests", "Roommate", "Confirm"]);
+    ? ["Room", "Children", "Confirm"]
+    : ["Room", "Children", "Roommate", "Confirm"];
   const totalSteps = stepLabels.length;
 
   return (
@@ -180,12 +179,8 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap, hasDiningPasses
         <PillButton
           fullWidth
           onClick={() => {
-            if (hasDiningPasses) {
-              router.push(`/book/${conferenceId}/dining`);
-            } else {
-              const nextStep = isPrivate ? "confirm" : "roommate";
-              router.push(`/book/${conferenceId}/${nextStep}`);
-            }
+            const nextStep = isPrivate ? "confirm" : "roommate";
+            router.push(`/book/${conferenceId}/${nextStep}`);
           }}
         >
           Continue

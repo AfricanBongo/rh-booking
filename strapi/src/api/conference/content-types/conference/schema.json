@@ -58,12 +58,6 @@
       "type": "media",
       "multiple": true,
       "allowedTypes": ["images"]
-    },
-    "dining_passes": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::dining-pass.dining-pass",
-      "mappedBy": "conferences"
     }
   }
 }

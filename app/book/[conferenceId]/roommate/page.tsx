@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getRoomTypes } from "@/lib/data/rooms";
-import { getDiningPassesForConference } from "@/lib/data/dining-passes";
 import { RoommatePageClient } from "./RoommatePageClient";
 import Link from "next/link";
 import { XIcon } from "@phosphor-icons/react/dist/ssr";
@@ -17,10 +16,7 @@ export default async function RoommatePage({ params }: PageProps): Promise<React
 
   if (!user) redirect("/auth/login");
 
-  const [roomTypes, diningPasses] = await Promise.all([
-    getRoomTypes(conferenceId),
-    getDiningPassesForConference(conferenceId),
-  ]);
+  const roomTypes = await getRoomTypes(conferenceId);
 
   const roomPriceMap = Object.fromEntries(
     roomTypes.map((rt) => [rt.id, { price: rt.price, type: rt.type }])
@@ -35,7 +31,6 @@ export default async function RoommatePage({ params }: PageProps): Promise<React
         <RoommatePageClient
           conferenceId={conferenceId}
           roomPriceMap={roomPriceMap}
-          hasDiningPasses={diningPasses.length > 0}
         />
       </div>
     </main>

@@ -7,7 +7,7 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, totalSteps, labels }: StepIndicatorProps): React.ReactElement {
-  const defaultLabels = ["Room", "Guests", "Roommate", "Confirm"];
+  const defaultLabels = ["Room", "Children", "Roommate", "Confirm"];
   const stepLabels = labels ?? defaultLabels;
 
   return (
