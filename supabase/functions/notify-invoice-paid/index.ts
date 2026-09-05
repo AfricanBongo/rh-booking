@@ -1,5 +1,5 @@
 import { UseSend } from "usesend-js";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 const usesendKey = Deno.env.get("USESEND_KEY")!;
 const fromEmail = Deno.env.get("FROM_EMAIL") || "noreply@royalhousechurch.org";
