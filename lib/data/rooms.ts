@@ -1,6 +1,7 @@
 import { strapiGet } from "@/lib/strapi";
 import { createClient } from "@/lib/supabase/server";
 import { calculateRoomAvailability } from "@/lib/utils/price";
+import type { ImageFormats } from "@/lib/data/conferences";
 
 export interface RoomType {
   id: string;
@@ -11,6 +12,7 @@ export interface RoomType {
   description: string;
   imageUrl: string | null;
   imageUrls: string[];
+  imageFormats: ImageFormats[];
   conferenceId: string;
 }
 
@@ -21,6 +23,11 @@ export interface RoomTypeWithAvailability extends RoomType {
   remaining: number;
 }
 
+interface StrapiRoomImage {
+  url: string;
+  formats: { thumbnail?: { url: string }; small?: { url: string }; medium?: { url: string }; large?: { url: string } } | null;
+}
+
 interface StrapiRoomTypeItem {
   id: number;
   documentId: string;
@@ -28,7 +35,7 @@ interface StrapiRoomTypeItem {
   price: number;
   total_available: number;
   description: string;
-  images: { url: string }[] | null;
+  images: StrapiRoomImage[] | null;
   conferences: { documentId: string }[] | null;
 }
 
@@ -39,9 +46,17 @@ function resolveImageUrl(url: string | undefined | null): string | null {
 }
 
 function mapRoomType(item: StrapiRoomTypeItem, conferenceId: string): RoomType {
-  const allUrls = (item.images ?? [])
+  const images = item.images ?? [];
+  const allUrls = images
     .map((img) => resolveImageUrl(img.url))
     .filter((url): url is string => url !== null);
+
+  const imageFormats = images.map((img) => ({
+    thumbnail: resolveImageUrl(img.formats?.thumbnail?.url),
+    small: resolveImageUrl(img.formats?.small?.url),
+    medium: resolveImageUrl(img.formats?.medium?.url),
+    large: resolveImageUrl(img.formats?.large?.url),
+  }));
 
   return {
     id: item.documentId,
@@ -52,6 +67,7 @@ function mapRoomType(item: StrapiRoomTypeItem, conferenceId: string): RoomType {
     description: item.description,
     imageUrl: allUrls[0] ?? null,
     imageUrls: allUrls,
+    imageFormats,
     conferenceId,
   };
 }

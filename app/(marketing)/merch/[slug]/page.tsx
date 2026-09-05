@@ -44,7 +44,7 @@ export default async function MerchDetailPage({ params }: Props): Promise<React.
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-6">
         <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface-secondary">
           {item.imageUrl ? (
-            <Image src={item.imageUrl} alt={item.name} fill className="object-cover" unoptimized />
+            <Image src={item.imageFormats.large ?? item.imageUrl} alt={item.name} fill className="object-cover" unoptimized />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <ShoppingBagIcon size={64} weight="thin" className="text-border" />

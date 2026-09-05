@@ -15,7 +15,7 @@ function MerchCard({ item }: { item: MerchItem }): React.ReactElement {
         <div className="relative aspect-square overflow-hidden bg-surface-secondary">
           {item.imageUrl ? (
             <Image
-              src={item.imageUrl}
+              src={item.imageFormats.small ?? item.imageUrl}
               alt={item.name}
               fill
               className={`object-cover transition-transform duration-500 ${isClosed ? "" : "group-hover:scale-105"}`}

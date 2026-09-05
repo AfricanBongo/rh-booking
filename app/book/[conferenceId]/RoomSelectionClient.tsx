@@ -70,6 +70,7 @@ export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceNa
             description={rt.description}
             price={rt.price}
             imageUrls={rt.imageUrls}
+            thumbnailUrls={rt.imageFormats.map((f) => f.small ?? f.medium ?? "").filter(Boolean)}
             remaining={rt.remaining}
             isSelected={selectedRoomTypeId === rt.id}
             onSelect={setRoomType}
