@@ -46,8 +46,10 @@ export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceNa
   const canContinue = selectedRoomTypeId && bedPreference;
   const selectedRoom = selectedRoomTypeId ? roomTypes.find((r) => r.id === selectedRoomTypeId) : null;
   const isPrivate = selectedRoom?.type === "private";
-  const totalSteps = isPrivate ? 3 : 4;
-  const stepLabels = isPrivate ? ["Room", "Children", "Confirm"] : ["Room", "Children", "Roommate", "Confirm"];
+  const stepLabels = isPrivate
+    ? ["Room", "Children", "Confirm"]
+    : ["Room", "Children", "Roommate", "Confirm"];
+  const totalSteps = stepLabels.length;
   const lightboxRoom = lightbox ? roomTypes.find((r) => r.id === lightbox.roomId) : null;
 
   return (
@@ -68,6 +70,7 @@ export function RoomSelectionClient({ conferenceId, conferenceSlug, conferenceNa
             description={rt.description}
             price={rt.price}
             imageUrls={rt.imageUrls}
+            thumbnailUrls={rt.imageFormats.map((f) => f.small ?? f.medium ?? "").filter(Boolean)}
             remaining={rt.remaining}
             isSelected={selectedRoomTypeId === rt.id}
             onSelect={setRoomType}

@@ -3,8 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 export interface Payment {
   id: string;
   amount: number;
-  status: "succeeded" | "pending" | "failed";
-  createdAt: string;
+  method: "card" | "cash";
+  status: "paid";
+  paidAt: string;
+  receiptUrl: string | null;
 }
 
 export interface BookingPaymentSummary {
@@ -45,18 +47,25 @@ export async function getBookingPaymentSummary(userId: string): Promise<BookingP
 export async function getPaymentHistory(bookingId: string): Promise<Payment[]> {
   const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("payments")
-    .select("id, amount, status, created_at")
-    .eq("booking_id", bookingId)
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.rpc("get_booking_payment_history", {
+    p_booking_id: bookingId,
+  });
 
-  if (!data) return [];
+  if (error || !data) return [];
 
-  return data.map((p) => ({
-    id: p.id,
-    amount: p.amount,
-    status: p.status,
-    createdAt: p.created_at,
+  return (data as Array<{
+    id: string;
+    amount: number;
+    method: string;
+    status: string;
+    paid_at: string;
+    receipt_url: string | null;
+  }>).map((row) => ({
+    id: row.id,
+    amount: row.amount,
+    method: row.method as "card" | "cash",
+    status: "paid" as const,
+    paidAt: row.paid_at,
+    receiptUrl: row.receipt_url,
   }));
 }

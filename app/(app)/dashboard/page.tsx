@@ -351,12 +351,12 @@ function DeadlinesCard({ daysUntilPaymentDeadline, daysUntilConference }: { days
   );
 }
 
-function ConferenceScrollCard({ conference }: { conference: { id: string; slug: string; name: string; startDate: string; endDate: string; imageUrl: string | null; isActive: boolean } }): React.ReactElement {
+function ConferenceScrollCard({ conference }: { conference: { id: string; slug: string; name: string; startDate: string; endDate: string; imageUrl: string | null; imageFormats: { small: string | null }; isActive: boolean } }): React.ReactElement {
   return (
     <Link href={`/dashboard/conferences/${conference.slug}`} className="shrink-0 w-[200px] group">
       <div className="aspect-[16/10] rounded-xl overflow-hidden bg-surface-secondary mb-2">
         {conference.imageUrl ? (
-          <Image src={conference.imageUrl} alt={conference.name} width={200} height={125} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          <Image src={conference.imageFormats.small ?? conference.imageUrl} alt={conference.name} width={200} height={125} className="w-full h-full object-cover group-hover:scale-105 transition-transform" unoptimized />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <CalendarDotsIcon size={32} weight="duotone" className="text-muted" />
@@ -374,12 +374,12 @@ function ConferenceScrollCard({ conference }: { conference: { id: string; slug: 
   );
 }
 
-function MerchScrollCard({ item }: { item: { id: string; slug: string; name: string; price: number; imageUrl: string | null } }): React.ReactElement {
+function MerchScrollCard({ item }: { item: { id: string; slug: string; name: string; price: number; imageUrl: string | null; imageFormats: { small: string | null } } }): React.ReactElement {
   return (
     <Link href={`/dashboard/merch/${item.slug}`} className="shrink-0 w-[160px] group">
       <div className="aspect-square rounded-xl overflow-hidden bg-surface-secondary mb-2">
         {item.imageUrl ? (
-          <Image src={item.imageUrl} alt={item.name} width={160} height={160} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          <Image src={item.imageFormats.small ?? item.imageUrl} alt={item.name} width={160} height={160} className="w-full h-full object-cover group-hover:scale-105 transition-transform" unoptimized />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <TagIcon size={32} weight="duotone" className="text-muted" />

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { CurrencyDollarIcon, CheckCircleIcon, ReceiptIcon } from "@phosphor-icons/react";
+import { CurrencyDollarIcon, CheckCircleIcon, ReceiptIcon, CaretDownIcon } from "@phosphor-icons/react";
 import { PillButton } from "@/components/ui/PillButton";
 import { Badge } from "@/components/ui/Badge";
 import { MIN_PAYMENT_AMOUNT } from "@/lib/constants";
 import { usePaymentUpdates } from "@/lib/hooks/usePaymentUpdates";
+import type { Payment } from "@/lib/data/payments";
+import { PaymentHistoryRow } from "./PaymentHistoryRow";
 
 interface PaymentCardProps {
   bookingId: string;
@@ -13,11 +15,12 @@ interface PaymentCardProps {
   totalPrice: number;
   amountPaid: number;
   userId: string;
+  payments: Payment[];
 }
 
 const PRESETS = [2500, 5000, 10000];
 
-export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid, userId }: PaymentCardProps): React.ReactElement {
+export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid, userId, payments }: PaymentCardProps): React.ReactElement {
   const [currentAmountPaid, setCurrentAmountPaid] = useState(amountPaid);
   const [currentTotalPrice, setCurrentTotalPrice] = useState(totalPrice);
 
@@ -146,6 +149,18 @@ export function PaymentCard({ bookingId, conferenceName, totalPrice, amountPaid,
           <span>${(remainingBalance / 100).toFixed(2)} remaining</span>
         </div>
       </div>
+
+      {payments.length > 0 && (
+        <details className="group border-t border-border pt-4">
+          <summary className="cursor-pointer text-sm font-medium flex items-center justify-between list-none select-none">
+            Payment history ({payments.length})
+            <CaretDownIcon size={16} className="text-muted transition-transform duration-200 group-open:rotate-180" />
+          </summary>
+          <ul className="mt-3 space-y-2">
+            {payments.map((p) => <PaymentHistoryRow key={p.id} payment={p} />)}
+          </ul>
+        </details>
+      )}
 
       {isPaidInFull ? (
         <div className="flex items-center gap-2 pt-2">

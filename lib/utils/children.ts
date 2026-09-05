@@ -1,13 +1,7 @@
-import { CHILDREN_SURCHARGE_MULTIPLIER } from "@/lib/constants";
-
-export interface GuestInput {
+export interface ChildInput {
   age: number;
 }
 
-export function calculateGuestSurcharge(guests: GuestInput[], perPersonRate: number): number {
-  const billableCount = guests.filter((g) => g.age >= 12).length;
-  return billableCount * perPersonRate * CHILDREN_SURCHARGE_MULTIPLIER;
-}
-
-export type ChildInput = GuestInput;
-export const calculateChildrenSurcharge = calculateGuestSurcharge;
+export type GuestInput = ChildInput;
+export const calculateChildrenSurcharge = (): number => 0;
+export const calculateGuestSurcharge = calculateChildrenSurcharge;

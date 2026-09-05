@@ -9,6 +9,7 @@ interface RoomTypeCardProps {
   description: string;
   price: number;
   imageUrls: string[];
+  thumbnailUrls: string[];
   remaining: number;
   isSelected: boolean;
   onSelect: (id: string) => void;
@@ -27,6 +28,7 @@ export function RoomTypeCard({
   description,
   price,
   imageUrls,
+  thumbnailUrls,
   remaining,
   isSelected,
   onSelect,
@@ -45,7 +47,7 @@ export function RoomTypeCard({
       ].join(" ")}
     >
       <ImageSlider
-        images={imageUrls}
+        images={thumbnailUrls.length > 0 ? thumbnailUrls : imageUrls}
         alt={typeLabels[type]}
         transitionName={`room-img-${id}`}
         onImageClick={(index) => onImageClick(id, index)}

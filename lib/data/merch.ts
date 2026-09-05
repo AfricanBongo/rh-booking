@@ -1,4 +1,5 @@
 import { strapiGet } from "@/lib/strapi";
+import type { ImageFormats } from "@/lib/data/conferences";
 
 export interface MerchItem {
   id: string;
@@ -7,6 +8,7 @@ export interface MerchItem {
   description: string;
   price: number;
   imageUrl: string | null;
+  imageFormats: ImageFormats;
   merch_status: "open" | "closed";
   conferenceId: string;
 }
@@ -18,6 +20,11 @@ export interface PickupLocation {
   conferenceId: string;
 }
 
+interface StrapiMerchImage {
+  url: string;
+  formats: { thumbnail?: { url: string }; small?: { url: string }; medium?: { url: string }; large?: { url: string } } | null;
+}
+
 interface StrapiMerchItem {
   id: number;
   documentId: string;
@@ -25,7 +32,7 @@ interface StrapiMerchItem {
   name: string;
   description: string;
   price: number;
-  images: { url: string }[] | null;
+  images: StrapiMerchImage[] | null;
   merch_status: "open" | "closed";
   conferences: { documentId: string }[] | null;
 }
@@ -45,13 +52,20 @@ function resolveImageUrl(url: string | undefined | null): string | null {
 }
 
 function mapMerchItem(item: StrapiMerchItem, conferenceId: string): MerchItem {
+  const firstImage = item.images?.[0];
   return {
     id: item.documentId,
     slug: item.slug,
     name: item.name,
     description: item.description,
     price: item.price,
-    imageUrl: resolveImageUrl(item.images?.[0]?.url),
+    imageUrl: resolveImageUrl(firstImage?.url),
+    imageFormats: {
+      thumbnail: resolveImageUrl(firstImage?.formats?.thumbnail?.url),
+      small: resolveImageUrl(firstImage?.formats?.small?.url),
+      medium: resolveImageUrl(firstImage?.formats?.medium?.url),
+      large: resolveImageUrl(firstImage?.formats?.large?.url),
+    },
     merch_status: item.merch_status,
     conferenceId,
   };

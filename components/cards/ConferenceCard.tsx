@@ -23,7 +23,7 @@ export function ConferenceCard({ conference }: ConferenceCardProps): React.React
         <div className="relative aspect-[16/10] overflow-hidden">
           {conference.imageUrl ? (
             <Image
-              src={conference.imageUrl}
+              src={conference.imageFormats.medium ?? conference.imageUrl}
               alt={conference.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
