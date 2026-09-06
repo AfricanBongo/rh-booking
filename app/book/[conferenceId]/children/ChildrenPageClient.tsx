@@ -40,7 +40,7 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
   }
 
   function addGuest() {
-    setGuests([...guests, { age: 0 }]);
+    setGuests([...guests, { age: 1 }]);
   }
 
   function removeGuest(index: number) {
@@ -64,8 +64,8 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
         <StepIndicator currentStep={2} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
-      <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Additional guests</h1>
-      <p className="text-muted mb-8">Let us know if any additional guests will be joining you.</p>
+      <h1 className="font-heading text-2xl md:text-3xl font-semibold mb-2">Children</h1>
+      <p className="text-muted mb-8">Add any children who will be traveling with you.</p>
 
       <div className="border border-border rounded-2xl p-5 bg-surface mb-6">
         <div className="flex items-center justify-between">
@@ -118,12 +118,6 @@ export function ChildrenPageClient({ conferenceId, roomPriceMap }: ChildrenPageC
                       onChange={(e) => updateGuest(i, "age", Math.max(0, Math.min(99, Number(e.target.value))))}
                       className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:border-accent transition-colors"
                     />
-                    {guest.age >= 12 && (
-                      <p className="text-xs text-muted mt-1 flex items-center gap-1">
-                        <InfoIcon size={12} />
-                        Noted. The RoyalHouse team will be in touch if additional charges apply.
-                      </p>
-                    )}
                   </div>
                 </div>
                 <button
