@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "usesend-js": "npm:usesend-js@latest",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2"
+  }
+}

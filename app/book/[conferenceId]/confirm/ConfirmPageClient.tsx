@@ -6,9 +6,7 @@ import { WarningIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { PillButton } from "@/components/ui/PillButton";
 import { useBookingFlow } from "@/stores/booking-flow";
-import { calculateChildrenSurcharge } from "@/lib/utils/children";
 import { PAYMENT_URGENCY_HOURS } from "@/lib/constants";
-import type { DiningPass } from "@/lib/data/dining-passes";
 
 interface RoomInfo {
   price: number;
@@ -22,7 +20,6 @@ interface ConfirmPageClientProps {
   checkOut: string;
   roomPriceMap: Record<string, RoomInfo>;
   isUrgent: boolean;
-  diningPasses: DiningPass[];
 }
 
 const typeLabels: Record<string, string> = {
@@ -38,10 +35,9 @@ export function ConfirmPageClient({
   checkOut,
   roomPriceMap,
   isUrgent,
-  diningPasses,
 }: ConfirmPageClientProps): React.ReactElement {
   const router = useRouter();
-  const { selectedRoomTypeId, bedPreference, children, guests, invitedRoommateId, myDiningPassId, reset } = useBookingFlow();
+  const { selectedRoomTypeId, bedPreference, children, invitedRoommateId, reset } = useBookingFlow();
   const [mounted, setMounted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,26 +52,15 @@ export function ConfirmPageClient({
 
   const room = selectedRoomTypeId ? roomPriceMap[selectedRoomTypeId] : undefined;
   const isPrivate = room?.type === "private";
-  const hasDining = diningPasses.length > 0;
   const stepLabels = isPrivate
-    ? (hasDining ? ["Room", "Guests", "Dining", "Confirm"] : ["Room", "Guests", "Confirm"])
-    : (hasDining ? ["Room", "Guests", "Dining", "Roommate", "Confirm"] : ["Room", "Guests", "Roommate", "Confirm"]);
+    ? ["Room", "Children", "Confirm"]
+    : ["Room", "Children", "Roommate", "Confirm"];
   const totalSteps = stepLabels.length;
   const currentStep = totalSteps;
 
   const perPerson = room?.price ?? 30000;
-  const surcharge = calculateChildrenSurcharge(children, perPerson);
-  const billableChildren = children.filter((c) => c.age >= 12).length;
 
-  const myPass = diningPasses.find((p) => p.id === myDiningPassId);
-  let diningTotal = myPass?.price ?? 0;
-  const guestDiningPasses = guests.map((g) => {
-    const pass = diningPasses.find((p) => p.id === g.diningPassId);
-    return pass ? { id: pass.id, name: pass.name, price: pass.price } : null;
-  }).filter(Boolean) as Array<{ id: string; name: string; price: number }>;
-  for (const gp of guestDiningPasses) diningTotal += gp.price;
-
-  const total = perPerson + surcharge + diningTotal;
+  const total = perPerson;
 
   async function handleConfirm(): Promise<void> {
     setSubmitting(true);
@@ -91,10 +76,6 @@ export function ConfirmPageClient({
           children,
           invitedRoommateId,
           roomPrice: room?.price ?? 0,
-          myDiningPassId: myDiningPassId ?? null,
-          myDiningPassName: myPass?.name ?? null,
-          myDiningPassPrice: myPass?.price ?? 0,
-          guestDiningPasses,
         }),
       });
 
@@ -129,11 +110,7 @@ export function ConfirmPageClient({
           <Row label="Check-in" value={formatDate(checkIn)} />
           <Row label="Check-out" value={formatDate(checkOut)} />
           {children.length > 0 && (
-            <Row label="Children" value={`${children.length} (${billableChildren} billable)`} />
-          )}
-          {myPass && <Row label="Your dining pass" value={myPass.name} />}
-          {guestDiningPasses.length > 0 && (
-            <Row label="Guest dining passes" value={`${guestDiningPasses.length}`} />
+            <Row label="Children" value={`${children.length}`} />
           )}
           {!isPrivate && (
             <Row
@@ -148,18 +125,6 @@ export function ConfirmPageClient({
             <span className="text-muted">Room share ({typeLabels[room?.type ?? "private"]})</span>
             <span>${(perPerson / 100).toFixed(2)}</span>
           </div>
-          {billableChildren > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-muted">Children surcharge ({billableChildren}x)</span>
-              <span>${(surcharge / 100).toFixed(2)}</span>
-            </div>
-          )}
-          {diningTotal > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-muted">Dining passes</span>
-              <span>${(diningTotal / 100).toFixed(2)}</span>
-            </div>
-          )}
           <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
             <span>Total</span>
             <span>${(total / 100).toFixed(2)}</span>

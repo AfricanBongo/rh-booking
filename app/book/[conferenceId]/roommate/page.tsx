@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { getRoomTypes } from "@/lib/data/rooms";
 import { RoommatePageClient } from "./RoommatePageClient";
 import Link from "next/link";
@@ -7,18 +9,18 @@ interface PageProps {
   params: Promise<{ conferenceId: string }>;
 }
 
-const maxOccupantsMap: Record<string, number> = {
-  private: 1,
-  "shared-2": 2,
-  "shared-4": 4,
-};
-
 export default async function RoommatePage({ params }: PageProps): Promise<React.ReactElement> {
   const { conferenceId } = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) redirect("/auth/login");
+
   const roomTypes = await getRoomTypes(conferenceId);
 
-  const sharedRoom = roomTypes.find((rt) => rt.type !== "private");
-  const maxOccupants = sharedRoom ? maxOccupantsMap[sharedRoom.type] : 2;
+  const roomPriceMap = Object.fromEntries(
+    roomTypes.map((rt) => [rt.id, { price: rt.price, type: rt.type }])
+  );
 
   return (
     <main className="min-h-screen bg-background py-8 px-4 md:px-8">
@@ -26,7 +28,10 @@ export default async function RoommatePage({ params }: PageProps): Promise<React
         <XIcon size={14} /> Exit
       </Link>
       <div className="max-w-2xl mx-auto">
-        <RoommatePageClient conferenceId={conferenceId} maxOccupants={maxOccupants} />
+        <RoommatePageClient
+          conferenceId={conferenceId}
+          roomPriceMap={roomPriceMap}
+        />
       </div>
     </main>
   );

@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 export interface AdditionalGuest {
   age: number;
-  diningPassId: string | null;
 }
 
 export type ChildEntry = AdditionalGuest;
@@ -14,7 +13,6 @@ interface BookingFlowState {
   guests: AdditionalGuest[];
   invitedRoommateId: string | null;
   relationshipType: "married" | "siblings" | "none" | null;
-  myDiningPassId: string | null;
 
   setConferenceId: (id: string) => void;
   setRoomType: (id: string) => void;
@@ -23,8 +21,6 @@ interface BookingFlowState {
   removeGuest: (index: number) => void;
   setGuests: (guests: AdditionalGuest[]) => void;
   setInvitee: (id: string | null, relationship?: "married" | "siblings" | "none") => void;
-  setMyDiningPass: (id: string | null) => void;
-  setGuestDiningPass: (index: number, id: string | null) => void;
   reset: () => void;
 
   children: AdditionalGuest[];
@@ -40,7 +36,6 @@ const initialState = {
   guests: [] as AdditionalGuest[],
   invitedRoommateId: null as string | null,
   relationshipType: null as "married" | "siblings" | "none" | null,
-  myDiningPassId: null as string | null,
 };
 
 export const useBookingFlow = create<BookingFlowState>((set, get) => ({
@@ -53,11 +48,6 @@ export const useBookingFlow = create<BookingFlowState>((set, get) => ({
   removeGuest: (index) => set((s) => ({ guests: s.guests.filter((_, i) => i !== index) })),
   setGuests: (guests) => set({ guests }),
   setInvitee: (id, relationship) => set({ invitedRoommateId: id, relationshipType: relationship ?? null }),
-  setMyDiningPass: (id) => set({ myDiningPassId: id }),
-  setGuestDiningPass: (index, id) =>
-    set((s) => ({
-      guests: s.guests.map((g, i) => (i === index ? { ...g, diningPassId: id } : g)),
-    })),
   reset: () => set(initialState),
 
   get children() { return get().guests; },
