@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.14](https://github.com/AfricanBongo/rh-booking/compare/v0.6.13...v0.6.14) (2026-09-06)
+
+
+### Bug Fixes
+
+* **children:** default age to 1 to prevent leading zero, remove per-card 12+ note, fix page heading ([9981255](https://github.com/AfricanBongo/rh-booking/commit/99812553bfbf0c0907b5ddc05b4740deb985ccac))
+
 ## [0.6.13](https://github.com/AfricanBongo/rh-booking/compare/v0.6.12...v0.6.13) (2026-09-05)
 
 
