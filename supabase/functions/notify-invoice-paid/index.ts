@@ -4,7 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 const usesendKey = Deno.env.get("USESEND_KEY")!;
 const fromEmail = Deno.env.get("FROM_EMAIL") || "noreply@royalhousechurch.org";
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SECRET_KEY")!;
+const SUPABASE_SECRET_KEYS = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")!);
+const supabaseServiceKey = SUPABASE_SECRET_KEYS["default"];
 
 const usesend = new UseSend(usesendKey);
 
