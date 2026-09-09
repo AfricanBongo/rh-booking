@@ -7,8 +7,16 @@ project_id = "rh-booking"
 [remotes.staging]
 project_id = "eswjpuapwsehqrfzufpw"
 
+[remotes.staging.auth]
+site_url = "https://staging.book.royalhousena.org"
+additional_redirect_urls = ["https://staging.book.royalhousena.org/**",]
+
 [remotes.production]
 project_id = "cagwgqubupwayqewsvlq"
+
+[remotes.production.auth]
+site_url = "https://book.royalhousena.org"
+additional_redirect_urls = ["https://book.royalhousena.org/**",]
 
 [api]
 enabled = true

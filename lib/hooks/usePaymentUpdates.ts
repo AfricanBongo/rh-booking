@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { createBrowserClient } from "@supabase/ssr";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+import { createClient } from "@/lib/supabase/client";
 
 export function usePaymentUpdates(
   userId: string | null,
@@ -13,7 +10,7 @@ export function usePaymentUpdates(
   useEffect(() => {
     if (!userId) return;
 
-    const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient();
 
     const channel = supabase
       .channel(`bookings:${userId}`)

@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { getConference } from "@/lib/data/conferences";
 import { getPaymentHistory } from "@/lib/data/payments";
 import { PillButton } from "@/components/ui";
-import { CurrencyDollarIcon, MegaphoneIcon } from "@phosphor-icons/react/dist/ssr";
-import { PaymentCard } from "./PaymentCard";
+import { CurrencyDollarIcon } from "@phosphor-icons/react/dist/ssr";
+import { PayPageClient } from "./PayPageClient";
 
 interface BookingRow {
   id: string;
@@ -36,7 +36,13 @@ export default async function PayPage(): Promise<React.ReactElement> {
         conferenceName = conf.name;
       } catch { /* noop */ }
       const payments = await getPaymentHistory(booking.id);
-      return { ...booking, conferenceName, payments };
+      return {
+        id: booking.id,
+        conferenceName,
+        totalPrice: booking.total_price,
+        amountPaid: booking.amount_paid,
+        payments,
+      };
     })
   );
 
@@ -63,19 +69,7 @@ export default async function PayPage(): Promise<React.ReactElement> {
       </div>
       <p className="text-muted text-sm mb-8">Manage payments for your conference bookings</p>
 
-      <div className="space-y-6 max-w-2xl">
-        {bookingsWithNames.map((booking) => (
-          <PaymentCard
-            key={booking.id}
-            bookingId={booking.id}
-            conferenceName={booking.conferenceName}
-            totalPrice={booking.total_price}
-            amountPaid={booking.amount_paid}
-            userId={user.id}
-            payments={booking.payments}
-          />
-        ))}
-      </div>
+      <PayPageClient userId={user.id} bookings={bookingsWithNames} />
     </main>
   );
 }
