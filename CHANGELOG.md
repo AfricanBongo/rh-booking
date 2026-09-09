@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.16](https://github.com/AfricanBongo/rh-booking/compare/v0.6.15...v0.6.16) (2026-09-09)
+
+
+### Bug Fixes
+
+* **functions:** use SUPABASE_SECRET_KEYS JSON env var instead of SUPABASE_SECRET_KEY ([b4f1eea](https://github.com/AfricanBongo/rh-booking/commit/b4f1eeaf56eb8c63eaddc54e8ad3c30a40778d65))
+
 ## [0.6.15](https://github.com/AfricanBongo/rh-booking/compare/v0.6.14...v0.6.15) (2026-09-09)
 
 
