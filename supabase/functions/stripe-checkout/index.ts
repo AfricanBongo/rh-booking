@@ -6,7 +6,8 @@ const MIN_PAYMENT_AMOUNT = 2500;
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!);
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SECRET_KEY")!;
+const SUPABASE_SECRET_KEYS = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")!);
+const supabaseServiceKey = SUPABASE_SECRET_KEYS["default"];
 
 function getSupabaseAdmin() {
   return createClient(supabaseUrl, supabaseServiceKey);
